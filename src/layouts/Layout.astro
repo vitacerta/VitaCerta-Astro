@@ -29,18 +29,28 @@ const rssHref = getRelativeLocaleUrl(
   "rss.xml"
 );
 
+const organizationId = new URL("#organization", site.url).href;
+const websiteId = new URL("#website", site.url).href;
+
 const websiteStructuredData = {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: site.title,
-  url: site.url,
-  description: site.description,
-  inLanguage: site.lang,
-  publisher: {
-    "@type": "Organization",
-    name: site.title,
-    url: site.url,
-  },
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": organizationId,
+      name: site.title,
+      url: site.url,
+    },
+    {
+      "@type": "WebSite",
+      "@id": websiteId,
+      name: site.title,
+      url: site.url,
+      description: site.description,
+      inLanguage: site.lang,
+      publisher: { "@id": organizationId },
+    },
+  ],
 };
 ---
 
