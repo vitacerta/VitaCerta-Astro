@@ -11,11 +11,29 @@
     scrollbar-width: auto;
     scrollbar-color: var(--color-muted) transparent;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-app antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.015em;
+  }
+
   a,
   button,
   #main-content {
     @apply outline-accent outline-offset-1 focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed;
   }
+
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
@@ -23,15 +41,27 @@
 }
 
 @utility max-w-app {
-  @apply max-w-3xl;
+  @apply max-w-6xl;
 }
 
 @utility app-layout {
-  @apply max-w-app mx-auto w-full px-4;
+  @apply max-w-app mx-auto w-full px-5 sm:px-6 lg:px-8;
 }
 
 @utility active-nav {
-  @apply underline decoration-wavy decoration-2 underline-offset-8;
+  @apply text-accent underline decoration-1 underline-offset-8;
+}
+
+.editorial-kicker {
+  @apply text-muted-foreground text-xs font-semibold tracking-[0.18em] uppercase;
+}
+
+.editorial-card {
+  @apply border-border bg-background rounded-2xl border p-5 transition-transform duration-200;
+}
+
+.editorial-card:hover {
+  transform: translateY(-2px);
 }
 
 :target {
