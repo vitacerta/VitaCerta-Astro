@@ -9,37 +9,73 @@ type Props = {
   canonicalURL?: string;
   pubDatetime?: Date;
   modDatetime?: Date | null;
+  category?: string;
 };
 
 const { site } = config;
-const { title, description, ogImage, canonicalURL, pubDatetime, modDatetime } =
-  Astro.props;
+const {
+  title,
+  description,
+  ogImage,
+  canonicalURL,
+  pubDatetime,
+  modDatetime,
+  category,
+} = Astro.props;
 
 const resolvedCanonical =
   canonicalURL ?? new URL(Astro.url.pathname, Astro.site).href;
 
+const organizationId = new URL("#organization", site.url).href;
+const websiteId = new URL("#website", site.url).href;
+const articleId = `${resolvedCanonical}#article`;
+
 const structuredData = {
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  headline: title ?? site.title,
-  description,
-  ...(ogImage && { image: [ogImage] }),
-  mainEntityOfPage: {
-    "@type": "WebPage",
-    "@id": resolvedCanonical,
-  },
-  ...(pubDatetime && { datePublished: pubDatetime.toISOString() }),
-  ...(modDatetime && { dateModified: modDatetime.toISOString() }),
-  author: {
-    "@type": "Organization",
-    name: site.author,
-    url: site.url,
-  },
-  publisher: {
-    "@type": "Organization",
-    name: site.title,
-    url: site.url,
-  },
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": articleId,
+      headline: title ?? site.title,
+      description,
+      url: resolvedCanonical,
+      inLanguage: site.lang,
+      ...(category && { articleSection: category }),
+      ...(ogImage && { image: [ogImage] }),
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": resolvedCanonical,
+      },
+      isPartOf: { "@id": websiteId },
+      ...(pubDatetime && { datePublished: pubDatetime.toISOString() }),
+      ...(modDatetime && { dateModified: modDatetime.toISOString() }),
+      author: { "@id": organizationId },
+      publisher: { "@id": organizationId },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Início",
+          item: site.url,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Conteúdos",
+          item: new URL("conteudos/", site.url).href,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: title ?? site.title,
+          item: resolvedCanonical,
+        },
+      ],
+    },
+  ],
 };
 ---
 
@@ -63,6 +99,7 @@ const structuredData = {
         />
       )
     }
+    {category && <meta property="article:section" content={category} />}
 
     <script
       type="application/ld+json"
