@@ -5,6 +5,14 @@ import config from "@/config";
 
 export const BLOG_PATH = "src/content/posts";
 
+const editorialCategory = z.enum([
+  "Saúde",
+  "Nutrição",
+  "Movimento",
+  "Mente",
+  "Longevidade",
+]);
+
 const posts = defineCollection({
   loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${BLOG_PATH}` }),
   schema: ({ image }) =>
@@ -15,7 +23,8 @@ const posts = defineCollection({
       title: z.string(),
       featured: z.boolean().optional(),
       draft: z.boolean().optional(),
-      tags: z.array(z.string()).default(["others"]),
+      category: editorialCategory.optional(),
+      tags: z.array(z.string()).default([]),
       ogImage: image().or(z.string()).optional(),
       description: z.string(),
       canonicalURL: z.string().optional(),
