@@ -1,37 +1,26 @@
 ---
-title: "About"
-description: "A bit about me and this blog."
+title: "Sobre o VitaCerta"
+description: "Conheça a proposta editorial do VitaCerta e como produzimos conteúdo de saúde claro, responsável e útil para a vida real."
 ---
 
-AstroPaper is a minimal, accessible and SEO-friendly blog theme built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/).
+O **VitaCerta** é um projeto editorial de saúde criado para transformar informação técnica em conteúdo claro, útil e responsável.
 
-![Astro Paper](@/assets/images/astropaper-og.jpg)
+Nosso objetivo é ajudar o leitor a compreender melhor temas de **saúde, nutrição, movimento, mente e longevidade**, sem alarmismo, promessas fáceis ou simplificações que distorçam o que a ciência realmente permite afirmar.
 
-AstroPaper provides a solid foundation for blogs, or even portfolios\_ with full markdown support, built-in dark mode, and a clean layout that works out-of-the-box.
+## Como trabalhamos
 
-The blog posts in this theme also serve as guides, docs or example articles\_ making AstroPaper a flexible starting point for your next content-driven site.
+Cada conteúdo é pensado para responder a dúvidas reais do cotidiano. Sempre que o tema exige dados, recomendações ou evidências científicas, buscamos referências confiáveis e deixamos claro o que é informação consolidada, o que ainda está em estudo e quando a avaliação de um profissional de saúde é necessária.
 
-## Features
+O VitaCerta não substitui consulta, diagnóstico ou tratamento médico. Nosso papel é **informar melhor para que o leitor possa fazer perguntas melhores, reconhecer sinais importantes e tomar decisões mais conscientes**.
 
-AstroPaper comes with a set of useful features that make content publishing easy and effective:
+## Nossa linha editorial
 
-- SEO-friendly
-- Fast performance
-- Light & dark mode
-- Highly customizable
-- Organizable blog posts
-- Responsive & accessible
-- Static search with [PageFind](https://pagefind.app/)
-- Automatic social image generation
+Organizamos o conteúdo em cinco áreas permanentes: **Saúde, Nutrição, Movimento, Mente e Longevidade**. Essa estrutura permite aprofundar temas sem transformar o site em uma coleção desconectada de artigos.
 
-and so much more.
+Também desenvolvemos conteúdos especiais que aproximam pesquisas e descobertas científicas da vida real, mantendo linguagem acessível e contexto suficiente para evitar interpretações exageradas.
 
-## Show your support
+## Compromisso editorial
 
-If you like [AstroPaper](https://github.com/satnaing/astro-paper), consider giving it a star ⭐️.
+Priorizamos clareza, utilidade, transparência e atualização. Quando um conteúdo precisar ser corrigido ou atualizado, a nova versão deve refletir a melhor informação disponível no momento.
 
-Found a bug 🐛 or have an improvement ✨ in mind? Feel free to open an [issue](https://github.com/satnaing/astro-paper/issues), submit a [pull request](https://github.com/satnaing/astro-paper/pulls) or start a [discussion](https://github.com/satnaing/astro-paper/discussions).
-
-If you find this theme helpful, you can also [sponsor me on GitHub](https://github.com/sponsors/satnaing) or [buy me a coffee](https://buymeacoffee.com/satnaing) to show your support — every penny counts.
-
-Kyay zuu! 🙏🏼
+O VitaCerta está em desenvolvimento contínuo. A estrutura atual foi criada para que o projeto possa crescer sem perder consistência editorial, qualidade técnica ou desempenho.
