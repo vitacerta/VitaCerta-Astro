@@ -1,0 +1,106 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import PostLayout from "@/layouts/PostLayout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Datetime from "@/components/Datetime.astro";
+import Tag from "@/components/Tag.astro";
+import { getPostSlug } from "@/utils/getPostPaths";
+import { getSortedPosts } from "@/utils/getSortedPosts";
+import { slugifyStr } from "@/utils/slugify";
+import config from "@/config";
+
+export async function getStaticPaths() {
+  const posts = getSortedPosts(await getCollection("posts"));
+
+  return posts.map(post => ({
+    params: { slug: getPostSlug(post.id, post.filePath) },
+    props: { post },
+  }));
+}
+
+type Props = {
+  post: CollectionEntry<"posts">;
+};
+
+const { post } = Astro.props;
+const {
+  title,
+  description,
+  ogImage: initOgImage,
+  canonicalURL,
+  pubDatetime,
+  modDatetime,
+  timezone,
+  tags,
+  category,
+} = post.data;
+
+const { Content } = await render(post);
+
+let ogImage: string | undefined;
+if (typeof initOgImage === "string") {
+  ogImage = new URL(initOgImage, Astro.site ?? Astro.url).href;
+} else if (initOgImage?.src) {
+  ogImage = new URL(initOgImage.src, Astro.site ?? Astro.url).href;
+}
+
+const resolvedCanonical =
+  canonicalURL ?? new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<PostLayout
+  title={`${title} | ${config.site.title}`}
+  description={description}
+  {ogImage}
+  canonicalURL={resolvedCanonical}
+  {pubDatetime}
+  {modDatetime}
+>
+  <Header />
+
+  <main id="main-content" class="app-layout mt-8" data-pagefind-body>
+    <article class="mx-auto max-w-3xl">
+      <header class="border-border border-b pb-8">
+        {
+          category && (
+            <a
+              href={`/${slugifyStr(category)}/`}
+              class="text-accent text-sm font-semibold uppercase tracking-[0.16em]"
+            >
+              {category}
+            </a>
+          )
+        }
+        <h1 class="font-editorial mt-3 text-4xl leading-tight font-semibold sm:text-5xl">
+          {title}
+        </h1>
+        <p class="text-muted-foreground mt-4 text-lg leading-8">
+          {description}
+        </p>
+        <div class="text-muted-foreground mt-5 text-sm">
+          <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+        </div>
+      </header>
+
+      <div class="app-prose mt-10">
+        <Content />
+      </div>
+
+      {
+        tags.length > 0 && (
+          <footer class="border-border mt-12 border-t pt-6">
+            <p class="text-muted-foreground mb-3 text-sm">Temas relacionados</p>
+            <ul class="flex flex-wrap gap-3">
+              {tags.map(tag => (
+                <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />
+              ))}
+            </ul>
+          </footer>
+        )
+      }
+    </article>
+  </main>
+
+  <Footer />
+</PostLayout>
