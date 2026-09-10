@@ -12,30 +12,39 @@ type Props = {
 };
 
 const { site } = config;
-
 const { title, description, ogImage, canonicalURL, pubDatetime, modDatetime } =
   Astro.props;
+
+const resolvedCanonical =
+  canonicalURL ?? new URL(Astro.url.pathname, Astro.site).href;
 
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   headline: title ?? site.title,
-  image: ogImage,
+  description,
+  ...(ogImage && { image: [ogImage] }),
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": resolvedCanonical,
+  },
   ...(pubDatetime && { datePublished: pubDatetime.toISOString() }),
   ...(modDatetime && { dateModified: modDatetime.toISOString() }),
-  author: [
-    {
-      "@type": "Person",
-      name: site.author,
-      ...(site.profile && { url: site.profile }),
-    },
-  ],
+  author: {
+    "@type": "Organization",
+    name: site.author,
+    url: site.url,
+  },
+  publisher: {
+    "@type": "Organization",
+    name: site.title,
+    url: site.url,
+  },
 };
 ---
 
-<Layout {title} {description} {ogImage} {canonicalURL}>
+<Layout {title} {description} {ogImage} canonicalURL={resolvedCanonical}>
   <Fragment slot="head">
-    <!-- Override og:type for article pages -->
     <meta property="og:type" content="article" />
 
     {
