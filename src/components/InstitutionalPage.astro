@@ -1,0 +1,34 @@
+---
+import { getEntry, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Main from "@/components/Main.astro";
+import config from "@/config";
+
+type Props = {
+  entryId: string;
+};
+
+const { entryId } = Astro.props;
+const page = await getEntry("pages", entryId);
+
+if (!page) {
+  throw new Error(`Missing institutional page content: ${entryId}`);
+}
+
+const { Content } = await render(page);
+---
+
+<Layout
+  title={`${page.data.title} | ${config.site.title}`}
+  description={page.data.description}
+  ogImage={page.data.ogImage}
+  canonicalURL={page.data.canonicalURL}
+>
+  <Header />
+  <Main pageTitle={page.data.title} class="app-prose" data-pagefind-body>
+    <Content />
+  </Main>
+  <Footer />
+</Layout>
