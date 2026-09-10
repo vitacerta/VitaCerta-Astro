@@ -1,0 +1,67 @@
+import type { UIStrings } from "../types";
+
+export default {
+  nav: {
+    home: "Início",
+    posts: "Conteúdos",
+    tags: "Temas",
+    about: "Sobre",
+    archives: "Arquivo",
+    search: "Buscar",
+  },
+  post: {
+    publishedAt: "Publicado em",
+    updatedAt: "Atualizado em",
+    sharePostIntro: "Compartilhe este artigo:",
+    sharePostOn: "Compartilhar este artigo no {{platform}}",
+    sharePostViaEmail: "Compartilhar este artigo por e-mail",
+    tagLabel: "Temas",
+    backToTop: "Voltar ao topo",
+    goBack: "Voltar",
+    editPage: "Editar página",
+    previousPost: "Artigo anterior",
+    nextPost: "Próximo artigo",
+  },
+  pagination: {
+    prev: "Anterior",
+    next: "Próxima",
+    page: "Página",
+  },
+  home: {
+    socialLinks: "Redes sociais",
+    featured: "Leituras essenciais",
+    recentPosts: "Conteúdos recentes",
+    allPosts: "Ver todos os conteúdos",
+  },
+  footer: {
+    copyright: "Copyright",
+    allRightsReserved: "Todos os direitos reservados.",
+  },
+  pages: {
+    tagTitle: "Tema",
+    tagDesc: "Todos os artigos sobre",
+    tagsTitle: "Temas",
+    tagsDesc: "Explore os temas abordados pelo VitaCerta.",
+    postsTitle: "Conteúdos",
+    postsDesc: "Todos os conteúdos publicados pelo VitaCerta.",
+    archivesTitle: "Arquivo",
+    archivesDesc: "Todos os conteúdos publicados, organizados por data.",
+    searchTitle: "Buscar",
+    searchDesc: "Encontre conteúdos no VitaCerta.",
+  },
+  a11y: {
+    skipToContent: "Ir para o conteúdo",
+    openMenu: "Abrir menu",
+    closeMenu: "Fechar menu",
+    toggleTheme: "Alternar tema",
+    searchPlaceholder: "Buscar conteúdos...",
+    noResults: "Nenhum resultado encontrado",
+    goToPreviousPage: "Ir para a página anterior",
+    goToNextPage: "Ir para a próxima página",
+  },
+  notFound: {
+    title: "404 — Página não encontrada",
+    message: "Não encontramos esta página.",
+    goHome: "Voltar ao início",
+  },
+} satisfies UIStrings;
