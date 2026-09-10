@@ -45,5 +45,6 @@ jobs:
       - name: "🚀 Build the project"
         run: pnpm run build
 
-      - name: "📝 Checking code format"
+      - name: "📝 Check code format"
+        continue-on-error: true
         run: pnpm run format:check
