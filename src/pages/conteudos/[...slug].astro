@@ -11,7 +11,9 @@ import { slugifyStr } from "@/utils/slugify";
 import config from "@/config";
 
 export async function getStaticPaths() {
-  const posts = getSortedPosts(await getCollection("posts"));
+  const posts = getSortedPosts(await getCollection("posts")).filter(
+    post => post.data.category
+  );
 
   return posts.map(post => ({
     params: { slug: getPostSlug(post.id, post.filePath) },
