@@ -1,20 +1,16 @@
 import {defineField, defineType} from 'sanity'
-import { isUniqueOtherThanLanguage } from '../lib/isUniqueOtherThanLanguage'
+import {isUniqueOtherThanLanguage} from '../lib/isUniqueOtherThanLanguage'
 
 export default defineType({
   name: 'post',
-  title: 'Post',
+  title: 'Artigo',
   type: 'document',
   fields: [
     defineField({
       name: 'language',
       title: 'Idioma',
       type: 'string',
-      options: {
-        list: [
-          {title: 'Português (Brasil)', value: 'pt-BR'},
-        ],
-      },
+      options: {list: [{title: 'Português (Brasil)', value: 'pt-BR'}]},
       initialValue: 'pt-BR',
       validation: (Rule) => Rule.required(),
     }),
@@ -28,11 +24,7 @@ export default defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      options: {
-        source: 'title',
-        maxLength: 96,
-        isUnique: isUniqueOtherThanLanguage,
-      },
+      options: {source: 'title', maxLength: 96, isUnique: isUniqueOtherThanLanguage},
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -48,7 +40,6 @@ export default defineType({
       type: 'reference',
       to: [{type: 'author'}],
       weak: true,
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'duration',
@@ -61,38 +52,27 @@ export default defineType({
       name: 'mainImage',
       title: 'Imagem principal',
       type: 'image',
-      fields: [
-        {
-          name: 'alt',
-          title: 'Texto alternativo',
-          type: 'string',
-        },
-      ],
-      options: {
-        hotspot: true,
-      },
+      fields: [defineField({name: 'alt', title: 'Texto alternativo', type: 'string'})],
+      options: {hotspot: true},
     }),
     defineField({
       name: 'thumbnail',
       title: 'Imagem de capa',
       type: 'image',
-      fields: [
-        {
-          name: 'alt',
-          title: 'Texto alternativo',
-          type: 'string',
-        },
-      ],
-      options: {
-        hotspot: true,
-      },
-      validation: (Rule) => Rule.required(),
+      fields: [defineField({name: 'alt', title: 'Texto alternativo', type: 'string'})],
+      options: {hotspot: true},
+    }),
+    defineField({
+      name: 'coverUrl',
+      title: 'URL da capa migrada',
+      type: 'url',
+      description: 'Preserva a imagem de capa existente durante a migração do Blogger.',
     }),
     defineField({
       name: 'categories',
       title: 'Categorias',
       type: 'array',
-      of: [{type: 'reference', to: {type: 'category'}}],
+      of: [{type: 'reference', to: [{type: 'category'}]}],
       validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
@@ -101,20 +81,21 @@ export default defineType({
       type: 'datetime',
     }),
     defineField({
+      name: 'canonicalURL',
+      title: 'URL canônica',
+      type: 'url',
+    }),
+    defineField({
       name: 'body',
       title: 'Conteúdo',
       type: 'blockContent',
     }),
   ],
   preview: {
-    select: {
-      title: 'title',
-      author: 'author.name',
-      media: 'thumbnail',
-    },
+    select: {title: 'title', author: 'author.name', media: 'thumbnail'},
     prepare(selection) {
       const {author} = selection
-      return {...selection, subtitle: author && `por ${author}`}
+      return {...selection, subtitle: author ? `por ${author}` : 'VitaCerta'}
     },
   },
 })
