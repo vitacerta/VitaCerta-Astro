@@ -5,9 +5,9 @@ import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from "@tailwindcss/vite";
 import { DEFAULT_LOCALE_SETTING, LOCALES_SETTING } from './src/locales';
-// https://astro.build/config
+
 export default defineConfig({
-	site: 'https://fyrre-seven.vercel.app/',
+	site: 'https://vitacerta.com.br/',
 	integrations: [mdx(), sitemap()],
 	image: { domains: ["cdn.sanity.io"], },
 	vite: {
@@ -18,7 +18,6 @@ export default defineConfig({
 		locales: Object.keys(LOCALES_SETTING),
 		routing: {
 			prefixDefaultLocale: true,
-			//redirectToDefaultLocale: false,
 		},
 	},
 	fonts: [
