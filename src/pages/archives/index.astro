@@ -23,7 +23,7 @@ if (!config.features.showArchives && notFoundUrl) {
 const t = useTranslations(locale);
 
 const posts = await getCollection("posts");
-const filteredPosts = posts.filter(postFilter);
+const filteredPosts = posts.filter(postFilter).filter(post => post.data.category);
 const monthFormatter = new Intl.DateTimeFormat(locale, { month: "long" });
 ---
 
