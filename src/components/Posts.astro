@@ -10,29 +10,23 @@ const locale = Astro.currentLocale;
 const posts = await client.fetch(
   `
   *[_type == "post" && language == $locale]
-  | order(_createdAt desc)
+  | order(publishedAt desc, _createdAt desc)
   [1...7]{
     title,
     description,
     duration,
-    _createdAt,
+    "date": coalesce(publishedAt, _createdAt),
     "slug": slug.current,
-    "image": thumbnail.asset->url,
-    "author": author->{name, slug},
+    "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
+    "author": author->{name, "slug": slug.current},
     "categories": categories[0]->{
-      "title": title[language == $locale][0].value,
-      slug
+      "title": title[_key == $locale][0].value,
+      "slug": slug.current
     }
   }
 `,
-  {
-    locale,
-  },
+  { locale },
 );
-
-//console.log("posts", posts);
-//console.log("cat", post.categories.title[0].value);
-//console.log("img", post.image);
 ---
 
 {
@@ -42,23 +36,19 @@ const posts = await client.fetch(
         <div class="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-10">
           <div>
             <div class="grid gap-10">
-              {posts.map((post) => (
-                <PostCardRow {...post} />
-              ))}
+              {posts.map((post) => <PostCardRow {...post} />)}
             </div>
             <a
               href={`/${locale}/blog`}
               class="btn btn-link mt-10 text-inherit uppercase no-underline group p-0"
             >
-              All articles
+              Todos os artigos
               <i class="fa-solid fa-arrow-right group-hover:translate-x-1" />
             </a>
           </div>
           <aside class="lg:flex flex-col gap-10 hidden">
             <Banner />
-
             <MostPopularPosts />
-
             <Subscribe />
           </aside>
         </div>
