@@ -3,23 +3,24 @@ import { isUniqueOtherThanLanguage } from '../lib/isUniqueOtherThanLanguage'
 
 export default defineType({
   name: 'author',
-  title: 'Author',
+  title: 'Autor',
   type: 'document',
   fields: [
     defineField({
       name: 'language',
+      title: 'Idioma',
       type: 'string',
       options: {
         list: [
-          {title: 'English', value: 'en'},
-          {title: 'Ukraine', value: 'ua'},
+          {title: 'Português (Brasil)', value: 'pt-BR'},
         ],
       },
+      initialValue: 'pt-BR',
+      validation: (Rule) => Rule.required(),
     }),
-
     defineField({
       name: 'name',
-      title: 'Name',
+      title: 'Nome',
       type: 'string',
       validation: (Rule) => Rule.required().min(1).max(50),
     }),
@@ -30,31 +31,32 @@ export default defineType({
       options: {
         source: 'name',
         maxLength: 96,
-        isUnique: isUniqueOtherThanLanguage
+        isUnique: isUniqueOtherThanLanguage,
       },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'job',
-      title: 'Job',
+      title: 'Função',
       type: 'string',
       validation: (Rule) => Rule.required().min(1).max(100),
     }),
     defineField({
       name: 'city',
-      title: 'City',
+      title: 'Cidade',
       type: 'string',
       validation: (Rule) => Rule.required().min(1).max(100),
     }),
     defineField({
       name: 'description',
-      title: 'Description',
+      title: 'Descrição',
       type: 'text',
-      description: 'Maximum 300 characters',
+      description: 'Máximo de 300 caracteres',
       validation: (Rule) => Rule.min(1).max(300),
     }),
     defineField({
       name: 'image',
-      title: 'Image',
+      title: 'Imagem',
       type: 'image',
       options: {
         hotspot: true,
@@ -63,11 +65,11 @@ export default defineType({
     }),
     defineField({
       name: 'bio',
-      title: 'Bio',
+      title: 'Biografia',
       type: 'array',
       of: [
         {
-          title: 'Block',
+          title: 'Bloco',
           type: 'block',
           styles: [{title: 'Normal', value: 'normal'}],
           lists: [],
@@ -76,7 +78,7 @@ export default defineType({
     }),
     defineField({
       name: 'contacts',
-      title: 'Contacts',
+      title: 'Contatos',
       type: 'array',
       of: [
         {
@@ -84,7 +86,7 @@ export default defineType({
           fields: [
             {
               name: 'network',
-              title: 'Network',
+              title: 'Rede',
               type: 'string',
               validation: (Rule) => Rule.min(1).max(50),
             },
@@ -96,7 +98,7 @@ export default defineType({
             },
             {
               name: 'icon',
-              title: 'Icon',
+              title: 'Ícone',
               type: 'string',
             },
           ],
