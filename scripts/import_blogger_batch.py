@@ -8,6 +8,7 @@ FEED='https://vitacerta.blogspot.com/feeds/posts/default?alt=atom&max-results=50
 OUT=Path('src/content/posts/migrados')
 NS={'a':'http://www.w3.org/2005/Atom'}
 TARGETS={s for s in os.environ.get('BATCH_SLUGS','').split(',') if s}
+BATCH_LIMIT=int(os.environ.get('BATCH_LIMIT','0') or '0')
 
 def slugify(s):
     s=unicodedata.normalize('NFKD',s).encode('ascii','ignore').decode().lower()
@@ -34,11 +35,12 @@ def description(body):
     return txt[:157].rsplit(' ',1)[0]+'…'
 
 def main():
-    if not TARGETS: raise SystemExit('BATCH_SLUGS vazio')
+    if not TARGETS and BATCH_LIMIT <= 0:
+        raise SystemExit('Informe BATCH_SLUGS ou BATCH_LIMIT')
     req=urllib.request.Request(FEED,headers={'User-Agent':'VitaCerta-Astro-Migrator/1.0'})
     raw=urllib.request.urlopen(req,timeout=30).read()
     root=ET.fromstring(raw); OUT.mkdir(parents=True,exist_ok=True)
-    found=set()
+    found=set(); selected=0
     for e in root.findall('a:entry',NS):
         title=(e.findtext('a:title',default='',namespaces=NS) or '').strip()
         body=(e.findtext('a:content',default='',namespaces=NS) or '').strip()
@@ -47,7 +49,12 @@ def main():
         kind=[c for c in cats if c.startswith('http://schemas.google.com/blogger/2008/kind#')]
         if kind and not any(c.endswith('#post') for c in kind): continue
         slug=slugify(title)
-        if slug not in TARGETS: continue
+        target_path=OUT/f'{slug}.md'
+        if TARGETS:
+            if slug not in TARGETS: continue
+        else:
+            if target_path.exists(): continue
+            if selected >= BATCH_LIMIT: break
         labels=[c for c in cats if not c.startswith('http://schemas.google.com/')]
         pub=e.findtext('a:published',default='',namespaces=NS) or ''
         upd=e.findtext('a:updated',default='',namespaces=NS) or pub
@@ -58,10 +65,13 @@ def main():
             'canonicalURL':f'https://vitacerta.com.br/conteudos/{slug}/'
         }
         lines=['---']+[f'{k}: {json.dumps(v,ensure_ascii=False)}' for k,v in front.items()]+['---','',body,'']
-        (OUT/f'{slug}.md').write_text('\n'.join(lines),encoding='utf-8')
-        found.add(slug)
-    missing=TARGETS-found
-    if missing: raise SystemExit('Não encontrados no feed: '+', '.join(sorted(missing)))
+        target_path.write_text('\n'.join(lines),encoding='utf-8')
+        found.add(slug); selected += 1
+    if TARGETS:
+        missing=TARGETS-found
+        if missing: raise SystemExit('Não encontrados no feed: '+', '.join(sorted(missing)))
+    elif selected != BATCH_LIMIT:
+        raise SystemExit(f'Solicitados {BATCH_LIMIT}, mas apenas {selected} artigos pendentes foram encontrados')
     print(f'Importados {len(found)} artigos')
 
 if __name__=='__main__': main()
