@@ -1,35 +1,49 @@
 name: Clean final migrated residues
 
+permissions:
+  contents: write
+
 on:
   push:
     paths:
       - ".github/workflows/clean-final-residues.yml"
 
 jobs:
-  diagnose:
+  clean:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Print exact residue contexts
+        with:
+          fetch-depth: 0
+
+      - name: Clean audited residues
         run: |
+          set -euo pipefail
+          for f in \
+            src/content/posts/migrados/creatina-como-escolher-a-melhor-e-quanto-realmente-voce-precisa.md \
+            src/content/posts/migrados/longevidade-os-habitos-que-realmente-aumentam-os-anos-de-vida-com-saude.md
+          do
+            python scripts/sanitize_blogger_html.py < "$f" > "$f.tmp"
+            mv "$f.tmp" "$f"
+          done
+
           python - <<'PY'
           from pathlib import Path
-          import re
-          files = [
-            Path('src/content/posts/migrados/ferro-para-que-serve-sinais-de-deficiencia-e-por-que-as-mulheres-sao-as-mais-afetadas.md'),
-            Path('src/content/posts/migrados/creatina-como-escolher-a-melhor-e-quanto-realmente-voce-precisa.md'),
-            Path('src/content/posts/migrados/longevidade-os-habitos-que-realmente-aumentam-os-anos-de-vida-com-saude.md'),
-          ]
-          pats = [
-            re.compile(r'https?://(?:www\.)?vitacerta\.blogspot\.com/[^\s"\'<>]*', re.I),
-            re.compile(r'style=["\'][^"\']*(?:color|background(?:-color)?|font-(?:family|size|weight|style)|line-height)\s*:[^"\']*["\']', re.I),
-          ]
-          for p in files:
-            s=p.read_text(encoding='utf-8')
-            print('FILE='+p.name)
-            for pat in pats:
-              for m in pat.finditer(s):
-                a=max(0,m.start()-180); b=min(len(s),m.end()+180)
-                print('MATCH='+s[a:b].replace('\n',' '))
+          p = Path('src/content/posts/migrados/ferro-para-que-serve-sinais-de-deficiencia-e-por-que-as-mulheres-sao-as-mais-afetadas.md')
+          s = p.read_text(encoding='utf-8')
+          old = 'https://vitacerta.blogspot.com/2026/08/magnesio-para-que-serve.html'
+          new = '/conteudos/magnesio-para-que-serve-sinais-de-deficiencia-e-quando-vale-suplementar/'
+          if old not in s:
+              raise SystemExit('Link Blogger esperado nao encontrado no artigo de ferro')
+          p.write_text(s.replace(old, new), encoding='utf-8')
           PY
+
+      - name: Commit cleanup
+        run: |
+          set -euo pipefail
+          git config user.name "vitacerta"
+          git config user.email "vitacerta67@gmail.com"
+          git add src/content/posts/migrados
+          git commit -m "Corrige residuos finais da migracao Blogger"
+          git push
