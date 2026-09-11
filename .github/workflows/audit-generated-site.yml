@@ -1,6 +1,6 @@
 name: Audit generated Astro site
 
-# One-shot audit of generated public routes and demo exposure.
+# One-shot audit of generated public routes and demo exposure after route cleanup.
 on:
   push:
     paths:
@@ -44,6 +44,7 @@ jobs:
           ]
           missing = [p for p in required if not (dist / p).exists()]
           article_pages = list((dist / 'conteudos').glob('*/index.html')) if (dist/'conteudos').exists() else []
+          nested_migrados = list((dist / 'conteudos' / 'migrados').glob('*/index.html')) if (dist/'conteudos'/'migrados').exists() else []
           sitemap_files = sorted(p.name for p in dist.glob('sitemap*'))
 
           demo_markers = [
@@ -58,22 +59,18 @@ jobs:
               if marker.lower() in text.lower():
                 demo_hits.append((str(p.relative_to(dist)), marker))
 
-          posts_dirs = sorted(p.name for p in (dist/'posts').iterdir()) if (dist/'posts').exists() else []
-          archive_exists = (dist/'archives').exists() or (dist/'archives/index.html').exists()
-          tags_exists = (dist/'tags').exists()
-
           print('MISSING_REQUIRED=' + (','.join(missing) if missing else '0'))
           print('ARTICLE_PAGES=' + str(len(article_pages)))
+          print('NESTED_MIGRADOS=' + str(len(nested_migrados)))
           print('SITEMAPS=' + (','.join(sitemap_files) if sitemap_files else '0'))
           print('POSTS_ROUTE_EXISTS=' + str((dist/'posts').exists()))
-          print('POSTS_ROUTE_ENTRIES=' + str(len(posts_dirs)))
-          print('ARCHIVES_EXISTS=' + str(archive_exists))
-          print('TAGS_EXISTS=' + str(tags_exists))
+          print('ARCHIVES_EXISTS=' + str((dist/'archives').exists()))
+          print('TAGS_EXISTS=' + str((dist/'tags').exists()))
           print('DEMO_HITS=' + str(len(demo_hits)))
           if demo_hits:
             for hit in demo_hits[:50]:
               print('DEMO=' + hit[0] + ' :: ' + hit[1])
 
-          if missing or len(article_pages) != 86 or not sitemap_files:
+          if missing or len(article_pages) != 86 or nested_migrados or not sitemap_files or demo_hits:
             sys.exit(1)
           PY
