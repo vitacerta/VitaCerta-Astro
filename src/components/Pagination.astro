@@ -1,46 +1,31 @@
 ---
-import type { Page } from "astro";
-import type { CollectionEntry } from "astro:content";
-import IconArrowLeft from "@/assets/icons/IconArrowLeft.svg";
-import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
-import LinkButton from "./LinkButton.astro";
-import { useTranslations } from "@/i18n";
-
-type Props = {
-  page: Page<CollectionEntry<"posts">>;
-};
-
-const { page } = Astro.props;
-
-const t = useTranslations(Astro.currentLocale);
+const { totalPages, page } = Astro.props;
 ---
 
-{
-  page.lastPage > 1 && (
-    <nav
-      class="mt-auto mb-8 flex justify-center gap-4"
-      role="navigation"
-      aria-label="Pagination Navigation"
-    >
-      <LinkButton
-        disabled={!page.url.prev}
-        href={page.url.prev as string}
-        class:list={["select-none", { "opacity-50": !page.url.prev }]}
-        aria-label={t.a11y.goToPreviousPage}
+<div class="pagination flex flex-wrap items-center gap-3">
+  {
+    page.url.prev && (
+      <a
+        href={page.url.prev}
+        class="pagination-btn flex gap-2 items-center btn"
       >
-        <IconArrowLeft class="inline-block rtl:rotate-180" />
-        {t.pagination.prev}
-      </LinkButton>
-      {page.currentPage} / {page.lastPage}
-      <LinkButton
-        disabled={!page.url.next}
-        href={page.url.next as string}
-        class:list={["select-none", { "opacity-50": !page.url.next }]}
-        aria-label={t.a11y.goToNextPage}
+        <i class="fa-solid fa-arrow-left" /> Previous
+      </a>
+    )
+  }
+
+  <span class="pagination-current">
+    Page {page.currentPage} of {totalPages}
+  </span>
+
+  {
+    page.url.next && (
+      <a
+        href={page.url.next}
+        class="pagination-btn flex gap-2 items-center btn"
       >
-        {t.pagination.next}
-        <IconArrowRight class="inline-block rtl:rotate-180" />
-      </LinkButton>
-    </nav>
-  )
-}
+        Next <i class="fa-solid fa-arrow-right" />
+      </a>
+    )
+  }
+</div>

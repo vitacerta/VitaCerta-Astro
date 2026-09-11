@@ -1,0 +1,77 @@
+---
+import { LOCALES } from "../../i18n";
+
+type Props = {
+  locale?: string;
+};
+
+const { locale = "en" } = Astro.props as Props;
+
+const currentPath = Astro.url.pathname;
+
+const options = Object.entries(LOCALES).map(([lang, config]) => {
+  const segments = currentPath.split("/").filter(Boolean);
+
+  let path: string;
+
+  // Homepage → /en or /ua
+  if (segments.length === 0) {
+    path = `/${lang}`;
+  }
+  // Already localized path → replace first segment
+  else if (Object.keys(LOCALES).includes(segments[0])) {
+    segments[0] = lang;
+    path = "/" + segments.join("/");
+  }
+  // Non-localized path → prepend language
+  else {
+    path = `/${lang}${currentPath}`;
+  }
+
+  return {
+    lang,
+    label: config.label,
+    path,
+    selected: lang === locale,
+  };
+});
+---
+
+<div class="form-control w-fit">
+  <div class="input input-bordered flex items-center gap-2">
+    <label for="lang-switcher" class="sr-only"> Select language </label>
+
+    <select
+      class="bg-transparent outline-none"
+      id="lang-switcher"
+      data-language-select
+    >
+      {
+        options.map((opt) => (
+          <option value={opt.path} data-lang={opt.lang} selected={opt.selected}>
+            {opt.label}
+          </option>
+        ))
+      }
+    </select>
+  </div>
+</div>
+
+<script is:inline>
+  document.querySelectorAll("[data-language-select]").forEach((select) => {
+    select.addEventListener("change", (event) => {
+      const target = event.target;
+      const option = target.selectedOptions?.[0];
+
+      if (!option?.value) return;
+
+      const lang = option.dataset.lang;
+
+      if (lang) {
+        localStorage.setItem("selectedLang", lang);
+      }
+
+      window.location.href = option.value;
+    });
+  });
+</script>

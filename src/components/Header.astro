@@ -1,135 +1,43 @@
 ---
-import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
-import IconSearch from "@/assets/icons/IconSearch.svg";
-import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
-import IconMoon from "@/assets/icons/IconMoon.svg";
-import IconX from "@/assets/icons/IconX.svg";
-import LinkButton from "./LinkButton.astro";
-import { EDITORIAL_CATEGORIES } from "@/data/categories";
-import { useTranslations } from "@/i18n";
-import config from "@/config";
+import Logo from "./Logo.astro";
+import Socials from "./Socials.astro";
+import LangSwitcher from "./i18n/LangSwitcher.astro";
 
-const { site, features } = config;
-const locale = Astro.currentLocale ?? config.site.lang;
-const t = useTranslations(locale);
-const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
-const isActive = (path: string) => currentPath === path || currentPath.startsWith(`${path}/`);
+import { menu } from "../consts";
+const locale = Astro.currentLocale;
 ---
 
-<a
-  id="skip-to-content"
-  href="#main-content"
-  class="bg-background text-accent absolute inset-s-16 -top-full z-50 px-3 py-2 backdrop-blur-lg transition-all focus:top-4"
->
-  {t.a11y.skipToContent}
-</a>
-
-<header class="border-border bg-background/95 sticky top-0 z-40 border-b backdrop-blur">
-  <div class="app-layout flex min-h-18 items-center justify-between gap-5 py-4">
-    <a href="/" class="shrink-0" aria-label="VitaCerta — início">
-      <span class="font-editorial text-2xl font-semibold tracking-tight sm:text-3xl">{site.title}</span>
-    </a>
-
-    <nav id="nav-menu" class="flex flex-1 items-center justify-end" aria-label="Navegação principal">
-      <button
-        id="menu-btn"
-        class="focus-outline p-2 lg:hidden"
-        aria-label={t.a11y.openMenu}
-        aria-expanded="false"
-        aria-controls="menu-items"
-      >
-        <IconX id="close-icon" class="hidden" />
-        <IconMenuDeep id="menu-icon" />
-      </button>
-
-      <ul
-        id="menu-items"
-        class="bg-background border-border absolute top-full right-5 left-5 hidden flex-col gap-1 rounded-b-2xl border border-t-0 p-4 shadow-sm lg:static lg:flex lg:flex-row lg:items-center lg:gap-1 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"
-      >
-        {EDITORIAL_CATEGORIES.map(category => (
-          <li>
-            <a
-              href={`/${category.slug}/`}
-              class:list={[
-                "hover:text-accent block rounded-lg px-3 py-2 text-sm font-medium",
-                { "text-accent": isActive(`/${category.slug}`) },
-              ]}
-            >
-              {category.name}
+<header class="relative header px-4 z-10">
+  <div class="container">
+    <div
+      class="py-4 border-b border-black flex flex-wrap gap-4 justify-between items-center"
+    >
+      <Logo />
+      <nav class="hidden md:flex gap-x-6 gap-y-2 items-center ml-auto">
+        {
+          menu.map((link) => (
+            <a class="hover:underline" href={`/${locale}${link.url}`}>
+              {link.title}
             </a>
-          </li>
-        ))}
-        <li>
-          <a
-            href="/sobre/"
-            class:list={[
-              "hover:text-accent block rounded-lg px-3 py-2 text-sm font-medium",
-              { "text-accent": isActive("/sobre") },
-            ]}
-          >
-            Sobre
-          </a>
-        </li>
-        {features.search !== false && (
-          <li class="flex items-center">
-            <LinkButton
-              href="/search/"
-              class="focus-outline relative size-10"
-              title={t.nav.search}
-              aria-label={t.nav.search}
-            >
-              <IconSearch class="absolute top-1/2 left-1/2 size-5 -translate-x-1/2 -translate-y-1/2" />
-            </LinkButton>
-          </li>
-        )}
-        {features.lightAndDarkMode && (
-          <li class="flex items-center">
-            <button
-              id="theme-btn"
-              class="focus-outline relative size-10"
-              title={t.a11y.toggleTheme}
-              aria-label={t.a11y.toggleTheme}
-              aria-live="polite"
-            >
-              <IconMoon class="absolute top-1/2 left-1/2 size-5 -translate-x-1/2 -translate-y-1/2 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-              <IconSunHigh class="absolute top-1/2 left-1/2 size-5 -translate-x-1/2 -translate-y-1/2 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-            </button>
-          </li>
-        )}
-      </ul>
-    </nav>
+          ))
+        }
+      </nav>
+      <div class="hidden md:flex gap-4 items-center">
+        &mdash;
+        <Socials />
+      </div>
+      <div class="ml-auto md:ml-0">
+        <LangSwitcher locale={locale} />
+      </div>
+      <div class="flex-none md:hidden">
+        <label
+          for="my-drawer-2"
+          aria-label="open sidebar"
+          class="btn btn-square btn-ghost"
+        >
+          <i class="fa-solid fa-bars"></i>
+        </label>
+      </div>
+    </div>
   </div>
 </header>
-
-<script>
-  function bindMenu() {
-    const menuBtn = document.querySelector<HTMLButtonElement>("#menu-btn");
-    const menuItems = document.querySelector<HTMLElement>("#menu-items");
-    const menuIcon = document.querySelector("#menu-icon");
-    const closeIcon = document.querySelector("#close-icon");
-    if (!menuBtn || !menuItems || !menuIcon || !closeIcon) return;
-
-    menuBtn.addEventListener("click", () => {
-      const isOpen = menuBtn.getAttribute("aria-expanded") === "true";
-      menuBtn.setAttribute("aria-expanded", String(!isOpen));
-      menuItems.classList.toggle("hidden");
-      menuItems.classList.toggle("flex");
-      menuIcon.classList.toggle("hidden");
-      closeIcon.classList.toggle("hidden");
-    });
-  }
-
-  function bindSkipLink() {
-    const skipLink = document.getElementById("skip-to-content");
-    skipLink?.addEventListener("click", event => {
-      event.preventDefault();
-      document.getElementById("main-content")?.focus();
-      document.getElementById("main-content")?.scrollIntoView({ behavior: "smooth" });
-    });
-  }
-
-  bindMenu();
-  bindSkipLink();
-  document.addEventListener("astro:after-swap", bindMenu);
-  document.addEventListener("astro:after-swap", bindSkipLink);
-</script>

@@ -1,55 +1,130 @@
 ---
-import type { HTMLAttributes } from "astro/types";
-import config from "@/config";
+const today = new Date();
+import Logo from "./Logo.astro";
+import Socials from "./Socials.astro";
+const locale = Astro.currentLocale;
 
-type Props = {
-  noMarginTop?: boolean;
-} & HTMLAttributes<"footer">;
+const navbar = [
+  {
+    links: [
+      {
+        url: "#",
+        title: "Art",
+      },
+      {
+        url: "#",
+        title: "Design",
+      },
+      {
+        url: "#",
+        title: "Architecture",
+      },
+    ],
+  },
+  {
+    links: [
+      {
+        url: "/blog",
+        title: "Magazine",
+      },
 
-const { noMarginTop = false, class: className, ...attrs } = Astro.props;
-const currentYear = new Date().getFullYear();
-const links = [
-  { label: "Sobre", href: "/sobre/" },
-  { label: "Contato", href: "/contato/" },
-  { label: "Privacidade", href: "/politica-de-privacidade/" },
-  { label: "Termos de uso", href: "/termos-de-uso/" },
+      {
+        url: "/podcast",
+        title: "Podcast",
+      },
+      {
+        url: "/authors",
+        title: "Authors",
+      },
+    ],
+  },
+  {
+    links: [
+      {
+        url: "#",
+        title: "Styleguide",
+      },
+      {
+        url: "#",
+        title: "Licensing",
+      },
+      {
+        url: "#",
+        title: "Changelog",
+      },
+    ],
+  },
 ];
 ---
 
-<footer
-  class:list={["app-layout", { "mt-auto": !noMarginTop }, className]}
-  {...attrs}
->
-  <div class="border-border mt-12 border-t py-8">
-    <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-      <div class="max-w-md">
-        <a href="/" class="font-editorial text-2xl font-semibold">
-          {config.site.title}
-        </a>
-        <p class="text-muted-foreground mt-2 text-sm leading-6">
-          Informação clara e responsável para apoiar escolhas melhores sobre
-          saúde, alimentação, movimento, mente e longevidade.
-        </p>
+<footer class="footer bg-black text-white pb-10 pt-5">
+  <div
+    class="footer-topline overflow-hidden uppercase flex gap-4 overflow-x-hidden w-full"
+  >
+    {Array.from({ length: 100 }).map((_) => <span>Newsletter+++</span>)}
+  </div>
+  <div class="footer-top w-full">
+    <div class="container">
+      <div
+        class="grid grid-cols-1 md:grid-cols-[1fr_auto] xl:grid-cols-[1fr_2fr] gap-10 items-center"
+      >
+        <div>
+          <h2 class="text-4xl sm:text-5xl uppercase font-bold">
+            Design News to your inbox
+          </h2>
+        </div>
+        <div>
+          <form
+            action="/"
+            method="GET"
+            class="flex flex-wrap gap-3 items-center md:ml-auto lg:max-w-sm"
+          >
+            <input
+              type="text"
+              required
+              name="subscribe_email"
+              id="subscribe-email"
+              placeholder="Email"
+              class="input text-black rounded-none flex-1"
+            />
+            <button
+              class="btn bg-white rounded-none shadow-none hover:bg-neutral hover:text-white uppercase"
+              type="submit">Sign Up</button
+            >
+          </form>
+        </div>
       </div>
-
-      <nav aria-label="Links institucionais">
-        <ul class="flex flex-wrap gap-x-5 gap-y-3 text-sm">
+    </div>
+  </div>
+  <div class="footer-mdl w-full">
+    <div class="container">
+      <div class="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-10">
+        <div>
+          <Logo />
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3">
           {
-            links.map(link => (
-              <li>
-                <a class="hover:text-accent" href={link.href}>
-                  {link.label}
-                </a>
-              </li>
+            navbar.map((item) => (
+              <nav class="grid gap-0">
+                {item.links.map((link) => (
+                  <a href={`/${locale}${link.url}`} class="hover:underline px-4 py-2">
+                    {link.title}
+                  </a>
+                ))}
+              </nav>
             ))
           }
-        </ul>
-      </nav>
+        </div>
+      </div>
     </div>
-
-    <div class="text-muted-foreground mt-8 flex flex-col gap-2 border-t border-dashed pt-5 text-xs sm:flex-row sm:items-center sm:justify-between">
-      <span>© {currentYear} VitaCerta. Todos os direitos reservados.</span>
-      <span>Conteúdo informativo. Não substitui orientação profissional.</span>
+  </div>
+  <div class="footer-btm w-full">
+    <div class="container flex flex-wrap gap-4 justify-between items-center">
+      <p class="text-xs opacity-50">
+        &copy; {today.getFullYear()} Made by Anastasiia Berest - Powered by Astro
+        + Sanity CMS
+      </p>
+      <Socials />
     </div>
   </div>
 </footer>

@@ -1,139 +1,23 @@
 ---
-import { getCollection } from "astro:content";
-import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
-import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
-import Card from "@/components/Card.astro";
-import LinkButton from "@/components/LinkButton.astro";
-import { getSortedPosts } from "@/utils/getSortedPosts";
-import { EDITORIAL_CATEGORIES } from "@/data/categories";
-import config from "@/config";
+import Layout from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import Topline from "../components/Topline.astro";
+import Demo from "../components/DemoPost.astro";
+import Posts from "../components/Posts.astro";
+import Podcasts from "../components/Podcasts.astro";
+import Authors from "../components/Authors.astro";
+const locale = Astro.url.pathname.split("/")[1];
 
-const posts = getSortedPosts(await getCollection("posts")).filter(
-  post => post.data.category
-);
-const featuredPosts = posts.filter(post => post.data.featured).slice(0, 4);
-const recentPosts = posts
-  .filter(post => !post.data.featured)
-  .slice(0, config.posts.perIndex);
+// if (!["en", "uk", "de"].includes(locale)) {
+//   return Astro.redirect("/en" + Astro.url.pathname);
+// }
 ---
 
-<Layout>
-  <Header />
-  <main id="main-content" tabindex="-1">
-    <section
-      class="app-layout grid gap-8 border-b py-12 sm:py-16 lg:grid-cols-[1.3fr_.7fr] lg:items-end lg:py-20"
-    >
-      <div class="max-w-3xl">
-        <p class="editorial-kicker">Saúde para a vida real</p>
-        <h1
-          class="mt-4 text-5xl leading-[1.02] font-semibold sm:text-6xl lg:text-7xl"
-        >
-          Informação clara para cuidar melhor de você.
-        </h1>
-        <p
-          class="text-muted-foreground mt-6 max-w-2xl text-lg leading-8 sm:text-xl"
-        >
-          O VitaCerta traduz saúde, nutrição, movimento, mente e longevidade em
-          conteúdo acessível, responsável e útil para o dia a dia.
-        </p>
-      </div>
-      <div class="border-border lg:border-l lg:pl-8">
-        <p class="text-muted-foreground text-sm leading-7">
-          Nosso foco é ajudar você a entender melhor informações de saúde sem
-          alarmismo, promessas fáceis ou linguagem desnecessariamente complicada.
-        </p>
-        <a
-          href="/sobre/"
-          class="text-accent mt-5 inline-flex items-center gap-2 text-sm font-semibold"
-        >
-          Conheça o VitaCerta <IconArrowRight class="size-4" />
-        </a>
-      </div>
-    </section>
-
-    <section class="app-layout py-10 sm:py-14">
-      <div class="mb-7 flex items-end justify-between gap-4">
-        <div>
-          <p class="editorial-kicker">Explore por assunto</p>
-          <h2 class="mt-2 text-3xl font-semibold sm:text-4xl">
-            Cinco áreas para cuidar melhor da sua saúde
-          </h2>
-        </div>
-      </div>
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        {
-          EDITORIAL_CATEGORIES.map(category => (
-            <a
-              href={`/${category.slug}/`}
-              class="editorial-card group block min-h-44"
-            >
-              <h3 class="group-hover:text-accent text-2xl font-semibold">
-                {category.name}
-              </h3>
-              <p class="text-muted-foreground mt-3 text-sm leading-6">
-                {category.description}
-              </p>
-            </a>
-          ))
-        }
-      </div>
-    </section>
-
-    {
-      featuredPosts.length > 0 && (
-        <section class="border-border border-y">
-          <div class="app-layout py-10 sm:py-14">
-            <p class="editorial-kicker">Seleção editorial</p>
-            <h2 class="mt-2 text-3xl font-semibold sm:text-4xl">
-              Leituras essenciais
-            </h2>
-            <ul class="mt-6 grid gap-4 md:grid-cols-2">
-              {featuredPosts.map(post => (
-                <Card variant="h3" {...post} />
-              ))}
-            </ul>
-          </div>
-        </section>
-      )
-    }
-
-    <section class="app-layout py-10 sm:py-14">
-      <div class="flex items-end justify-between gap-4">
-        <div>
-          <p class="editorial-kicker">Atualizações</p>
-          <h2 class="mt-2 text-3xl font-semibold sm:text-4xl">
-            Conteúdos recentes
-          </h2>
-        </div>
-      </div>
-
-      {
-        recentPosts.length > 0 ? (
-          <ul class="mt-6 grid gap-4 md:grid-cols-2">
-            {recentPosts.map(post => (
-              <Card variant="h3" {...post} />
-            ))}
-          </ul>
-        ) : (
-          <div class="editorial-card mt-6 max-w-2xl">
-            <h3 class="text-2xl font-semibold">Acervo em migração</h3>
-            <p class="text-muted-foreground mt-2 leading-7">
-              A nova estrutura do VitaCerta está pronta para receber o acervo
-              editorial. Os conteúdos existentes serão incorporados preservando
-              títulos, metadados e URLs sempre que possível.
-            </p>
-          </div>
-        )
-      }
-
-      <div class="mt-8">
-        <LinkButton href="/conteudos/">
-          Ver todos os conteúdos <IconArrowRight class="inline-block size-4" />
-        </LinkButton>
-      </div>
-    </section>
-  </main>
-  <Footer />
+<Layout title="Homepage">
+  <Hero title="Art & Life" />
+  <Topline />
+  <Demo />
+  <Posts />
+  <Podcasts />
+  <Authors />
 </Layout>
