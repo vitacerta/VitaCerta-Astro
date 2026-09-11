@@ -1,0 +1,52 @@
+name: Build preview Astro
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/preview-pages.yml"
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "11.3.0"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - name: Prepare isolated project preview
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          base = '/VitaCerta-Astro'
+          for p in Path('dist').rglob('*.html'):
+              s = p.read_text(encoding='utf-8')
+              # Preview must never be indexed.
+              if '<head>' in s and 'name="robots"' not in s:
+                  s = s.replace('<head>', '<head><meta name="robots" content="noindex,nofollow">', 1)
+              # Prefix root-relative navigation and generated assets only in preview output.
+              s = re.sub(r'((?:href|src)=["\'])/(?!/)', rf'\1{base}/', s)
+              p.write_text(s, encoding='utf-8')
+          for p in Path('dist').rglob('*.css'):
+              s = p.read_text(encoding='utf-8')
+              s = re.sub(r'url\((["\']?)/(?!/)', rf'url(\1{base}/', s)
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Validate preview paths
+        run: |
+          test -f dist/index.html
+          test -f dist/conteudos/index.html
+          grep -q '/VitaCerta-Astro/conteudos/' dist/index.html
+          grep -q 'noindex,nofollow' dist/index.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vitacerta-astro-preview
+          path: dist
+          retention-days: 3
