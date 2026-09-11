@@ -7,12 +7,16 @@ import {internationalizedArray} from 'sanity-plugin-internationalized-array'
 import {structure} from './structure'
 import {table} from '@sanity/table'
 
+const languages = [
+  {id: 'pt-BR', title: 'Português (Brasil)'},
+]
+
 export default defineConfig({
   name: 'default',
   title: 'VitaCerta',
 
-  projectId: '1dh7sg5j', // change to value, env doesn't work
-  dataset: 'production', // change to value, env doesn't work
+  projectId: '1dh7sg5j',
+  dataset: 'production',
 
   plugins: [
     table(),
@@ -21,22 +25,16 @@ export default defineConfig({
       structure,
     }),
     documentInternationalization({
-      supportedLanguages: [
-        {id: 'ua', title: 'Ukraine'},
-        {id: 'en', title: 'English'},
-      ],
+      supportedLanguages: languages,
       schemaTypes: ['post', 'author', 'podcast'],
-      languageField: `language`,
+      languageField: 'language',
       weakReferences: true,
       bulkPublish: true,
       hideLanguageFilter: true,
     }),
     internationalizedArray({
-      languages: [
-        {id: 'en', title: 'English'},
-        {id: 'ua', title: 'Ukaraine'},
-      ],
-      defaultLanguages: ['en'],
+      languages,
+      defaultLanguages: ['pt-BR'],
       fieldTypes: ['string'],
     }),
   ],
