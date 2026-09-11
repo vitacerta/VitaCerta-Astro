@@ -1,0 +1,57 @@
+name: Clean nine legacy articles
+
+permissions:
+  contents: write
+
+on:
+  push:
+    paths:
+      - ".github/workflows/clean-nine-residues.yml"
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Sanitize nine articles
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, 'scripts')
+          from sanitize_blogger_html import sanitize_blogger_html
+
+          names = [
+            'alongamento-antes-ou-depois-do-treino-o-momento-certo-para-cada-tipo.md',
+            'ansiedade-antecipatoria-por-que-voce-ja-sofre-antes-de-o-problema-acontecer.md',
+            'check-up-de-homens-depois-dos-40-os-exames-que-costumam-ficar-de-fora.md',
+            'comer-mais-frutas-vermelhas-e-cha-pode-mudar-como-voce-envelhece-um-estudo-de-24-anos-inve.md',
+            'danca-como-exercicio-os-beneficios-fisicos-e-mentais-de-colocar-o-corpo-em-movimento.md',
+            'dormindo-mal-entenda-quando-o-magnesio-pode-ajudar-a-melhorar-o-sono.md',
+            'pressao-alta-sem-sintomas-por-que-a-hipertensao-e-chamada-de-assassina-silenciosa.md',
+            'saciado-por-mais-tempo-veja-os-alimentos-que-controlam-a-fome.md',
+            'sua-sede-continua-mesmo-bebendo-agua-descubra-o-que-pode-estar-faltando.md',
+          ]
+          root = Path('src/content/posts/migrados')
+          for name in names:
+              p = root / name
+              old = p.read_text(encoding='utf-8')
+              new = sanitize_blogger_html(old)
+              p.write_text(new, encoding='utf-8')
+              print(name, len(old), '->', len(new))
+          PY
+      - name: Commit cleanup
+        run: |
+          set -euo pipefail
+          git config user.name "vitacerta"
+          git config user.email "vitacerta67@gmail.com"
+          git add src/content/posts/migrados
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 1
+          fi
+          git commit -m "Remove estilos legados dos nove artigos restantes"
+          git push
