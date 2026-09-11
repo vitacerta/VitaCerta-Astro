@@ -1,5 +1,6 @@
 name: Audit generated Astro site
 
+# One-shot audit of generated public routes and demo exposure.
 on:
   push:
     paths:
@@ -28,7 +29,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re, sys
+          import sys
 
           dist = Path('dist')
           required = [
@@ -42,21 +43,17 @@ jobs:
             'sobre/index.html',
           ]
           missing = [p for p in required if not (dist / p).exists()]
-
           article_pages = list((dist / 'conteudos').glob('*/index.html')) if (dist/'conteudos').exists() else []
           sitemap_files = sorted(p.name for p in dist.glob('sitemap*'))
 
           demo_markers = [
-            'AstroPaper', 'How to use AstroPaper', 'Adding new posts', 'Markdown Style Guide',
-            'Dynamic OG image', 'How to configure AstroPaper'
+            'AstroPaper', 'How to use AstroPaper', 'Adding new posts',
+            'Markdown Style Guide', 'Dynamic OG image', 'How to configure AstroPaper'
           ]
           demo_hits = []
           html_files = list(dist.rglob('*.html'))
           for p in html_files:
-            try:
-              text = p.read_text(encoding='utf-8', errors='ignore')
-            except Exception:
-              continue
+            text = p.read_text(encoding='utf-8', errors='ignore')
             for marker in demo_markers:
               if marker.lower() in text.lower():
                 demo_hits.append((str(p.relative_to(dist)), marker))
@@ -77,6 +74,6 @@ jobs:
             for hit in demo_hits[:50]:
               print('DEMO=' + hit[0] + ' :: ' + hit[1])
 
-          if missing or len(article_pages) != 86:
+          if missing or len(article_pages) != 86 or not sitemap_files:
             sys.exit(1)
           PY
