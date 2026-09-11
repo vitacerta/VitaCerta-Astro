@@ -47,6 +47,11 @@ jobs:
           s = s.replace("process.env.VITE_SANITY_PROJECT_ID || ''", "'1dh7sg5j'")
           s = s.replace("process.env.VITE_SANITY_DATASET || ''", "'production'")
           p.write_text(s)
+
+          demo = Path('src/components/DemoPost.astro')
+          ds = demo.read_text()
+          ds = ds.replace('console.log("cat", post.categories.title);', 'if (post?.categories) console.log("cat", post.categories.title);')
+          demo.write_text(ds)
           PY
 
       - name: Install dependencies
@@ -62,5 +67,3 @@ jobs:
           git add -A
           git commit -m "Importa Fyrre original conectado ao Sanity VitaCerta" || exit 0
           git push origin HEAD:fyrre-base
-
-# run: 2026-09-11T16:24:00-03:00
