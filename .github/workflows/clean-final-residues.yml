@@ -1,7 +1,4 @@
-name: Clean final migrated residues
-
-permissions:
-  contents: write
+name: Audit final Blogger migration
 
 on:
   push:
@@ -9,41 +6,45 @@ on:
       - ".github/workflows/clean-final-residues.yml"
 
 jobs:
-  clean:
+  audit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Clean audited residues
+      - name: Audit migrated articles
         run: |
-          set -euo pipefail
-          for f in \
-            src/content/posts/migrados/creatina-como-escolher-a-melhor-e-quanto-realmente-voce-precisa.md \
-            src/content/posts/migrados/longevidade-os-habitos-que-realmente-aumentam-os-anos-de-vida-com-saude.md
-          do
-            python scripts/sanitize_blogger_html.py < "$f" > "$f.tmp"
-            mv "$f.tmp" "$f"
-          done
-
           python - <<'PY'
           from pathlib import Path
-          p = Path('src/content/posts/migrados/ferro-para-que-serve-sinais-de-deficiencia-e-por-que-as-mulheres-sao-as-mais-afetadas.md')
-          s = p.read_text(encoding='utf-8')
-          old = 'https://vitacerta.blogspot.com/2026/08/magnesio-para-que-serve.html'
-          new = '/conteudos/magnesio-para-que-serve-sinais-de-deficiencia-e-quando-vale-suplementar/'
-          if old not in s:
-              raise SystemExit('Link Blogger esperado nao encontrado no artigo de ferro')
-          p.write_text(s.replace(old, new), encoding='utf-8')
-          PY
+          import re, sys
 
-      - name: Commit cleanup
-        run: |
-          set -euo pipefail
-          git config user.name "vitacerta"
-          git config user.email "vitacerta67@gmail.com"
-          git add src/content/posts/migrados
-          git commit -m "Corrige residuos finais da migracao Blogger"
-          git push
+          root = Path('src/content/posts/migrados')
+          files = sorted(root.glob('*.md'))
+          blogger = re.compile(r'https?://(?:www\.)?vitacerta\.blogspot\.com/', re.I)
+          legacy = re.compile(
+              r'(?:^|;)\s*(?:color|background(?:-color)?|font-(?:family|size|weight|style|feature-settings|kerning|optical-sizing|variant(?:-[\w-]+)?|width)|font-size-adjust|line-height|-webkit-text-stroke-(?:color|width)|-webkit-text-size-adjust)\s*:',
+              re.I,
+          )
+          style = re.compile(r'\sstyle=("[^"]*"|\'[^\']*\')', re.I)
+
+          bad_links = []
+          bad_styles = []
+          for p in files:
+              text = p.read_text(encoding='utf-8')
+              for m in blogger.finditer(text):
+                  bad_links.append((p.name, m.start()))
+              for sm in style.finditer(text):
+                  value = sm.group(1)[1:-1]
+                  if legacy.search(value):
+                      bad_styles.append((p.name, value[:180]))
+
+          print(f'ARTICLE_COUNT={len(files)}')
+          print(f'BLOGGER_INTERNAL_LINKS={len(bad_links)}')
+          print(f'LEGACY_STYLE_ATTRS={len(bad_styles)}')
+          if bad_links:
+              print('BAD_LINK_FILES=' + ','.join(sorted({x[0] for x in bad_links})))
+          if bad_styles:
+              print('BAD_STYLE_FILES=' + ','.join(sorted({x[0] for x in bad_styles})))
+
+          if len(files) != 86 or bad_links or bad_styles:
+              sys.exit(1)
+          PY
