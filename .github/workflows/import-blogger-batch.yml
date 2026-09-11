@@ -19,7 +19,7 @@ jobs:
 
       - name: Import final pending Blogger posts
         env:
-          BATCH_LIMIT: "11"
+          BATCH_LIMIT: "10"
         run: python scripts/import_blogger_batch.py
 
       - name: Commit imported posts
@@ -32,5 +32,5 @@ jobs:
             echo "No article changes required."
             exit 0
           fi
-          git commit -m "Importa lote final de 11 artigos"
+          git commit -m "Importa lote final de 10 artigos"
           git push
