@@ -1,0 +1,107 @@
+name: Prepara migracao VitaCerta para Sanity
+
+on:
+  push:
+    branches: [fyrre-base]
+    paths:
+      - '.github/workflows/prepare-vitacerta-migration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch Fyrre
+        uses: actions/checkout@v4
+        with:
+          ref: fyrre-base
+          fetch-depth: 0
+
+      - name: Gerar manifesto dos 86 artigos a partir da main
+        run: |
+          python3 - <<'PY'
+          import json, re, subprocess
+          from pathlib import Path
+
+          base = 'src/content/posts/migrados/'
+          out_dir = Path('migration')
+          out_dir.mkdir(exist_ok=True)
+
+          names = subprocess.check_output(
+              ['git', 'ls-tree', '-r', '--name-only', 'origin/main', base],
+              text=True,
+          ).splitlines()
+          files = [p for p in names if p.endswith(('.md', '.mdx'))]
+
+          def unquote(v):
+              v = v.strip()
+              if len(v) >= 2 and v[0] == v[-1] and v[0] in ('"', "'"):
+                  return v[1:-1].replace('\\"', '"')
+              return v
+
+          rows = []
+          for path in sorted(files):
+              raw = subprocess.check_output(['git', 'show', f'origin/main:{path}'], text=True)
+              if not raw.startswith('---'):
+                  raise SystemExit(f'Frontmatter ausente: {path}')
+              _, fm, body = raw.split('---', 2)
+              meta = {}
+              for line in fm.splitlines():
+                  m = re.match(r'^([A-Za-z][A-Za-z0-9_]*):\s*(.*)$', line)
+                  if m:
+                      meta[m.group(1)] = unquote(m.group(2))
+
+              img = re.search(r'<img\b[^>]*\bsrc=["\']([^"\']+)["\']', body, re.I)
+              slug = Path(path).stem
+              rows.append({
+                  'sourcePath': path,
+                  'slug': slug,
+                  'title': meta.get('title', ''),
+                  'description': meta.get('description', ''),
+                  'publishedAt': meta.get('pubDatetime', ''),
+                  'modifiedAt': meta.get('modDatetime', ''),
+                  'category': meta.get('category', ''),
+                  'canonicalURL': meta.get('canonicalURL', ''),
+                  'coverUrl': img.group(1) if img else '',
+                  'bodyHtml': body.strip(),
+              })
+
+          allowed = {'Saúde', 'Nutrição', 'Movimento', 'Mente', 'Longevidade'}
+          invalid = sorted({r['category'] for r in rows if r['category'] not in allowed})
+          missing_title = [r['slug'] for r in rows if not r['title']]
+          missing_cover = [r['slug'] for r in rows if not r['coverUrl']]
+          canonical_bad = [r['slug'] for r in rows if r['canonicalURL'] and f"/conteudos/{r['slug']}/" not in r['canonicalURL']]
+
+          report = {
+              'articleCount': len(rows),
+              'invalidCategories': invalid,
+              'missingTitles': missing_title,
+              'missingCovers': missing_cover,
+              'canonicalSlugMismatches': canonical_bad,
+              'categoryCounts': {c: sum(1 for r in rows if r['category'] == c) for c in sorted(allowed)},
+          }
+
+          Path('migration/vitacerta-posts.json').write_text(
+              json.dumps(rows, ensure_ascii=False, indent=2), encoding='utf-8'
+          )
+          Path('migration/vitacerta-migration-report.json').write_text(
+              json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8'
+          )
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+
+          if len(rows) != 86:
+              raise SystemExit(f'Esperados 86 artigos; encontrados {len(rows)}')
+          if invalid or missing_title or canonical_bad:
+              raise SystemExit('Manifesto contém inconsistências que precisam ser revisadas')
+          PY
+
+      - name: Commitar manifesto validado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add migration/vitacerta-posts.json migration/vitacerta-migration-report.json
+          git commit -m "Prepara manifesto dos 86 artigos para migracao Sanity" || exit 0
+          git push origin HEAD:fyrre-base
