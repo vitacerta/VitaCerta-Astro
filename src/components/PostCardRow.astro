@@ -7,6 +7,7 @@ const {
   slug,
   description,
   duration,
+  date,
   _createdAt,
   image,
   author,
@@ -14,54 +15,45 @@ const {
 } = Astro.props;
 
 const locale = Astro.currentLocale;
-
+const displayDate = date || _createdAt;
 ---
 
-<article
-  class="group grid grid-cols-1 sm:grid-cols-[1fr_2fr] md:grid-cols-[240px_auto] gap-4 border-t pt-10 first:border-t-0 first:pt-0"
->
+<article class="group grid grid-cols-1 sm:grid-cols-[1fr_2fr] md:grid-cols-[240px_auto] gap-4 border-t pt-10 first:border-t-0 first:pt-0">
   <a href={`/${locale}/blog/${slug}`}>
-    <Image
-      src={image}
-      alt={title}
-      width={240}
-      height={240}
-      format="webp"
-      quality={45}
-      class="aspect-square w-full h-auto"
-    />
+    {image && (
+      <Image
+        src={image}
+        alt={title}
+        width={240}
+        height={240}
+        format="webp"
+        quality={45}
+        class="aspect-square w-full h-auto object-cover"
+      />
+    )}
   </a>
   <div class="flex flex-col justify-between">
     <a href={`/${locale}/blog/${slug}`}>
       <h3 class="group-hover:underline">{title}</h3>
-      <p class="mb-10">
-        {description}
-      </p>
+      <p class="mb-10">{description}</p>
     </a>
-    <div
-      class="flex flex-wrap gap-x-6 gap-y-3 justify-between items-center mt-auto"
-    >
-      <p>
-        <b class="mr-2">Text</b>
-        <a href={`/${locale}/authors/${author.slug.current}`} class="hover:underline">
-          {author.name}
+    <div class="flex flex-wrap gap-x-6 gap-y-3 justify-between items-center mt-auto">
+      {author && (
+        <p>
+          <b class="mr-2">Texto</b>
+          <a href={`/${locale}/authors/${author.slug}`} class="hover:underline">{author.name}</a>
+        </p>
+      )}
+      {displayDate && <p><b class="mr-2">Data</b><span>{formatDate(displayDate)}</span></p>}
+      {duration != null && <p><b class="mr-2">Leitura</b><span>{duration} min</span></p>}
+      {categories && (
+        <a
+          href={`/${locale}/blog/${categories.slug}`}
+          class="ml-auto btn btn-outline rounded-full py-1 px-4 h-auto hover:bg-black hover:text-white uppercase"
+        >
+          {categories.title}
         </a>
-      </p>
-      <p>
-        <b class="mr-2">Date</b>
-        <span>{formatDate(_createdAt)}</span>
-      </p>
-      <p>
-        <b class="mr-2">Read</b>
-        <span>{duration} Min</span>
-      </p>
-
-      <a
-        href={`${locale}/blog/${categories.slug.current}`}
-        class="ml-auto btn btn-outline rounded-full py-1 px-4 h-auto hover:bg-black hover:text-white uppercase"
-      >
-        {categories.title}
-      </a>
+      )}
     </div>
   </div>
 </article>
