@@ -1,0 +1,100 @@
+name: Prepara lote piloto Sanity
+
+on:
+  push:
+    branches: [fyrre-base]
+    paths:
+      - '.github/workflows/prepare-sanity-sample.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fyrre-base
+          fetch-depth: 0
+
+      - name: Gerar lote piloto com Portable Text
+        run: |
+          python3 - <<'PY'
+          import json, re, subprocess, html as htmlmod, uuid
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          paths = subprocess.check_output(
+              ['git','ls-tree','-r','--name-only','origin/main','src/content/posts/migrados/'],
+              text=True,
+          ).splitlines()
+          paths = sorted([p for p in paths if p.endswith(('.md','.mdx'))])[:3]
+
+          class Parser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.blocks=[]; self.buf=[]; self.style='normal'; self.listItem=None; self.in_block=False
+              def flush(self):
+                  text=' '.join(''.join(self.buf).split())
+                  if text:
+                      self.blocks.append({
+                          '_type':'block','_key':uuid.uuid4().hex[:12],
+                          'style':self.style,'markDefs':[],
+                          'children':[{'_type':'span','_key':uuid.uuid4().hex[:12],'text':text,'marks':[]}],
+                          **({'listItem':self.listItem,'level':1} if self.listItem else {})
+                      })
+                  self.buf=[]; self.style='normal'; self.listItem=None; self.in_block=False
+              def handle_starttag(self, tag, attrs):
+                  tag=tag.lower()
+                  if tag in ('p','h1','h2','h3','h4','blockquote','li'):
+                      self.flush(); self.in_block=True
+                      self.style={'h1':'h1','h2':'h2','h3':'h3','h4':'h4','blockquote':'blockquote'}.get(tag,'normal')
+                      if tag=='li': self.listItem='bullet'
+                  elif tag=='br' and self.in_block:
+                      self.buf.append('\n')
+              def handle_endtag(self, tag):
+                  if tag.lower() in ('p','h1','h2','h3','h4','blockquote','li'):
+                      self.flush()
+              def handle_data(self, data):
+                  if self.in_block: self.buf.append(htmlmod.unescape(data))
+
+          rows=[]
+          for path in paths:
+              raw=subprocess.check_output(['git','show',f'origin/main:{path}'],text=True)
+              _,fm,body=raw.split('---',2)
+              meta={}
+              for line in fm.splitlines():
+                  m=re.match(r'^([A-Za-z][A-Za-z0-9_]*):\s*(.*)$',line)
+                  if m:
+                      v=m.group(2).strip()
+                      if len(v)>=2 and v[0]==v[-1] and v[0] in ('"',"'"): v=v[1:-1]
+                      meta[m.group(1)]=v
+              cover=re.search(r'<img\b[^>]*\bsrc=["\']([^"\']+)["\']',body,re.I)
+              p=Parser(); p.feed(body); p.flush()
+              words=sum(len(b['children'][0]['text'].split()) for b in p.blocks)
+              rows.append({
+                  'slug':Path(path).stem,
+                  'title':meta.get('title',''),
+                  'description':meta.get('description',''),
+                  'publishedAt':meta.get('pubDatetime',''),
+                  'category':meta.get('category',''),
+                  'canonicalURL':meta.get('canonicalURL',''),
+                  'coverUrl':cover.group(1) if cover else '',
+                  'duration':max(1,round(words/220)),
+                  'body':p.blocks,
+                  'blockCount':len(p.blocks),
+                  'wordCount':words,
+              })
+          Path('migration/sanity-sample-3.json').write_text(json.dumps(rows,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps([{'slug':r['slug'],'category':r['category'],'blocks':r['blockCount'],'words':r['wordCount']} for r in rows],ensure_ascii=False,indent=2))
+          PY
+
+      - name: Commitar lote piloto
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add migration/sanity-sample-3.json
+          git commit -m "Gera lote piloto de 3 artigos para Sanity" || exit 0
+          git push origin HEAD:fyrre-base
