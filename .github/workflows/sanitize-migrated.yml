@@ -1,0 +1,42 @@
+name: Sanitize migrated Blogger posts
+
+permissions:
+  contents: write
+
+on:
+  push:
+    paths:
+      - ".github/workflows/sanitize-migrated.yml"
+
+jobs:
+  sanitize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sanitize migrated posts
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          for file in src/content/posts/migrados/*.md; do
+            python scripts/sanitize_blogger_html.py < "$file" > "$file.tmp"
+            mv "$file.tmp" "$file"
+          done
+
+      - name: Commit sanitized posts
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- src/content/posts/migrados; then
+            echo "No changes required."
+            exit 0
+          fi
+          git config user.name "vitacerta"
+          git config user.email "vitacerta67@gmail.com"
+          git add src/content/posts/migrados
+          git commit -m "Sanitiza HTML dos artigos migrados do Blogger"
+          git push
