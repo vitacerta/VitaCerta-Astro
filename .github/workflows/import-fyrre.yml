@@ -62,3 +62,5 @@ jobs:
           git add -A
           git commit -m "Importa Fyrre original conectado ao Sanity VitaCerta" || exit 0
           git push origin HEAD:fyrre-base
+
+# run: 2026-09-11T16:24:00-03:00
