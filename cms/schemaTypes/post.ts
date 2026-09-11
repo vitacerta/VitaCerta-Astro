@@ -90,6 +90,13 @@ export default defineType({
       title: 'Conteúdo',
       type: 'blockContent',
     }),
+    defineField({
+      name: 'legacyBodyHtml',
+      title: 'Conteúdo legado (HTML)',
+      type: 'text',
+      description: 'Cópia preservada dos artigos migrados do Blogger. Novos artigos usam o campo Conteúdo.',
+      readOnly: true,
+    }),
   ],
   preview: {
     select: {title: 'title', author: 'author.name', media: 'thumbnail'},
