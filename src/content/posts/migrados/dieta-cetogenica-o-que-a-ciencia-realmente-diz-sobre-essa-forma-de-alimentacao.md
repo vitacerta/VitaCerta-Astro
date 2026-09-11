@@ -10,7 +10,7 @@ canonicalURL: "https://vitacerta.com.br/conteudos/dieta-cetogenica-o-que-a-cienc
 
 <p>&nbsp;</p>
 
-<p dir="ltr"></p><div class="separator" style="clear: both; text-align: center;"><a href="https://blogger.googleusercontent.com/img/a/AVvXsEhLfoY_Q6RXFxl7XO7B5yCPDukx6BaHCW70JbDxW2TrW-wwYeFkfzlgv41ksMLfd7OTcgGSLPN4DO7jtsz8gNZgy4OHcQk-z5WhiD3cajNL3Wv2v5mA8ATbrHPZCJxDmgQRZsqEzPKDRkcoDNMgShb1JuHmSxBvesY9Kwdm4f-wMOVehavVJaVqvwTQnKou" style="margin-left: 1em; margin-right: 1em;"><img alt="" data-original-height="630" data-original-width="1200" height="168" src="https://blogger.googleusercontent.com/img/a/AVvXsEhLfoY_Q6RXFxl7XO7B5yCPDukx6BaHCW70JbDxW2TrW-wwYeFkfzlgv41ksMLfd7OTcgGSLPN4DO7jtsz8gNZgy4OHcQk-z5WhiD3cajNL3Wv2v5mA8ATbrHPZCJxDmgQRZsqEzPKDRkcoDNMgShb1JuHmSxBvesY9Kwdm4f-wMOVehavVJaVqvwTQnKou" width="320" /></a></div><br />A dieta cetogênica, também conhecida como dieta keto, ganhou enorme popularidade nos últimos anos. Nas redes sociais, ela costuma aparecer associada a emagrecimento rápido, controle da glicose e mudanças profundas no metabolismo.<p></p>
+<p dir="ltr"></p><div class="separator" style="clear: both; text-align: center"><a href="https://blogger.googleusercontent.com/img/a/AVvXsEhLfoY_Q6RXFxl7XO7B5yCPDukx6BaHCW70JbDxW2TrW-wwYeFkfzlgv41ksMLfd7OTcgGSLPN4DO7jtsz8gNZgy4OHcQk-z5WhiD3cajNL3Wv2v5mA8ATbrHPZCJxDmgQRZsqEzPKDRkcoDNMgShb1JuHmSxBvesY9Kwdm4f-wMOVehavVJaVqvwTQnKou" style="margin-left: 1em; margin-right: 1em"><img alt="" data-original-height="630" data-original-width="1200" height="168" src="https://blogger.googleusercontent.com/img/a/AVvXsEhLfoY_Q6RXFxl7XO7B5yCPDukx6BaHCW70JbDxW2TrW-wwYeFkfzlgv41ksMLfd7OTcgGSLPN4DO7jtsz8gNZgy4OHcQk-z5WhiD3cajNL3Wv2v5mA8ATbrHPZCJxDmgQRZsqEzPKDRkcoDNMgShb1JuHmSxBvesY9Kwdm4f-wMOVehavVJaVqvwTQnKou" width="320" /></a></div><br />A dieta cetogênica, também conhecida como dieta keto, ganhou enorme popularidade nos últimos anos. Nas redes sociais, ela costuma aparecer associada a emagrecimento rápido, controle da glicose e mudanças profundas no metabolismo.<p></p>
 
 <p dir="ltr">Mas o que acontece de verdade quando os carboidratos são reduzidos de maneira bastante significativa?</p>
 
@@ -204,7 +204,7 @@ canonicalURL: "https://vitacerta.com.br/conteudos/dieta-cetogenica-o-que-a-cienc
 
 <p dir="ltr">O mais importante é observar a evolução ao longo do tempo e considerar composição corporal, alimentação, atividade física e outros indicadores relevantes.</p>
 
-<p dir="ltr">Para quem está interessado em estratégias alimentares, também vale lembrar que o horário em que comemos é apenas uma parte da história — nosso artigo sobre <a href="https://vitacerta.blogspot.com/2026/08/exercicio-em-jejum-emagrece.html">exercício em jejum e emagrecimento</a> mostra como a ciência vem investigando outra abordagem bastante popular atualmente.</p>
+<p dir="ltr">Para quem está interessado em estratégias alimentares, também vale lembrar que o horário em que comemos é apenas uma parte da história — nosso artigo sobre <a href="/conteudos/exercicio-em-jejum-emagrece/">exercício em jejum e emagrecimento</a> mostra como a ciência vem investigando outra abordagem bastante popular atualmente.</p>
 
 <h2 dir="ltr">Dieta cetogênica é melhor que uma dieta tradicional?</h2>
 
