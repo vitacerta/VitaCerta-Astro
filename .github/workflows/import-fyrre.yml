@@ -1,0 +1,52 @@
+name: Import Fyrre base
+
+on:
+  push:
+    branches: [fyrre-base]
+    paths:
+      - '.github/workflows/import-fyrre.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout VitaCerta branch
+        uses: actions/checkout@v4
+        with:
+          ref: fyrre-base
+          fetch-depth: 0
+
+      - name: Clone official Fyrre source
+        run: git clone --depth 1 https://github.com/anastasiiaxfr/fyrre.git /tmp/fyrre
+
+      - name: Replace app with pristine Fyrre
+        run: |
+          rm -rf src public cms
+          rm -f astro.config.* package.json package-lock.json tsconfig.json README.md LICENSE
+          cp -R /tmp/fyrre/src ./src
+          cp -R /tmp/fyrre/public ./public
+          cp -R /tmp/fyrre/cms ./cms
+          cp /tmp/fyrre/astro.config.mjs ./astro.config.mjs
+          cp /tmp/fyrre/package.json ./package.json
+          cp /tmp/fyrre/package-lock.json ./package-lock.json
+          cp /tmp/fyrre/tsconfig.json ./tsconfig.json
+          cp /tmp/fyrre/README.md ./README.md
+          cp /tmp/fyrre/LICENSE ./LICENSE
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build pristine Fyrre
+        run: npm run build
+
+      - name: Commit imported theme
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Importa Fyrre original em ambiente isolado" || exit 0
+          git push origin HEAD:fyrre-base
