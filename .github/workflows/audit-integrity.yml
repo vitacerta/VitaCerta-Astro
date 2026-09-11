@@ -1,0 +1,40 @@
+name: Audit migrated content integrity
+
+on:
+  push:
+    paths:
+      - ".github/workflows/audit-integrity.yml"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Audit migrated articles
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          root = Path('src/content/posts/migrados')
+          files = sorted(root.glob('*.md'))
+          print(f'FILES={len(files)}')
+          short=[]; invalid=[]; blogger=[]; styles=[]
+          req=['title:', 'description:', 'pubDatetime:', 'category:', 'canonicalURL:']
+          for p in files:
+              s=p.read_text(encoding='utf-8')
+              if len(s) < 2500: short.append((p.name,len(s)))
+              if not s.startswith('---\n') or s.count('\n---\n') < 1 or any(k not in s.split('\n---\n',1)[0] for k in req):
+                  invalid.append(p.name)
+              if re.search(r'https?://(?:www\.)?vitacerta\.blogspot\.com/', s, re.I): blogger.append(p.name)
+              if re.search(r'style=["\'][^"\']*(?:color|background(?:-color)?|font-(?:family|size|weight|style)|line-height)\s*:', s, re.I): styles.append(p.name)
+          print(f'SHORT={len(short)}')
+          for n,z in short: print(f'SHORT_FILE={n}\t{z}')
+          print(f'INVALID_FRONTMATTER={len(invalid)}')
+          for n in invalid: print('INVALID_FILE='+n)
+          print(f'BLOGGER_INTERNAL_LINKS={len(blogger)}')
+          for n in blogger: print('BLOGGER_FILE='+n)
+          print(f'LEGACY_STYLE_FILES={len(styles)}')
+          for n in styles: print('STYLE_FILE='+n)
+          PY
