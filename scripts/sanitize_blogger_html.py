@@ -20,7 +20,21 @@ REMOVE_STYLE_PROPERTIES = {
     "font-weight",
     "font-style",
     "line-height",
+    "-webkit-text-stroke-color",
+    "-webkit-text-stroke-width",
+    "-webkit-text-size-adjust",
+    "font-feature-settings",
+    "font-kerning",
+    "font-optical-sizing",
+    "font-size-adjust",
+    "font-width",
+    "font-variation-settings",
+    "font-variant",
 }
+
+REMOVE_STYLE_PREFIXES = (
+    "font-variant-",
+)
 
 
 def _clean_style_value(style: str) -> str:
@@ -31,7 +45,12 @@ def _clean_style_value(style: str) -> str:
         prop, value = declaration.split(":", 1)
         prop = prop.strip().lower()
         value = value.strip()
-        if not prop or not value or prop in REMOVE_STYLE_PROPERTIES:
+        if (
+            not prop
+            or not value
+            or prop in REMOVE_STYLE_PROPERTIES
+            or any(prop.startswith(prefix) for prefix in REMOVE_STYLE_PREFIXES)
+        ):
             continue
         kept.append(f"{prop}: {value}")
     return "; ".join(kept)
