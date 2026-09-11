@@ -1,5 +1,6 @@
 name: Audit final Blogger migration
 
+# Final one-shot audit after legacy-style cleanup.
 on:
   push:
     paths:
