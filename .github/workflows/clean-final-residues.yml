@@ -1,43 +1,35 @@
 name: Clean final migrated residues
 
-permissions:
-  contents: write
-
 on:
   push:
     paths:
       - ".github/workflows/clean-final-residues.yml"
 
 jobs:
-  clean:
+  diagnose:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Sanitize three audited files
+      - name: Print exact residue contexts
         run: |
-          set -euo pipefail
-          for f in \
-            src/content/posts/migrados/ferro-para-que-serve-sinais-de-deficiencia-e-por-que-as-mulheres-sao-as-mais-afetadas.md \
-            src/content/posts/migrados/creatina-como-escolher-a-melhor-e-quanto-realmente-voce-precisa.md \
-            src/content/posts/migrados/longevidade-os-habitos-que-realmente-aumentam-os-anos-de-vida-com-saude.md
-          do
-            python scripts/sanitize_blogger_html.py < "$f" > "$f.tmp"
-            mv "$f.tmp" "$f"
-          done
-
-      - name: Commit cleanup
-        run: |
-          set -euo pipefail
-          git config user.name "vitacerta"
-          git config user.email "vitacerta67@gmail.com"
-          git add src/content/posts/migrados
-          if git diff --cached --quiet; then
-            echo "No changes required."
-            exit 0
-          fi
-          git commit -m "Remove residuos finais da migracao Blogger"
-          git push
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          files = [
+            Path('src/content/posts/migrados/ferro-para-que-serve-sinais-de-deficiencia-e-por-que-as-mulheres-sao-as-mais-afetadas.md'),
+            Path('src/content/posts/migrados/creatina-como-escolher-a-melhor-e-quanto-realmente-voce-precisa.md'),
+            Path('src/content/posts/migrados/longevidade-os-habitos-que-realmente-aumentam-os-anos-de-vida-com-saude.md'),
+          ]
+          pats = [
+            re.compile(r'https?://(?:www\.)?vitacerta\.blogspot\.com/[^\s"\'<>]*', re.I),
+            re.compile(r'style=["\'][^"\']*(?:color|background(?:-color)?|font-(?:family|size|weight|style)|line-height)\s*:[^"\']*["\']', re.I),
+          ]
+          for p in files:
+            s=p.read_text(encoding='utf-8')
+            print('FILE='+p.name)
+            for pat in pats:
+              for m in pat.finditer(s):
+                a=max(0,m.start()-180); b=min(len(s),m.end()+180)
+                print('MATCH='+s[a:b].replace('\n',' '))
+          PY
