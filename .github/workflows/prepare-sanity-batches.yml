@@ -1,0 +1,97 @@
+name: Prepara lotes completos Sanity
+
+on:
+  push:
+    branches: [fyrre-base]
+    paths:
+      - '.github/workflows/prepare-sanity-batches.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fyrre-base
+          fetch-depth: 0
+
+      - name: Gerar lotes Sanity
+        run: |
+          python3 - <<'PY'
+          import json, re, hashlib
+          from html import unescape
+          from pathlib import Path
+
+          src = Path('migration/vitacerta-posts.json')
+          rows = json.loads(src.read_text(encoding='utf-8'))
+
+          categories = {
+              'Longevidade': ('2d8d5604-6572-4d40-b865-a8a5b9d398a0', 'longevidade'),
+              'Mente': ('56db7347-e6c3-4bb5-96e2-0a2539ada4d6', 'mente'),
+              'Movimento': ('b3720af3-6d9c-42f5-8b72-481e486742d5', 'movimento'),
+              'Nutrição': ('42558655-90d9-495e-9a67-5ae87a4427b5', 'nutricao'),
+              'Saúde': ('b20b81f2-2907-4ffd-b71d-6e37f91e5d9e', 'saude'),
+          }
+
+          def text_words(html):
+              text = re.sub(r'<[^>]+>', ' ', html or '')
+              text = unescape(text)
+              return len(re.findall(r'\b\w+\b', text, flags=re.UNICODE))
+
+          docs = []
+          for r in rows:
+              cat_id, cat_slug = categories[r['category']]
+              slug = r['slug']
+              stable_id = 'vitacerta-post-' + hashlib.sha1(slug.encode('utf-8')).hexdigest()[:24]
+              words = text_words(r.get('bodyHtml',''))
+              docs.append({
+                  '_id': stable_id,
+                  '_type': 'post',
+                  'language': 'pt-BR',
+                  'title': r['title'],
+                  'slug': {'_type':'slug','current':slug},
+                  'description': r['description'],
+                  'duration': max(1, round(words / 220)),
+                  'categories': [{'_type':'reference','_key':'cat-'+cat_slug,'_ref':cat_id}],
+                  'publishedAt': r['publishedAt'],
+                  'canonicalURL': r['canonicalURL'],
+                  'coverUrl': r['coverUrl'],
+                  'legacyBodyHtml': r.get('bodyHtml',''),
+              })
+
+          out = Path('migration/sanity-batches')
+          out.mkdir(parents=True, exist_ok=True)
+          for old in out.glob('batch-*.json'):
+              old.unlink()
+
+          size = 10
+          manifest = []
+          for i in range(0, len(docs), size):
+              batch = docs[i:i+size]
+              name = f'batch-{i//size+1:02d}.json'
+              (out/name).write_text(json.dumps(batch, ensure_ascii=False, indent=2), encoding='utf-8')
+              manifest.append({
+                  'file': name,
+                  'count': len(batch),
+                  'slugs': [d['slug']['current'] for d in batch],
+              })
+
+          (out/'manifest.json').write_text(json.dumps({
+              'articleCount': len(docs),
+              'batchCount': len(manifest),
+              'batches': manifest,
+          }, ensure_ascii=False, indent=2), encoding='utf-8')
+          print(json.dumps({'articleCount':len(docs),'batchCount':len(manifest)}, ensure_ascii=False))
+          PY
+
+      - name: Commitar lotes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add migration/sanity-batches
+          git commit -m "Gera lotes completos para importacao Sanity" || exit 0
+          git push origin HEAD:fyrre-base
