@@ -72,11 +72,21 @@ jobs:
               'sua-sede-continua-mesmo-bebendo-agua-descubra-o-que-pode-estar-faltando',
               'saciado-por-mais-tempo-veja-os-alimentos-que-controlam-a-fome',
               'nao-gosta-de-academia-7-atividades-de-lazer-que-ajudam-a-manter-o-corpo-em-movimento',
+              'cansado-irritado-e-de-mau-humor-seu-intestino-pode-ser-o-culpado',
+              'esquecimento-falta-de-foco-e-dificuldade-para-aprender-7-habitos-simples-que-ajudam-a-cuid',
+              'vitaminas-depois-dos-40-o-que-realmente-vale-a-pena-suplementar',
+              'que-tal-trocar-o-carro-pela-bicicleta-seu-trajeto-pode-virar-atividade-fisica',
+              'sentindo-o-corpo-travado-o-tempo-que-voce-passa-sentado-pode-ser-o-culpado',
+              'depois-eu-faco-quando-a-procrastinacao-comeca-a-atrapalhar-sua-vida',
+              'barriga-inchada-depois-de-comer-7-habitos-que-podem-ajudar-a-evitar-o-desconforto',
+              'celular-antes-de-dormir-o-que-a-ciencia-diz-sobre-o-seu-sono',
+              'esta-apertando-os-olhos-para-enxergar-melhor-talvez-nao-seja-apenas-cansaco',
+              'omega-3-faz-bem-para-o-coracao-o-que-as-pesquisas-realmente-descobriram',
           }
           all_source_slugs = {row['slug'] for row in rows}
           expected_drafts = all_source_slugs - expected_published
 
-          if len(expected_published) != 24 or len(expected_drafts) != 62:
+          if len(expected_published) != 34 or len(expected_drafts) != 52:
               raise SystemExit('Contagem esperada inconsistente para o ensaio')
 
           article_root = Path('dist/conteudos')
@@ -137,12 +147,12 @@ jobs:
               if f'/conteudos/{slug}/' in rss:
                   raise SystemExit(f'Rascunho vazou para RSS: {slug}')
 
-          print('PRODUCTION_REHEARSAL_OK: 24 publicados visiveis, 62 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
+          print('PRODUCTION_REHEARSAL_OK: 34 publicados visiveis, 52 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
           PY
 
       - name: Upload production rehearsal artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vitacerta-production-rehearsal-24
+          name: vitacerta-production-rehearsal-34
           path: dist
           retention-days: 3
