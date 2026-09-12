@@ -66,7 +66,7 @@ jobs:
           for old in out.glob('batch-*.json'):
               old.unlink()
 
-          size = 10
+          size = 3
           manifest = []
           for i in range(0, len(docs), size):
               batch = docs[i:i+size]
