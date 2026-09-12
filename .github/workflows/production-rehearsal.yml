@@ -47,91 +47,38 @@ jobs:
           if len(rows) != 86:
               raise SystemExit(f'Manifesto inesperado: {len(rows)} artigos')
 
-          expected_published = {
-              '16-alimentos-que-ajudam-a-aliviar-o-estresse-com-respaldo-cientifico',
-              'a-importancia-da-enfermagem-dentro-do-sistema-de-saude',
-              '10-habitos-simples-para-cuidar-do-coracao-todos-os-dias',
-              'treino-de-forca-depois-dos-40-por-que-a-musculacao-se-torna-ainda-mais-importante',
-              'longevidade-os-habitos-que-realmente-aumentam-os-anos-de-vida-com-saude',
-              'creatina-para-mulheres-tudo-o-que-voce-precisa-saber-antes-de-usar',
-              'passou-dos-40-e-esta-muito-tempo-sentado-o-que-caminhar-todos-os-dias-pode-mudar-na-sua-sa',
-              'proteina-em-tudo-voce-realmente-precisa-de-tantos-alimentos-proteicos',
-              'envelhecer-bem-nao-e-so-viver-mais-o-que-voce-pode-fazer-hoje-para-preservar-sua-autonomia',
-              'plato-de-emagrecimento-por-que-o-peso-trava-mesmo-fazendo-tudo-certo-e-o-que-a-ciencia-sug',
-              'menopausa-o-que-mudou-nos-tratamentos-e-quais-opcoes-existem-hoje',
-              'meditacao-para-ansiedade-como-a-pratica-pode-ajudar-a-acalmar-a-mente',
-              'fim-de-semana-sem-tela-7-ideias-de-lazer-para-descansar-a-mente-e-aproveitar-melhor-o-temp',
-              'dor-nas-costas-no-home-office-o-que-realmente-ajuda-alem-de-ajustar-a-postura',
-              'vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante',
-              'sintomas-da-falta-de-vitamina-d-sinais-grupos-de-risco-e-quando-suplementar',
-              'guia-definitivo-dos-efeitos-colaterais-do-ozempic-como-aliviar-sintomas-e-proteger-os-musc',
-              'como-nao-perder-massa-magra-usando-ozempic-proteinas-treino-e-suplementacao',
-              'o-que-comer-quando-estiver-com-enjoo-do-ozempic-guia-e-cardapio-pratico',
-              'guia-completo-sobre-dor-abdominal-causas-sintomas-e-quando-procurar-um-medico',
-              'dormindo-mal-entenda-quando-o-magnesio-pode-ajudar-a-melhorar-o-sono',
-              'sua-sede-continua-mesmo-bebendo-agua-descubra-o-que-pode-estar-faltando',
-              'saciado-por-mais-tempo-veja-os-alimentos-que-controlam-a-fome',
-              'nao-gosta-de-academia-7-atividades-de-lazer-que-ajudam-a-manter-o-corpo-em-movimento',
-              'cansado-irritado-e-de-mau-humor-seu-intestino-pode-ser-o-culpado',
-              'esquecimento-falta-de-foco-e-dificuldade-para-aprender-7-habitos-simples-que-ajudam-a-cuid',
-              'vitaminas-depois-dos-40-o-que-realmente-vale-a-pena-suplementar',
-              'que-tal-trocar-o-carro-pela-bicicleta-seu-trajeto-pode-virar-atividade-fisica',
-              'sentindo-o-corpo-travado-o-tempo-que-voce-passa-sentado-pode-ser-o-culpado',
-              'depois-eu-faco-quando-a-procrastinacao-comeca-a-atrapalhar-sua-vida',
-              'barriga-inchada-depois-de-comer-7-habitos-que-podem-ajudar-a-evitar-o-desconforto',
-              'celular-antes-de-dormir-o-que-a-ciencia-diz-sobre-o-seu-sono',
-              'esta-apertando-os-olhos-para-enxergar-melhor-talvez-nao-seja-apenas-cansaco',
-              'omega-3-faz-bem-para-o-coracao-o-que-as-pesquisas-realmente-descobriram',
-              'garganta-seca-ou-irritada-5-dicas-eficazes-para-aliviar-o-desconforto',
-              'maxxing-por-que-a-busca-pela-versao-otimizada-de-si-mesmo-pode-estar-te-adoecendo',
-              'comer-bem-nao-precisa-ser-complicado-o-guia-definitivo-para-uma-alimentacao-saudavel-no-di',
-              'efervescencia-coletiva-por-que-viver-experiencias-em-grupo-faz-tao-bem-para-a-sua-saude-me',
-              'relogio-que-mede-a-frequencia-cardiaca-vale-a-pena-5-modelos-populares-no-brasil-e-o-que-o',
-              'jejum-intermitente-como-funciona-quais-sao-os-beneficios-e-o-que-voce-precisa-saber-antes-',
-              'sindrome-do-intestino-irritavel-e-dor-pelvica-existe-uma-relacao',
-              'seu-cerebro-trabalha-muito-quando-voce-le-entenda-o-que-a-ciencia-descobriu',
-              'marmita-para-emagrecer-como-organizar-as-refeicoes-da-semana-sem-virar-refem-de-dieta',
-              'pressao-alta-veja-como-baixar-o-numero-de-baixo-a-diastolica-com-mudancas-simples-no-dia-a',
-              'de-onde-vem-o-colesterol-entenda-a-origem-e-como-manter-niveis-saudaveis',
-              'o-que-faz-um-gastroenterologista-entenda-quando-procurar-esse-especialista',
-              'quais-exames-toda-mulher-deve-fazer-apos-os-40-anos',
-              'tipos-de-terapia-conheca-as-principais-abordagens-e-como-escolher-a-ideal-para-voce',
-              'osteoporose-como-preservar-a-saude-dos-ossos-antes-dos-50',
-              'quantos-passos-por-dia-voce-realmente-precisa-dar',
-              'exercicio-em-jejum-emagrece-mais-o-que-dizem-os-estudos',
-              'por-que-voce-acorda-cansado-mesmo-dormindo-8-horas',
-              'acucar-escondido-os-alimentos-saudaveis-que-tem-mais-acucar-do-que-parecem',
-              'cafe-da-manha-e-mesmo-a-refeicao-mais-importante-do-dia-o-que-diz-a-ciencia',
-              'pressao-alta-sem-sintomas-por-que-a-hipertensao-e-chamada-de-assassina-silenciosa',
-              'check-up-de-homens-depois-dos-40-os-exames-que-costumam-ficar-de-fora',
-              'ansiedade-antecipatoria-por-que-voce-ja-sofre-antes-de-o-problema-acontecer',
-              'magnesio-para-que-serve-sinais-de-deficiencia-e-quando-vale-suplementar',
-              'whey-protein-faz-mal-aos-rins-o-que-a-ciencia-diz-sobre-o-mito',
-          }
-          all_source_slugs = {row['slug'] for row in rows}
-          expected_drafts = all_source_slugs - expected_published
+          expected_published = {row['slug'] for row in rows}
+          expected_drafts = set()
 
-          if len(expected_published) != 59 or len(expected_drafts) != 27:
-              raise SystemExit('Contagem esperada inconsistente para o ensaio')
+          if len(expected_published) != 86 or len(expected_drafts) != 0:
+              raise SystemExit('Contagem esperada inconsistente para o ensaio final')
 
           article_root = Path('dist/conteudos')
-          generated = {p.parent.name for p in article_root.glob('*/index.html') if p.is_file()} if article_root.is_dir() else set()
+          generated = {
+              p.parent.name
+              for p in article_root.glob('*/index.html')
+              if p.is_file()
+          } if article_root.is_dir() else set()
+
           if generated != expected_published:
-              raise SystemExit('Visibilidade de producao incorreta: ' f'gerados={sorted(generated)} esperados={sorted(expected_published)}')
-          leaked_drafts = sorted(generated & expected_drafts)
-          if leaked_drafts:
-              raise SystemExit(f'Rascunhos expostos no build de producao: {leaked_drafts}')
+              raise SystemExit(
+                  'Visibilidade de producao incorreta: '
+                  f'gerados={sorted(generated)} esperados={sorted(expected_published)}'
+              )
 
           sitemap_files = list(Path('dist').glob('sitemap*.xml'))
           if not sitemap_files:
               raise SystemExit('Sitemap ausente')
           sitemap = '\n'.join(p.read_text(encoding='utf-8') for p in sitemap_files)
+
           rss_path = Path('dist/rss.xml')
           if not rss_path.is_file():
               raise SystemExit('RSS ausente')
           rss = rss_path.read_text(encoding='utf-8')
+
           html_pages = [p.read_text(encoding='utf-8') for p in Path('dist').rglob('*.html')]
           all_html = '\n'.join(html_pages)
+
           if 'noindex,nofollow' in all_html or 'noindex' in all_html:
               raise SystemExit('Build de producao contem diretiva noindex')
 
@@ -153,19 +100,12 @@ jobs:
               if f'/pt-BR/blog/{slug}' in all_html:
                   raise SystemExit(f'Link interno antigo voltou: {slug}')
 
-          for slug in sorted(expected_drafts):
-              canonical = f'https://vitacerta.com.br/conteudos/{slug}/'
-              if canonical in sitemap:
-                  raise SystemExit(f'Rascunho vazou para sitemap: {slug}')
-              if f'/conteudos/{slug}/' in rss:
-                  raise SystemExit(f'Rascunho vazou para RSS: {slug}')
-
-          print('PRODUCTION_REHEARSAL_OK: 59 publicados visiveis, 27 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
+          print('PRODUCTION_REHEARSAL_OK: 86 publicados visiveis, 0 rascunhos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
           PY
 
       - name: Upload production rehearsal artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vitacerta-production-rehearsal-59
+          name: vitacerta-production-rehearsal-86
           path: dist
           retention-days: 3
