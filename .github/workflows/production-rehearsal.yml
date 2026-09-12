@@ -62,11 +62,16 @@ jobs:
               'meditacao-para-ansiedade-como-a-pratica-pode-ajudar-a-acalmar-a-mente',
               'fim-de-semana-sem-tela-7-ideias-de-lazer-para-descansar-a-mente-e-aproveitar-melhor-o-temp',
               'dor-nas-costas-no-home-office-o-que-realmente-ajuda-alem-de-ajustar-a-postura',
+              'vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante',
+              'sintomas-da-falta-de-vitamina-d-sinais-grupos-de-risco-e-quando-suplementar',
+              'guia-definitivo-dos-efeitos-colaterais-do-ozempic-como-aliviar-sintomas-e-proteger-os-musc',
+              'como-nao-perder-massa-magra-usando-ozempic-proteinas-treino-e-suplementacao',
+              'o-que-comer-quando-estiver-com-enjoo-do-ozempic-guia-e-cardapio-pratico',
           }
           all_source_slugs = {row['slug'] for row in rows}
           expected_drafts = all_source_slugs - expected_published
 
-          if len(expected_published) != 14 or len(expected_drafts) != 72:
+          if len(expected_published) != 19 or len(expected_drafts) != 67:
               raise SystemExit('Contagem esperada inconsistente para o ensaio')
 
           article_root = Path('dist/conteudos')
@@ -127,12 +132,12 @@ jobs:
               if f'/conteudos/{slug}/' in rss:
                   raise SystemExit(f'Rascunho vazou para RSS: {slug}')
 
-          print('PRODUCTION_REHEARSAL_OK: 14 publicados visiveis, 72 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
+          print('PRODUCTION_REHEARSAL_OK: 19 publicados visiveis, 67 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
           PY
 
       - name: Upload production rehearsal artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vitacerta-production-rehearsal-14
+          name: vitacerta-production-rehearsal-19
           path: dist
           retention-days: 3
