@@ -13,18 +13,19 @@ export async function getStaticPaths({ paginate }) {
     const posts = await client.fetch(
       `
       *[_type == "post" && language == $lang]
-      | order(_createdAt desc)
+      | order(publishedAt desc, _createdAt desc)
       {
         title,
         description,
         duration,
+        publishedAt,
         _createdAt,
         "slug": slug.current,
-        "image": thumbnail.asset->url,
-        "author": author->{name, slug},
+        "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
+        "author": author->{name, "slug": slug.current},
         "categories": categories[0]->{
-          "title": title[language == $lang][0].value,
-          slug
+          "title": title[_key == $lang][0].value,
+          "slug": slug.current
         }
       }
     `,
@@ -48,7 +49,6 @@ const locale = Astro.params.lang;
 
 const { page } = Astro.props;
 
-
 const totalPages = Math.ceil(page.total / page.size);
 
 const postsCategories = await client.fetch(
@@ -56,7 +56,7 @@ const postsCategories = await client.fetch(
   *[_type == "category"]
   | order(_createdAt desc)
   {
-    "title": title[language == $lang][0].value,
+    "title": title[_key == $lang][0].value,
     "slug": slug.current,
   }
 `,
@@ -69,13 +69,13 @@ const postsCategories = await client.fetch(
 
   <section class="mt-10">
     <div class="container flex flex-wrap justify-between items-center gap-4">
-      <p class="font-semibold uppercase">Categories</p>
+      <p class="font-semibold uppercase">Categorias</p>
       <div class="flex flex-wrap items-center gap-4 justify-start">
         <a
           href={`/${locale}/blog`}
           class="btn btn-outline rounded-full py-1 px-4 h-auto hover:bg-black hover:text-white uppercase"
         >
-          ALL
+          TODAS
         </a>
         {
           postsCategories.map((cat) => (
@@ -93,7 +93,7 @@ const postsCategories = await client.fetch(
   <section class="section mt-5!">
     <div class="container">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-10">
-        {page.data.map((post, index) => <PostCard {...post} />)}
+        {page.data.map((post) => <PostCard {...post} />)}
       </div>
 
       {totalPages > 1 && <Pagination totalPages={totalPages} page={page} />}
