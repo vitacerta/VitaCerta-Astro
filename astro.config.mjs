@@ -9,7 +9,7 @@ import { DEFAULT_LOCALE_SETTING, LOCALES_SETTING } from './src/locales';
 export default defineConfig({
 	site: 'https://vitacerta.com.br/',
 	integrations: [mdx(), sitemap()],
-	image: { domains: ["cdn.sanity.io"], },
+	image: { domains: ["cdn.sanity.io", "blogger.googleusercontent.com"], },
 	vite: {
 		plugins: [tailwindcss()],
 	},
