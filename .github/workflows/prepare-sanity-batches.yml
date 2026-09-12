@@ -63,17 +63,22 @@ jobs:
 
           out = Path('migration/sanity-batches')
           out.mkdir(parents=True, exist_ok=True)
-          for old in out.glob('batch-*.json'):
+          for old in list(out.glob('batch-*.json')) + list(out.glob('meta-*.json')):
               old.unlink()
 
           size = 3
           manifest = []
           for i in range(0, len(docs), size):
               batch = docs[i:i+size]
-              name = f'batch-{i//size+1:02d}.json'
+              n = i//size+1
+              name = f'batch-{n:02d}.json'
+              meta_name = f'meta-{n:02d}.json'
               (out/name).write_text(json.dumps(batch, ensure_ascii=False, indent=2), encoding='utf-8')
+              meta_batch = [{k:v for k,v in d.items() if k != 'legacyBodyHtml'} for d in batch]
+              (out/meta_name).write_text(json.dumps(meta_batch, ensure_ascii=False, indent=2), encoding='utf-8')
               manifest.append({
                   'file': name,
+                  'metaFile': meta_name,
                   'count': len(batch),
                   'slugs': [d['slug']['current'] for d in batch],
               })
