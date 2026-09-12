@@ -1,0 +1,125 @@
+name: Production rehearsal
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - fyrre-base
+    paths:
+      - ".github/workflows/production-rehearsal.yml"
+
+jobs:
+  rehearsal:
+    name: Build production without deploy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      VITE_SANITY_PROJECT_ID: 1dh7sg5j
+      VITE_SANITY_DATASET: production
+      SANITY_PREVIEW: "false"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build as production
+        run: npm run build
+
+      - name: Validate production visibility and SEO
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          rows = json.loads(Path('migration/vitacerta-posts.json').read_text(encoding='utf-8'))
+          if len(rows) != 86:
+              raise SystemExit(f'Manifesto inesperado: {len(rows)} artigos')
+
+          expected_published = {
+              '16-alimentos-que-ajudam-a-aliviar-o-estresse-com-respaldo-cientifico',
+              'a-importancia-da-enfermagem-dentro-do-sistema-de-saude',
+              '10-habitos-simples-para-cuidar-do-coracao-todos-os-dias',
+              'treino-de-forca-depois-dos-40-por-que-a-musculacao-se-torna-ainda-mais-importante',
+          }
+          all_source_slugs = {row['slug'] for row in rows}
+          expected_drafts = all_source_slugs - expected_published
+
+          article_root = Path('dist/conteudos')
+          generated = {
+              p.parent.name
+              for p in article_root.glob('*/index.html')
+              if p.is_file()
+          } if article_root.is_dir() else set()
+
+          if generated != expected_published:
+              raise SystemExit(
+                  'Visibilidade de producao incorreta: '
+                  f'gerados={sorted(generated)} esperados={sorted(expected_published)}'
+              )
+
+          leaked_drafts = sorted(generated & expected_drafts)
+          if leaked_drafts:
+              raise SystemExit(f'Rascunhos expostos no build de producao: {leaked_drafts}')
+
+          sitemap_files = list(Path('dist').glob('sitemap*.xml'))
+          if not sitemap_files:
+              raise SystemExit('Sitemap ausente')
+          sitemap = '\n'.join(p.read_text(encoding='utf-8') for p in sitemap_files)
+
+          rss_path = Path('dist/rss.xml')
+          if not rss_path.is_file():
+              raise SystemExit('RSS ausente')
+          rss = rss_path.read_text(encoding='utf-8')
+
+          html_pages = [p.read_text(encoding='utf-8') for p in Path('dist').rglob('*.html')]
+          all_html = '\n'.join(html_pages)
+
+          if 'noindex,nofollow' in all_html or 'noindex' in all_html:
+              raise SystemExit('Build de producao contem diretiva noindex')
+
+          for slug in sorted(expected_published):
+              page = Path('dist/conteudos') / slug / 'index.html'
+              text = page.read_text(encoding='utf-8')
+              canonical = f'https://vitacerta.com.br/conteudos/{slug}/'
+              if '<html lang="pt-BR">' not in text:
+                  raise SystemExit(f'lang pt-BR ausente em {slug}')
+              if 'rel="canonical"' not in text or canonical not in text:
+                  raise SystemExit(f'Canonical incorreto em {slug}')
+              if canonical not in sitemap:
+                  raise SystemExit(f'Sitemap sem artigo publicado: {slug}')
+              if f'/conteudos/{slug}/' not in rss:
+                  raise SystemExit(f'RSS sem artigo publicado: {slug}')
+              old_route = Path('dist/pt-BR/blog') / slug / 'index.html'
+              if old_route.is_file():
+                  raise SystemExit(f'Rota antiga de artigo voltou: {slug}')
+              if f'/pt-BR/blog/{slug}' in all_html:
+                  raise SystemExit(f'Link interno antigo voltou: {slug}')
+
+          for slug in sorted(expected_drafts):
+              canonical = f'https://vitacerta.com.br/conteudos/{slug}/'
+              if canonical in sitemap:
+                  raise SystemExit(f'Rascunho vazou para sitemap: {slug}')
+              if f'/conteudos/{slug}/' in rss:
+                  raise SystemExit(f'Rascunho vazou para RSS: {slug}')
+
+          print('PRODUCTION_REHEARSAL_OK: 4 publicados visiveis, 82 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
+          PY
+
+      - name: Upload production rehearsal artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitacerta-production-rehearsal-4
+          path: dist
+          retention-days: 3
