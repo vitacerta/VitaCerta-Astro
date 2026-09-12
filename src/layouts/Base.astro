@@ -4,13 +4,24 @@ import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import Drawer from "../components/Drawer.astro";
 
-const { title, description, image } = Astro.props;
+const {
+  title,
+  description,
+  image,
+  canonicalURL,
+  lang = Astro.currentLocale || "pt-BR",
+} = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
-    <BaseHead title={title} description={description} image={image} />
+    <BaseHead
+      title={title}
+      description={description}
+      image={image}
+      canonicalURL={canonicalURL}
+    />
   </head>
   <body>
     <div class="drawer flex-1">
