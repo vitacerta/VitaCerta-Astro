@@ -1,143 +1,263 @@
 {
   "articleCount": 86,
-  "batchCount": 9,
+  "batchCount": 29,
   "batches": [
     {
       "file": "batch-01.json",
-      "count": 10,
+      "count": 3,
       "slugs": [
         "10-habitos-simples-para-cuidar-do-coracao-todos-os-dias",
         "16-alimentos-que-ajudam-a-aliviar-o-estresse-com-respaldo-cientifico",
-        "a-importancia-da-enfermagem-dentro-do-sistema-de-saude",
-        "acucar-escondido-os-alimentos-saudaveis-que-tem-mais-acucar-do-que-parecem",
-        "alongamento-antes-ou-depois-do-treino-o-momento-certo-para-cada-tipo",
-        "alzheimer-quais-sao-os-primeiros-sinais-que-merecem-atencao",
-        "ansiedade-antecipatoria-por-que-voce-ja-sofre-antes-de-o-problema-acontecer",
-        "barriga-inchada-depois-de-comer-7-habitos-que-podem-ajudar-a-evitar-o-desconforto",
-        "cafe-da-manha-e-mesmo-a-refeicao-mais-importante-do-dia-o-que-diz-a-ciencia",
-        "calvicie-nao-e-so-estetica-o-que-ela-pode-revelar-sobre-sua-saude-hormonal"
+        "a-importancia-da-enfermagem-dentro-do-sistema-de-saude"
       ]
     },
     {
       "file": "batch-02.json",
-      "count": 10,
+      "count": 3,
       "slugs": [
-        "cancer-de-mama-o-medo-que-afastou-mulheres-da-reposicao-hormonal-por-20-anos",
-        "cansado-irritado-e-de-mau-humor-seu-intestino-pode-ser-o-culpado",
-        "celular-antes-de-dormir-o-que-a-ciencia-diz-sobre-o-seu-sono",
-        "check-up-de-homens-depois-dos-40-os-exames-que-costumam-ficar-de-fora",
-        "comer-bem-nao-precisa-ser-complicado-o-guia-definitivo-para-uma-alimentacao-saudavel-no-di",
-        "comer-mais-frutas-vermelhas-e-cha-pode-mudar-como-voce-envelhece-um-estudo-de-24-anos-inve",
-        "como-nao-perder-massa-magra-usando-ozempic-proteinas-treino-e-suplementacao",
-        "creatina-como-escolher-a-melhor-e-quanto-realmente-voce-precisa",
-        "creatina-para-mulheres-tudo-o-que-voce-precisa-saber-antes-de-usar",
-        "danca-como-exercicio-os-beneficios-fisicos-e-mentais-de-colocar-o-corpo-em-movimento"
+        "acucar-escondido-os-alimentos-saudaveis-que-tem-mais-acucar-do-que-parecem",
+        "alongamento-antes-ou-depois-do-treino-o-momento-certo-para-cada-tipo",
+        "alzheimer-quais-sao-os-primeiros-sinais-que-merecem-atencao"
       ]
     },
     {
       "file": "batch-03.json",
-      "count": 10,
+      "count": 3,
       "slugs": [
-        "de-onde-vem-o-colesterol-entenda-a-origem-e-como-manter-niveis-saudaveis",
+        "ansiedade-antecipatoria-por-que-voce-ja-sofre-antes-de-o-problema-acontecer",
+        "barriga-inchada-depois-de-comer-7-habitos-que-podem-ajudar-a-evitar-o-desconforto",
+        "cafe-da-manha-e-mesmo-a-refeicao-mais-importante-do-dia-o-que-diz-a-ciencia"
+      ]
+    },
+    {
+      "file": "batch-04.json",
+      "count": 3,
+      "slugs": [
+        "calvicie-nao-e-so-estetica-o-que-ela-pode-revelar-sobre-sua-saude-hormonal",
+        "cancer-de-mama-o-medo-que-afastou-mulheres-da-reposicao-hormonal-por-20-anos",
+        "cansado-irritado-e-de-mau-humor-seu-intestino-pode-ser-o-culpado"
+      ]
+    },
+    {
+      "file": "batch-05.json",
+      "count": 3,
+      "slugs": [
+        "celular-antes-de-dormir-o-que-a-ciencia-diz-sobre-o-seu-sono",
+        "check-up-de-homens-depois-dos-40-os-exames-que-costumam-ficar-de-fora",
+        "comer-bem-nao-precisa-ser-complicado-o-guia-definitivo-para-uma-alimentacao-saudavel-no-di"
+      ]
+    },
+    {
+      "file": "batch-06.json",
+      "count": 3,
+      "slugs": [
+        "comer-mais-frutas-vermelhas-e-cha-pode-mudar-como-voce-envelhece-um-estudo-de-24-anos-inve",
+        "como-nao-perder-massa-magra-usando-ozempic-proteinas-treino-e-suplementacao",
+        "creatina-como-escolher-a-melhor-e-quanto-realmente-voce-precisa"
+      ]
+    },
+    {
+      "file": "batch-07.json",
+      "count": 3,
+      "slugs": [
+        "creatina-para-mulheres-tudo-o-que-voce-precisa-saber-antes-de-usar",
+        "danca-como-exercicio-os-beneficios-fisicos-e-mentais-de-colocar-o-corpo-em-movimento",
+        "de-onde-vem-o-colesterol-entenda-a-origem-e-como-manter-niveis-saudaveis"
+      ]
+    },
+    {
+      "file": "batch-08.json",
+      "count": 3,
+      "slugs": [
         "depois-eu-faco-quando-a-procrastinacao-comeca-a-atrapalhar-sua-vida",
         "depressao-tambem-doi-no-corpo-os-sintomas-fisicos-que-muita-gente-nao-reconhece",
-        "dieta-cetogenica-o-que-a-ciencia-realmente-diz-sobre-essa-forma-de-alimentacao",
+        "dieta-cetogenica-o-que-a-ciencia-realmente-diz-sobre-essa-forma-de-alimentacao"
+      ]
+    },
+    {
+      "file": "batch-09.json",
+      "count": 3,
+      "slugs": [
         "dieta-dash-a-alimentacao-criada-para-ajudar-a-controlar-a-pressao-arterial",
         "dieta-mediterranea-por-que-ela-e-considerada-uma-das-mais-saudaveis-pela-ciencia",
-        "dieta-vegetariana-o-que-acontece-com-a-saude-quando-a-carne-sai-do-prato",
+        "dieta-vegetariana-o-que-acontece-com-a-saude-quando-a-carne-sai-do-prato"
+      ]
+    },
+    {
+      "file": "batch-10.json",
+      "count": 3,
+      "slugs": [
         "disfuncao-eretil-pode-ser-um-alerta-cardiovascular-anos-antes-do-infarto",
         "dor-nas-costas-no-home-office-o-que-realmente-ajuda-alem-de-ajustar-a-postura",
         "dormindo-mal-entenda-quando-o-magnesio-pode-ajudar-a-melhorar-o-sono"
       ]
     },
     {
-      "file": "batch-04.json",
-      "count": 10,
+      "file": "batch-11.json",
+      "count": 3,
       "slugs": [
         "efervescencia-coletiva-por-que-viver-experiencias-em-grupo-faz-tao-bem-para-a-sua-saude-me",
         "envelhecer-bem-nao-e-so-viver-mais-o-que-voce-pode-fazer-hoje-para-preservar-sua-autonomia",
-        "esquecimento-falta-de-foco-e-dificuldade-para-aprender-7-habitos-simples-que-ajudam-a-cuid",
+        "esquecimento-falta-de-foco-e-dificuldade-para-aprender-7-habitos-simples-que-ajudam-a-cuid"
+      ]
+    },
+    {
+      "file": "batch-12.json",
+      "count": 3,
+      "slugs": [
         "esta-apertando-os-olhos-para-enxergar-melhor-talvez-nao-seja-apenas-cansaco",
         "exercicio-em-jejum-emagrece-mais-o-que-dizem-os-estudos",
-        "ferro-para-que-serve-sinais-de-deficiencia-e-por-que-as-mulheres-sao-as-mais-afetadas",
+        "ferro-para-que-serve-sinais-de-deficiencia-e-por-que-as-mulheres-sao-as-mais-afetadas"
+      ]
+    },
+    {
+      "file": "batch-13.json",
+      "count": 3,
+      "slugs": [
         "fim-de-semana-sem-tela-7-ideias-de-lazer-para-descansar-a-mente-e-aproveitar-melhor-o-temp",
         "garganta-seca-ou-irritada-5-dicas-eficazes-para-aliviar-o-desconforto",
-        "guia-completo-sobre-dor-abdominal-causas-sintomas-e-quando-procurar-um-medico",
-        "guia-definitivo-dos-efeitos-colaterais-do-ozempic-como-aliviar-sintomas-e-proteger-os-musc"
+        "guia-completo-sobre-dor-abdominal-causas-sintomas-e-quando-procurar-um-medico"
       ]
     },
     {
-      "file": "batch-05.json",
-      "count": 10,
+      "file": "batch-14.json",
+      "count": 3,
       "slugs": [
+        "guia-definitivo-dos-efeitos-colaterais-do-ozempic-como-aliviar-sintomas-e-proteger-os-musc",
         "jejum-intermitente-como-funciona-quais-sao-os-beneficios-e-o-que-voce-precisa-saber-antes-",
-        "jejum-intermitente-sera-que-ficar-algumas-horas-sem-comer-realmente-faz-diferenca",
+        "jejum-intermitente-sera-que-ficar-algumas-horas-sem-comer-realmente-faz-diferenca"
+      ]
+    },
+    {
+      "file": "batch-15.json",
+      "count": 3,
+      "slugs": [
         "longevidade-os-habitos-que-realmente-aumentam-os-anos-de-vida-com-saude",
         "magnesio-para-que-serve-sinais-de-deficiencia-e-quando-vale-suplementar",
-        "marmita-para-emagrecer-como-organizar-as-refeicoes-da-semana-sem-virar-refem-de-dieta",
-        "maxxing-por-que-a-busca-pela-versao-otimizada-de-si-mesmo-pode-estar-te-adoecendo",
-        "meditacao-para-ansiedade-como-a-pratica-pode-ajudar-a-acalmar-a-mente",
-        "menopausa-o-que-mudou-nos-tratamentos-e-quais-opcoes-existem-hoje",
-        "nao-gosta-de-academia-7-atividades-de-lazer-que-ajudam-a-manter-o-corpo-em-movimento",
-        "nutricionista-alimentando-vidas-promovendo-saude"
+        "marmita-para-emagrecer-como-organizar-as-refeicoes-da-semana-sem-virar-refem-de-dieta"
       ]
     },
     {
-      "file": "batch-06.json",
-      "count": 10,
+      "file": "batch-16.json",
+      "count": 3,
       "slugs": [
-        "o-infarto-que-passa-despercebido-por-que-o-coracao-da-mulher-avisa-de-forma-diferente",
+        "maxxing-por-que-a-busca-pela-versao-otimizada-de-si-mesmo-pode-estar-te-adoecendo",
+        "meditacao-para-ansiedade-como-a-pratica-pode-ajudar-a-acalmar-a-mente",
+        "menopausa-o-que-mudou-nos-tratamentos-e-quais-opcoes-existem-hoje"
+      ]
+    },
+    {
+      "file": "batch-17.json",
+      "count": 3,
+      "slugs": [
+        "nao-gosta-de-academia-7-atividades-de-lazer-que-ajudam-a-manter-o-corpo-em-movimento",
+        "nutricionista-alimentando-vidas-promovendo-saude",
+        "o-infarto-que-passa-despercebido-por-que-o-coracao-da-mulher-avisa-de-forma-diferente"
+      ]
+    },
+    {
+      "file": "batch-18.json",
+      "count": 3,
+      "slugs": [
         "o-medo-do-infarto-fez-homens-evitarem-a-reposicao-de-testosterona-veja-o-que-mudou",
         "o-que-comer-quando-estiver-com-enjoo-do-ozempic-guia-e-cardapio-pratico",
-        "o-que-faz-um-gastroenterologista-entenda-quando-procurar-esse-especialista",
+        "o-que-faz-um-gastroenterologista-entenda-quando-procurar-esse-especialista"
+      ]
+    },
+    {
+      "file": "batch-19.json",
+      "count": 3,
+      "slugs": [
         "o-que-significa-aquela-pontada-no-peito-que-surge-quando-voce-respira-fundo",
         "o-ronco-que-pode-estar-preparando-seu-corpo-para-um-infarto",
-        "omega-3-faz-bem-para-o-coracao-o-que-as-pesquisas-realmente-descobriram",
+        "omega-3-faz-bem-para-o-coracao-o-que-as-pesquisas-realmente-descobriram"
+      ]
+    },
+    {
+      "file": "batch-20.json",
+      "count": 3,
+      "slugs": [
         "osteoporose-como-preservar-a-saude-dos-ossos-antes-dos-50",
         "passou-dos-40-e-esta-muito-tempo-sentado-o-que-caminhar-todos-os-dias-pode-mudar-na-sua-sa",
         "plato-de-emagrecimento-por-que-o-peso-trava-mesmo-fazendo-tudo-certo-e-o-que-a-ciencia-sug"
       ]
     },
     {
-      "file": "batch-07.json",
-      "count": 10,
+      "file": "batch-21.json",
+      "count": 3,
       "slugs": [
         "por-que-minhas-pernas-parecem-pesadas-no-fim-do-dia-cansaco-ou-circulacao",
         "por-que-sinto-tanto-sono-depois-do-almoco-e-como-evitar-a-lerdeza",
-        "por-que-voce-acorda-cansado-mesmo-dormindo-8-horas",
+        "por-que-voce-acorda-cansado-mesmo-dormindo-8-horas"
+      ]
+    },
+    {
+      "file": "batch-22.json",
+      "count": 3,
+      "slugs": [
         "pressao-alta-sem-sintomas-por-que-a-hipertensao-e-chamada-de-assassina-silenciosa",
         "pressao-alta-veja-como-baixar-o-numero-de-baixo-a-diastolica-com-mudancas-simples-no-dia-a",
-        "proteina-em-tudo-voce-realmente-precisa-de-tantos-alimentos-proteicos",
+        "proteina-em-tudo-voce-realmente-precisa-de-tantos-alimentos-proteicos"
+      ]
+    },
+    {
+      "file": "batch-23.json",
+      "count": 3,
+      "slugs": [
         "quais-exames-toda-mulher-deve-fazer-apos-os-40-anos",
         "quantos-passos-por-dia-voce-realmente-precisa-dar",
-        "que-tal-trocar-o-carro-pela-bicicleta-seu-trajeto-pode-virar-atividade-fisica",
-        "relogio-que-mede-a-frequencia-cardiaca-vale-a-pena-5-modelos-populares-no-brasil-e-o-que-o"
+        "que-tal-trocar-o-carro-pela-bicicleta-seu-trajeto-pode-virar-atividade-fisica"
       ]
     },
     {
-      "file": "batch-08.json",
-      "count": 10,
+      "file": "batch-24.json",
+      "count": 3,
       "slugs": [
+        "relogio-que-mede-a-frequencia-cardiaca-vale-a-pena-5-modelos-populares-no-brasil-e-o-que-o",
         "saciado-por-mais-tempo-veja-os-alimentos-que-controlam-a-fome",
-        "sentindo-o-corpo-travado-o-tempo-que-voce-passa-sentado-pode-ser-o-culpado",
+        "sentindo-o-corpo-travado-o-tempo-que-voce-passa-sentado-pode-ser-o-culpado"
+      ]
+    },
+    {
+      "file": "batch-25.json",
+      "count": 3,
+      "slugs": [
         "seu-cerebro-trabalha-muito-quando-voce-le-entenda-o-que-a-ciencia-descobriu",
         "sindrome-do-intestino-irritavel-e-dor-pelvica-existe-uma-relacao",
-        "sindrome-do-panico-o-que-acontece-no-cerebro-durante-uma-crise",
-        "sintomas-da-falta-de-vitamina-d-sinais-grupos-de-risco-e-quando-suplementar",
-        "sua-sede-continua-mesmo-bebendo-agua-descubra-o-que-pode-estar-faltando",
-        "tdah-em-adultos-por-que-tantos-diagnosticos-chegam-so-depois-dos-30",
-        "tipos-de-terapia-conheca-as-principais-abordagens-e-como-escolher-a-ideal-para-voce",
-        "treino-de-forca-depois-dos-40-por-que-a-musculacao-se-torna-ainda-mais-importante"
+        "sindrome-do-panico-o-que-acontece-no-cerebro-durante-uma-crise"
       ]
     },
     {
-      "file": "batch-09.json",
-      "count": 6,
+      "file": "batch-26.json",
+      "count": 3,
       "slugs": [
-        "vitamina-b12-a-deficiencia-silenciosa-que-afeta-vegetarianos-idosos-e-quem-toma-certos-rem",
+        "sintomas-da-falta-de-vitamina-d-sinais-grupos-de-risco-e-quando-suplementar",
+        "sua-sede-continua-mesmo-bebendo-agua-descubra-o-que-pode-estar-faltando",
+        "tdah-em-adultos-por-que-tantos-diagnosticos-chegam-so-depois-dos-30"
+      ]
+    },
+    {
+      "file": "batch-27.json",
+      "count": 3,
+      "slugs": [
+        "tipos-de-terapia-conheca-as-principais-abordagens-e-como-escolher-a-ideal-para-voce",
+        "treino-de-forca-depois-dos-40-por-que-a-musculacao-se-torna-ainda-mais-importante",
+        "vitamina-b12-a-deficiencia-silenciosa-que-afeta-vegetarianos-idosos-e-quem-toma-certos-rem"
+      ]
+    },
+    {
+      "file": "batch-28.json",
+      "count": 3,
+      "slugs": [
         "vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante",
         "vitaminas-depois-dos-40-o-que-realmente-vale-a-pena-suplementar",
-        "whey-protein-faz-mal-aos-rins-o-que-a-ciencia-diz-sobre-o-mito",
+        "whey-protein-faz-mal-aos-rins-o-que-a-ciencia-diz-sobre-o-mito"
+      ]
+    },
+    {
+      "file": "batch-29.json",
+      "count": 2,
+      "slugs": [
         "zinco-o-mineral-esquecido-que-ajuda-na-imunidade-e-na-cicatrizacao",
         "zumbido-no-ouvido-quando-e-so-estresse-e-quando-merece-investigacao"
       ]
