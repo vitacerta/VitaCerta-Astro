@@ -78,8 +78,11 @@ jobs:
           lang_problems = []
 
           html_pages = []
+          html_by_path = {}
           for hp in Path('dist').rglob('*.html'):
-              html_pages.append(hp.read_text(encoding='utf-8'))
+              page_text = hp.read_text(encoding='utf-8')
+              html_pages.append(page_text)
+              html_by_path[str(hp)] = page_text
           all_html = '\n'.join(html_pages)
 
           sitemap_text = '\n'.join(
@@ -117,8 +120,15 @@ jobs:
               if '<html lang="pt-BR">' not in text:
                   lang_problems.append(slug)
 
-              if f'/pt-BR/blog/{slug}' in all_html:
+              needle = f'/pt-BR/blog/{slug}'
+              if needle in all_html:
                   old_internal_links.append(slug)
+                  for page_path, page_text in html_by_path.items():
+                      start = page_text.find(needle)
+                      if start != -1:
+                          left = max(0, start - 180)
+                          right = min(len(page_text), start + len(needle) + 180)
+                          print('OLD_LINK_CONTEXT', slug, page_path, repr(page_text[left:right]))
               if expected not in sitemap_text:
                   sitemap_missing.append(slug)
               if f'/conteudos/{slug}/' not in rss_text:
