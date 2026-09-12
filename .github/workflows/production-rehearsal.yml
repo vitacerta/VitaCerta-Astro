@@ -57,11 +57,16 @@ jobs:
               'passou-dos-40-e-esta-muito-tempo-sentado-o-que-caminhar-todos-os-dias-pode-mudar-na-sua-sa',
               'proteina-em-tudo-voce-realmente-precisa-de-tantos-alimentos-proteicos',
               'envelhecer-bem-nao-e-so-viver-mais-o-que-voce-pode-fazer-hoje-para-preservar-sua-autonomia',
+              'plato-de-emagrecimento-por-que-o-peso-trava-mesmo-fazendo-tudo-certo-e-o-que-a-ciencia-sug',
+              'menopausa-o-que-mudou-nos-tratamentos-e-quais-opcoes-existem-hoje',
+              'meditacao-para-ansiedade-como-a-pratica-pode-ajudar-a-acalmar-a-mente',
+              'fim-de-semana-sem-tela-7-ideias-de-lazer-para-descansar-a-mente-e-aproveitar-melhor-o-temp',
+              'dor-nas-costas-no-home-office-o-que-realmente-ajuda-alem-de-ajustar-a-postura',
           }
           all_source_slugs = {row['slug'] for row in rows}
           expected_drafts = all_source_slugs - expected_published
 
-          if len(expected_published) != 9 or len(expected_drafts) != 77:
+          if len(expected_published) != 14 or len(expected_drafts) != 72:
               raise SystemExit('Contagem esperada inconsistente para o ensaio')
 
           article_root = Path('dist/conteudos')
@@ -122,12 +127,12 @@ jobs:
               if f'/conteudos/{slug}/' in rss:
                   raise SystemExit(f'Rascunho vazou para RSS: {slug}')
 
-          print('PRODUCTION_REHEARSAL_OK: 9 publicados visiveis, 77 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
+          print('PRODUCTION_REHEARSAL_OK: 14 publicados visiveis, 72 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
           PY
 
       - name: Upload production rehearsal artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vitacerta-production-rehearsal-9
+          name: vitacerta-production-rehearsal-14
           path: dist
           retention-days: 3
