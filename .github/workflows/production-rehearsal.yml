@@ -92,26 +92,32 @@ jobs:
               'seu-cerebro-trabalha-muito-quando-voce-le-entenda-o-que-a-ciencia-descobriu',
               'marmita-para-emagrecer-como-organizar-as-refeicoes-da-semana-sem-virar-refem-de-dieta',
               'pressao-alta-veja-como-baixar-o-numero-de-baixo-a-diastolica-com-mudancas-simples-no-dia-a',
+              'de-onde-vem-o-colesterol-entenda-a-origem-e-como-manter-niveis-saudaveis',
+              'o-que-faz-um-gastroenterologista-entenda-quando-procurar-esse-especialista',
+              'quais-exames-toda-mulher-deve-fazer-apos-os-40-anos',
+              'tipos-de-terapia-conheca-as-principais-abordagens-e-como-escolher-a-ideal-para-voce',
+              'osteoporose-como-preservar-a-saude-dos-ossos-antes-dos-50',
+              'quantos-passos-por-dia-voce-realmente-precisa-dar',
+              'exercicio-em-jejum-emagrece-mais-o-que-dizem-os-estudos',
+              'por-que-voce-acorda-cansado-mesmo-dormindo-8-horas',
+              'acucar-escondido-os-alimentos-saudaveis-que-tem-mais-acucar-do-que-parecem',
+              'cafe-da-manha-e-mesmo-a-refeicao-mais-importante-do-dia-o-que-diz-a-ciencia',
+              'pressao-alta-sem-sintomas-por-que-a-hipertensao-e-chamada-de-assassina-silenciosa',
+              'check-up-de-homens-depois-dos-40-os-exames-que-costumam-ficar-de-fora',
+              'ansiedade-antecipatoria-por-que-voce-ja-sofre-antes-de-o-problema-acontecer',
+              'magnesio-para-que-serve-sinais-de-deficiencia-e-quando-vale-suplementar',
+              'whey-protein-faz-mal-aos-rins-o-que-a-ciencia-diz-sobre-o-mito',
           }
           all_source_slugs = {row['slug'] for row in rows}
           expected_drafts = all_source_slugs - expected_published
 
-          if len(expected_published) != 44 or len(expected_drafts) != 42:
+          if len(expected_published) != 59 or len(expected_drafts) != 27:
               raise SystemExit('Contagem esperada inconsistente para o ensaio')
 
           article_root = Path('dist/conteudos')
-          generated = {
-              p.parent.name
-              for p in article_root.glob('*/index.html')
-              if p.is_file()
-          } if article_root.is_dir() else set()
-
+          generated = {p.parent.name for p in article_root.glob('*/index.html') if p.is_file()} if article_root.is_dir() else set()
           if generated != expected_published:
-              raise SystemExit(
-                  'Visibilidade de producao incorreta: '
-                  f'gerados={sorted(generated)} esperados={sorted(expected_published)}'
-              )
-
+              raise SystemExit('Visibilidade de producao incorreta: ' f'gerados={sorted(generated)} esperados={sorted(expected_published)}')
           leaked_drafts = sorted(generated & expected_drafts)
           if leaked_drafts:
               raise SystemExit(f'Rascunhos expostos no build de producao: {leaked_drafts}')
@@ -120,15 +126,12 @@ jobs:
           if not sitemap_files:
               raise SystemExit('Sitemap ausente')
           sitemap = '\n'.join(p.read_text(encoding='utf-8') for p in sitemap_files)
-
           rss_path = Path('dist/rss.xml')
           if not rss_path.is_file():
               raise SystemExit('RSS ausente')
           rss = rss_path.read_text(encoding='utf-8')
-
           html_pages = [p.read_text(encoding='utf-8') for p in Path('dist').rglob('*.html')]
           all_html = '\n'.join(html_pages)
-
           if 'noindex,nofollow' in all_html or 'noindex' in all_html:
               raise SystemExit('Build de producao contem diretiva noindex')
 
@@ -157,12 +160,12 @@ jobs:
               if f'/conteudos/{slug}/' in rss:
                   raise SystemExit(f'Rascunho vazou para RSS: {slug}')
 
-          print('PRODUCTION_REHEARSAL_OK: 44 publicados visiveis, 42 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
+          print('PRODUCTION_REHEARSAL_OK: 59 publicados visiveis, 27 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
           PY
 
       - name: Upload production rehearsal artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vitacerta-production-rehearsal-44
+          name: vitacerta-production-rehearsal-59
           path: dist
           retention-days: 3
