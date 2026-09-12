@@ -22,7 +22,7 @@ jobs:
       - name: Gerar lotes Sanity
         run: |
           python3 - <<'PY'
-          import json, re, hashlib
+          import json, re
           from html import unescape
           from pathlib import Path
 
@@ -46,10 +46,8 @@ jobs:
           for r in rows:
               cat_id, cat_slug = categories[r['category']]
               slug = r['slug']
-              stable_id = 'vitacerta-post-' + hashlib.sha1(slug.encode('utf-8')).hexdigest()[:24]
               words = text_words(r.get('bodyHtml',''))
               docs.append({
-                  '_id': stable_id,
                   '_type': 'post',
                   'language': 'pt-BR',
                   'title': r['title'],
