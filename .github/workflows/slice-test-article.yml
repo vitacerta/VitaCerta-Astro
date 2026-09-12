@@ -1,0 +1,35 @@
+name: Prepara artigo teste Sanity
+
+on:
+  push:
+    branches: [fyrre-base]
+    paths:
+      - '.github/workflows/slice-test-article.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  slice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fyrre-base
+      - name: Extrair primeiro artigo do manifesto
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          rows = json.loads(Path('migration/vitacerta-posts.json').read_text(encoding='utf-8'))
+          Path('migration/test-article.json').write_text(json.dumps(rows[0], ensure_ascii=False, indent=2), encoding='utf-8')
+          print(rows[0]['slug'])
+          PY
+      - name: Commitar artigo de teste
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add migration/test-article.json
+          git commit -m "Extrai primeiro artigo para teste Sanity" || exit 0
+          git push origin HEAD:fyrre-base
