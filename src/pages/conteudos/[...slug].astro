@@ -43,6 +43,18 @@ const { post } = Astro.props;
 const displayDate = post.publishedAt || post._createdAt;
 const canonicalURL = post.canonicalURL || `https://vitacerta.com.br/conteudos/${post.slug}/`;
 
+const normalizeLegacyInternalLinks = (html = "") => html
+  .replace(
+    /https?:\/\/(?:www\.)?vitacerta\.com\.br\/pt-BR\/blog\/([a-z0-9-]+)\/?/gi,
+    "/conteudos/$1/",
+  )
+  .replace(
+    /\/pt-BR\/blog\/([a-z0-9-]+)\/?/gi,
+    "/conteudos/$1/",
+  );
+
+const legacyBodyHtml = normalizeLegacyInternalLinks(post.legacyBodyHtml || "");
+
 const relatedPosts = await client.fetch(
   `
   *[_type == "post" && language == $lang && slug.current != $currentSlug]
@@ -136,8 +148,8 @@ const socials = [
 
         {post.body ? (
           <div class="post"><PortableComponent body={post.body} /></div>
-        ) : post.legacyBodyHtml ? (
-          <div class="post" set:html={post.legacyBodyHtml}></div>
+        ) : legacyBodyHtml ? (
+          <div class="post" set:html={legacyBodyHtml}></div>
         ) : null}
       </div>
     </div>
