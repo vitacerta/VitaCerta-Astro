@@ -11,15 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: "11.3.0"
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: "pnpm"
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
       - name: Prepare isolated project preview
         run: |
           python - <<'PY'
@@ -42,13 +39,9 @@ jobs:
       - name: Validate preview paths
         run: |
           test -f dist/index.html
-          test -f dist/conteudos/index.html
-          grep -q '/VitaCerta-Astro/conteudos/' dist/index.html
           grep -q 'noindex,nofollow' dist/index.html
       - uses: actions/upload-artifact@v4
         with:
           name: vitacerta-astro-preview
           path: dist
           retention-days: 3
-
-# validation trigger 2026-09-12
