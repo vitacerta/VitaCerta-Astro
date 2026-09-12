@@ -52,9 +52,17 @@ jobs:
               'a-importancia-da-enfermagem-dentro-do-sistema-de-saude',
               '10-habitos-simples-para-cuidar-do-coracao-todos-os-dias',
               'treino-de-forca-depois-dos-40-por-que-a-musculacao-se-torna-ainda-mais-importante',
+              'longevidade-os-habitos-que-realmente-aumentam-os-anos-de-vida-com-saude',
+              'creatina-para-mulheres-tudo-o-que-voce-precisa-saber-antes-de-usar',
+              'passou-dos-40-e-esta-muito-tempo-sentado-o-que-caminhar-todos-os-dias-pode-mudar-na-sua-sa',
+              'proteina-em-tudo-voce-realmente-precisa-de-tantos-alimentos-proteicos',
+              'envelhecer-bem-nao-e-so-viver-mais-o-que-voce-pode-fazer-hoje-para-preservar-sua-autonomia',
           }
           all_source_slugs = {row['slug'] for row in rows}
           expected_drafts = all_source_slugs - expected_published
+
+          if len(expected_published) != 9 or len(expected_drafts) != 77:
+              raise SystemExit('Contagem esperada inconsistente para o ensaio')
 
           article_root = Path('dist/conteudos')
           generated = {
@@ -114,12 +122,12 @@ jobs:
               if f'/conteudos/{slug}/' in rss:
                   raise SystemExit(f'Rascunho vazou para RSS: {slug}')
 
-          print('PRODUCTION_REHEARSAL_OK: 4 publicados visiveis, 82 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
+          print('PRODUCTION_REHEARSAL_OK: 9 publicados visiveis, 77 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
           PY
 
       - name: Upload production rehearsal artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vitacerta-production-rehearsal-4
+          name: vitacerta-production-rehearsal-9
           path: dist
           retention-days: 3
