@@ -7,17 +7,18 @@ const locale = Astro.currentLocale;
 const post = await client.fetch(
   `
   *[_type == "post" && language == $locale]
-  | order(_createdAt desc)[0]{
+  | order(publishedAt desc, _createdAt desc)[0]{
     title,
     description,
     duration,
+    publishedAt,
     _createdAt,
     "slug": slug.current,
-    "image": coalesce(mainImage.asset->url, thumbnail.asset->url),
-    "author": author->{name, slug},
+    "image": coalesce(mainImage.asset->url, thumbnail.asset->url, coverUrl),
+    "author": author->{name, "slug": slug.current},
     "categories": categories[0]->{
-      "title": title[language == $locale][0].value,
-      slug
+      "title": title[_key == $locale][0].value,
+      "slug": slug.current
     }
   }
   `,
@@ -26,9 +27,7 @@ const post = await client.fetch(
   },
 );
 
-//console.log("post", post);
-if (post?.categories) console.log("cat", post.categories.title);
-//console.log("img", post.image);
+const displayDate = post?.publishedAt || post?._createdAt;
 ---
 
 {
@@ -45,49 +44,59 @@ if (post?.categories) console.log("cat", post.categories.title);
             </a>
 
             <div class="flex flex-wrap gap-x-6 gap-y-3 justify-between items-center">
-              <p>
-                <b class="mr-2">Text</b>
-                <a
-                  href={`/${locale}/authors/${post.author.slug.current}`}
-                  class="hover:underline"
-                >
-                  {post.author.name}
-                </a>
-              </p>
-              <p>
-                <b class="mr-2">Date</b>
-                <span>{formatDate(post._createdAt)}</span>
-              </p>
-              <p>
-                <b class="mr-2">Duration</b>
-                <span>{post.duration} Min</span>
-              </p>
+              {post.author && (
+                <p>
+                  <b class="mr-2">Texto</b>
+                  <a
+                    href={`/${locale}/authors/${post.author.slug}`}
+                    class="hover:underline"
+                  >
+                    {post.author.name}
+                  </a>
+                </p>
+              )}
+              {displayDate && (
+                <p>
+                  <b class="mr-2">Data</b>
+                  <span>{formatDate(displayDate)}</span>
+                </p>
+              )}
+              {post.duration != null && (
+                <p>
+                  <b class="mr-2">Leitura</b>
+                  <span>{post.duration} min</span>
+                </p>
+              )}
 
-              <a
-                href={`/${locale}/blog/${post.categories.slug.current}`}
-                class="ml-auto btn btn-outline rounded-full py-1 px-4 h-auto hover:bg-black hover:text-white uppercase"
-              >
-                {post.categories.title}
-              </a>
+              {post.categories && (
+                <a
+                  href={`/${locale}/blog/${post.categories.slug}`}
+                  class="ml-auto btn btn-outline rounded-full py-1 px-4 h-auto hover:bg-black hover:text-white uppercase"
+                >
+                  {post.categories.title}
+                </a>
+              )}
             </div>
           </div>
         </div>
-        <div class="order-1 lg:order-2">
-          <a href={`/${locale}/blog/${post.slug}`} class="group-hover:underline">
-            <Image
-              src={post.image}
-              alt={post.title}
-              width={700}
-              height={350}
-              format="webp"
-              quality={50}
-              loading="eager"
-              fetchpriority="high"
-              sizes="100vw"
-              class="w-full h-auto aspect-[2/1] object-cover"
-            />
-          </a>
-        </div>
+        {post.image && (
+          <div class="order-1 lg:order-2">
+            <a href={`/${locale}/blog/${post.slug}`} class="group-hover:underline">
+              <Image
+                src={post.image}
+                alt={post.title}
+                width={700}
+                height={350}
+                format="webp"
+                quality={50}
+                loading="eager"
+                fetchpriority="high"
+                sizes="100vw"
+                class="w-full h-auto aspect-[2/1] object-cover"
+              />
+            </a>
+          </div>
+        )}
       </div>
     </section>
   ) : null
