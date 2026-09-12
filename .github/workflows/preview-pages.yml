@@ -9,6 +9,9 @@ on:
 jobs:
   preview:
     runs-on: ubuntu-latest
+    env:
+      VITE_SANITY_PROJECT_ID: 1dh7sg5j
+      VITE_SANITY_DATASET: production
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -40,6 +43,9 @@ jobs:
         run: |
           test -f dist/index.html
           grep -q 'noindex,nofollow' dist/index.html
+          test -f "dist/pt-BR/blog/10-habitos-simples-para-cuidar-do-coracao-todos-os-dias/index.html"
+          test -f "dist/pt-BR/blog/16-alimentos-que-ajudam-a-aliviar-o-estresse-com-respaldo-cientifico/index.html"
+          test -f "dist/pt-BR/blog/a-importancia-da-enfermagem-dentro-do-sistema-de-saude/index.html"
       - uses: actions/upload-artifact@v4
         with:
           name: vitacerta-astro-preview
