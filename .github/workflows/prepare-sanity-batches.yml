@@ -74,13 +74,18 @@ jobs:
               name = f'batch-{n:02d}.json'
               meta_name = f'meta-{n:02d}.json'
               (out/name).write_text(json.dumps(batch, ensure_ascii=False, indent=2), encoding='utf-8')
-              meta_batch = [{k:v for k,v in d.items() if k != 'legacyBodyHtml'} for d in batch]
+              meta_batch = []
+              for d in batch:
+                  meta = {k:v for k,v in d.items() if k != 'legacyBodyHtml'}
+                  meta['sourceBodyLength'] = len(d.get('legacyBodyHtml',''))
+                  meta_batch.append(meta)
               (out/meta_name).write_text(json.dumps(meta_batch, ensure_ascii=False, indent=2), encoding='utf-8')
               manifest.append({
                   'file': name,
                   'metaFile': meta_name,
                   'count': len(batch),
                   'slugs': [d['slug']['current'] for d in batch],
+                  'bodyLengths': [len(d.get('legacyBodyHtml','')) for d in batch],
               })
 
           (out/'manifest.json').write_text(json.dumps({
