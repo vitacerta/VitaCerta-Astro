@@ -46,7 +46,7 @@ const authorSlug = author?.slug?.current || author?.slug;
         </a>
       )}
     </div>
-    <a href={`/${locale}/blog/${slug}`} class="mb-auto">
+    <a href={`/conteudos/${slug}`} class="mb-auto">
       {image && (
         <Image
           src={image}
@@ -65,7 +65,7 @@ const authorSlug = author?.slug?.current || author?.slug;
   <div
     class="mx-auto lg:mx-0 flex flex-wrap justify-between items-center mt-auto"
   >
-    <a href={`/${locale}/blog/${slug}`}>
+    <a href={`/conteudos/${slug}`}>
       <p>{description}</p>
     </a>
     <div class="flex flex-wrap gap-x-6 gap-y-3 justify-start items-center mt-4">
