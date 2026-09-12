@@ -5,6 +5,8 @@ on:
   push:
     paths:
       - ".github/workflows/preview-pages.yml"
+      - "src/**"
+      - "migration/**"
 
 jobs:
   preview:
@@ -69,9 +71,10 @@ jobs:
           missing = []
           title_mismatch = []
           too_small = []
+          legacy_routes = []
           for row in rows:
               slug = row['slug']
-              p = Path('dist/pt-BR/blog') / slug / 'index.html'
+              p = Path('dist/conteudos') / slug / 'index.html'
               if not p.is_file():
                   missing.append(slug)
                   continue
@@ -83,17 +86,22 @@ jobs:
               if len(text) < 3000:
                   too_small.append(slug)
 
-          if missing or title_mismatch or too_small:
+              old = Path('dist/pt-BR/blog') / slug / 'index.html'
+              if old.is_file():
+                  legacy_routes.append(slug)
+
+          if missing or title_mismatch or too_small or legacy_routes:
               print('missing=', missing)
               print('title_mismatch=', title_mismatch)
               print('too_small=', too_small)
+              print('legacy_routes=', legacy_routes)
               raise SystemExit('Falha na validacao dos artigos')
 
           root = Path('dist/index.html').read_text(encoding='utf-8')
           if 'noindex,nofollow' not in root:
               raise SystemExit('Preview sem noindex')
 
-          print(f'VALIDADO: {len(rows)} artigos, home, listagem e 5 categorias')
+          print(f'VALIDADO: {len(rows)} artigos em /conteudos/, home, listagem e 5 categorias; rota antiga ausente')
           PY
       - name: Audit 4 published pilots against canonical migration source
         run: |
