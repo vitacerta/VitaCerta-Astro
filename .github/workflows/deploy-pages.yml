@@ -42,6 +42,31 @@ jobs:
         run: npm ci
       - name: Build production
         run: npm run build
+      - name: Prepare technical GitHub Pages path
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          base = '/VitaCerta-Astro'
+
+          for p in Path('dist').rglob('*.html'):
+              s = p.read_text(encoding='utf-8')
+              if '<head>' in s and 'name="robots"' not in s:
+                  s = s.replace('<head>', '<head><meta name="robots" content="noindex,nofollow">', 1)
+              s = re.sub(r'((?:href|src)=["\'])/(?!/)', rf'\1{base}/', s)
+              p.write_text(s, encoding='utf-8')
+
+          for p in Path('dist').rglob('*.css'):
+              s = p.read_text(encoding='utf-8')
+              s = re.sub(r'url\((["\']?)/(?!/)', rf'url(\1{base}/', s)
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Verify technical Pages paths
+        run: |
+          grep -q '/VitaCerta-Astro/_astro/' dist/index.html
+          grep -q 'noindex,nofollow' dist/index.html
+          test "$(find dist/conteudos -type f -name index.html | wc -l)" -eq 86
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
