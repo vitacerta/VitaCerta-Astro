@@ -45,7 +45,7 @@ jobs:
       - name: Validate all 86 VitaCerta articles
         run: |
           python - <<'PY'
-          import json, html, sys
+          import json, html
           from pathlib import Path
 
           rows = json.loads(Path('migration/vitacerta-posts.json').read_text(encoding='utf-8'))
@@ -77,7 +77,8 @@ jobs:
                   continue
               text = p.read_text(encoding='utf-8')
               title = row['title']
-              if title not in text and html.escape(title, quote=False) not in text:
+              escaped_title = html.escape(title, quote=True)
+              if title not in text and escaped_title not in text:
                   title_mismatch.append(slug)
               if len(text) < 3000:
                   too_small.append(slug)
