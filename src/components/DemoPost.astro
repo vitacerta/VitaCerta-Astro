@@ -35,11 +35,11 @@ const displayDate = post?.publishedAt || post?._createdAt;
     <section class="section section-demo-post">
       <div class="container grid gap-10">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 order-2 lg:order-1 group">
-          <a href={`/${locale}/blog/${post.slug}`} class="group-hover:underline">
+          <a href={`/conteudos/${post.slug}`} class="group-hover:underline">
             <h2 class="h1">{post.title}</h2>
           </a>
           <div class="grid gap-4">
-            <a href={`/${locale}/blog/${post.slug}`}>
+            <a href={`/conteudos/${post.slug}`}>
               <p>{post.description}</p>
             </a>
 
@@ -81,7 +81,7 @@ const displayDate = post?.publishedAt || post?._createdAt;
         </div>
         {post.image && (
           <div class="order-1 lg:order-2">
-            <a href={`/${locale}/blog/${post.slug}`} class="group-hover:underline">
+            <a href={`/conteudos/${post.slug}`} class="group-hover:underline">
               <Image
                 src={post.image}
                 alt={post.title}
