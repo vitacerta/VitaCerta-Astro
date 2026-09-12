@@ -14,12 +14,12 @@ const {
   categories,
 } = Astro.props;
 
-const locale = Astro.currentLocale;
+const locale = Astro.currentLocale || "pt-BR";
 const displayDate = date || _createdAt;
 ---
 
 <article class="group grid grid-cols-1 sm:grid-cols-[1fr_2fr] md:grid-cols-[240px_auto] gap-4 border-t pt-10 first:border-t-0 first:pt-0">
-  <a href={`/${locale}/blog/${slug}`}>
+  <a href={`/conteudos/${slug}`}>
     {image && (
       <Image
         src={image}
@@ -33,7 +33,7 @@ const displayDate = date || _createdAt;
     )}
   </a>
   <div class="flex flex-col justify-between">
-    <a href={`/${locale}/blog/${slug}`}>
+    <a href={`/conteudos/${slug}`}>
       <h3 class="group-hover:underline">{title}</h3>
       <p class="mb-10">{description}</p>
     </a>
