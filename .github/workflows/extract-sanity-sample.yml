@@ -1,0 +1,55 @@
+name: Extrai amostra para migracao Sanity
+
+on:
+  push:
+    branches: [fyrre-base]
+    paths:
+      - '.github/workflows/extract-sanity-sample.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: fyrre-base
+          fetch-depth: 0
+
+      - name: Gerar amostra dos 3 primeiros artigos
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          src = Path('migration/vitacerta-posts.json')
+          data = json.loads(src.read_text(encoding='utf-8'))
+          sample = data[:3]
+          slim = []
+          for r in sample:
+              slim.append({
+                  'slug': r['slug'],
+                  'title': r['title'],
+                  'description': r['description'],
+                  'publishedAt': r['publishedAt'],
+                  'category': r['category'],
+                  'canonicalURL': r['canonicalURL'],
+                  'coverUrl': r['coverUrl'],
+                  'bodyHtml': r['bodyHtml'],
+              })
+          Path('migration/sample-3.json').write_text(
+              json.dumps(slim, ensure_ascii=False, indent=2), encoding='utf-8'
+          )
+          print('sample_count=', len(slim))
+          PY
+
+      - name: Commitar amostra
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add migration/sample-3.json
+          git commit -m "Extrai amostra de 3 artigos para validar migracao Sanity" || exit 0
+          git push origin HEAD:fyrre-base
