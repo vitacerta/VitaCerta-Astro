@@ -1,0 +1,93 @@
+name: Importa artigos VitaCerta para Sanity
+
+on:
+  push:
+    branches: [fyrre-base]
+    paths:
+      - '.github/workflows/import-sanity-bulk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    env:
+      SANITY_PROJECT_ID: 1dh7sg5j
+      SANITY_DATASET: production
+      SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: fyrre-base
+
+      - name: Verificar credencial de escrita
+        run: |
+          if [ -z "$SANITY_AUTH_TOKEN" ]; then
+            echo "SANITY_AUTH_TOKEN_NOT_CONFIGURED"
+            exit 2
+          fi
+          echo "SANITY_AUTH_TOKEN_CONFIGURED"
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Importar artigos como rascunhos
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs'
+          import path from 'node:path'
+          import {randomUUID} from 'node:crypto'
+          import {createClient} from '@sanity/client'
+
+          const client = createClient({
+            projectId: process.env.SANITY_PROJECT_ID,
+            dataset: process.env.SANITY_DATASET,
+            token: process.env.SANITY_AUTH_TOKEN,
+            apiVersion: '2026-09-12',
+            useCdn: false,
+            perspective: 'raw',
+          })
+
+          const dir = 'migration/sanity-batches'
+          const manifest = JSON.parse(fs.readFileSync(path.join(dir, 'manifest.json'), 'utf8'))
+          const expectedSlugs = new Set(manifest.batches.flatMap(b => b.slugs))
+          if (expectedSlugs.size !== 86) throw new Error(`Manifesto inesperado: ${expectedSlugs.size} slugs`)
+
+          const existing = await client.fetch(`*[_type == "post" && defined(slug.current)]{_id,"slug":slug.current}`)
+          const existingSlugs = new Set(existing.map(x => x.slug))
+
+          let created = 0
+          let skipped = 0
+          for (const batchInfo of manifest.batches) {
+            const docs = JSON.parse(fs.readFileSync(path.join(dir, batchInfo.file), 'utf8'))
+            for (const doc of docs) {
+              const slug = doc?.slug?.current
+              if (!slug) throw new Error(`Documento sem slug em ${batchInfo.file}`)
+              if (existingSlugs.has(slug)) {
+                skipped++
+                continue
+              }
+              const draft = {...doc, _id: `drafts.${randomUUID()}`}
+              await client.create(draft)
+              existingSlugs.add(slug)
+              created++
+            }
+          }
+
+          const after = await client.fetch(`*[_type == "post" && defined(slug.current)]{_id,"slug":slug.current, title, coverUrl, legacyBodyHtml, canonicalURL, categories}`)
+          const unique = new Map()
+          for (const d of after) if (expectedSlugs.has(d.slug) && !unique.has(d.slug)) unique.set(d.slug, d)
+
+          const missing = [...expectedSlugs].filter(s => !unique.has(s))
+          const incomplete = [...unique.values()].filter(d => !d.title || !d.coverUrl || !d.legacyBodyHtml || !d.canonicalURL || !Array.isArray(d.categories) || d.categories.length === 0)
+
+          console.log(JSON.stringify({expected:86, uniqueMatched:unique.size, created, skipped, missing:missing.length, incomplete:incomplete.length}, null, 2))
+          if (missing.length || incomplete.length || unique.size !== 86) {
+            console.error('MISSING', missing)
+            console.error('INCOMPLETE', incomplete.map(d => d.slug))
+            process.exit(3)
+          }
+          NODE
