@@ -44,7 +44,7 @@ jobs:
               s = re.sub(r'url\((["\']?)/(?!/)', rf'url(\1{base}/', s)
               p.write_text(s, encoding='utf-8')
           PY
-      - name: Validate all 86 VitaCerta articles
+      - name: Validate all 86 VitaCerta articles and SEO
         run: |
           python - <<'PY'
           import json, html
@@ -63,6 +63,8 @@ jobs:
               Path('dist/pt-BR/blog/movimento/index.html'),
               Path('dist/pt-BR/blog/mente/index.html'),
               Path('dist/pt-BR/blog/longevidade/index.html'),
+              Path('dist/rss.xml'),
+              Path('dist/sitemap-index.xml'),
           ]
           for p in required_pages:
               if not p.is_file():
@@ -72,12 +74,31 @@ jobs:
           title_mismatch = []
           too_small = []
           legacy_routes = []
+          canonical_problems = []
+          lang_problems = []
+
+          html_pages = []
+          for hp in Path('dist').rglob('*.html'):
+              html_pages.append(hp.read_text(encoding='utf-8'))
+          all_html = '\n'.join(html_pages)
+
+          sitemap_text = '\n'.join(
+              p.read_text(encoding='utf-8')
+              for p in Path('dist').glob('sitemap*.xml')
+          )
+          rss_text = Path('dist/rss.xml').read_text(encoding='utf-8')
+
+          old_internal_links = []
+          sitemap_missing = []
+          rss_missing = []
+
           for row in rows:
               slug = row['slug']
               p = Path('dist/conteudos') / slug / 'index.html'
               if not p.is_file():
                   missing.append(slug)
                   continue
+
               text = p.read_text(encoding='utf-8')
               title = row['title']
               escaped_title = html.escape(title, quote=True)
@@ -90,18 +111,40 @@ jobs:
               if old.is_file():
                   legacy_routes.append(slug)
 
-          if missing or title_mismatch or too_small or legacy_routes:
-              print('missing=', missing)
-              print('title_mismatch=', title_mismatch)
-              print('too_small=', too_small)
-              print('legacy_routes=', legacy_routes)
-              raise SystemExit('Falha na validacao dos artigos')
+              expected = f'https://vitacerta.com.br/conteudos/{slug}/'
+              if 'rel="canonical"' not in text or expected not in text:
+                  canonical_problems.append(slug)
+              if '<html lang="pt-BR">' not in text:
+                  lang_problems.append(slug)
+
+              if f'/pt-BR/blog/{slug}' in all_html:
+                  old_internal_links.append(slug)
+              if expected not in sitemap_text:
+                  sitemap_missing.append(slug)
+              if f'/conteudos/{slug}/' not in rss_text:
+                  rss_missing.append(slug)
+
+          problems = {
+              'missing': missing,
+              'title_mismatch': title_mismatch,
+              'too_small': too_small,
+              'legacy_routes': legacy_routes,
+              'canonical_problems': canonical_problems,
+              'lang_problems': lang_problems,
+              'old_internal_links': old_internal_links,
+              'sitemap_missing': sitemap_missing,
+              'rss_missing': rss_missing,
+          }
+          if any(problems.values()):
+              for key, value in problems.items():
+                  print(f'{key}=', value)
+              raise SystemExit('Falha na validacao dos artigos/SEO')
 
           root = Path('dist/index.html').read_text(encoding='utf-8')
           if 'noindex,nofollow' not in root:
               raise SystemExit('Preview sem noindex')
 
-          print(f'VALIDADO: {len(rows)} artigos em /conteudos/, home, listagem e 5 categorias; rota antiga ausente')
+          print(f'SEO_OK: {len(rows)} artigos em /conteudos/ com canonical, pt-BR, sitemap e RSS; rota e links antigos ausentes')
           PY
       - name: Audit 4 published pilots against canonical migration source
         run: |
