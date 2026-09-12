@@ -14,7 +14,7 @@ export async function getStaticPaths({ paginate }) {
     const categories = await client.fetch(
       `
       *[_type == "category"]{
-        "title": title[language == $lang][0].value,
+        "title": title[_key == $lang][0].value,
         "slug": slug.current
       }
       `,
@@ -29,19 +29,20 @@ export async function getStaticPaths({ paginate }) {
           && language == $lang
           && $category in categories[]->slug.current
         ]
-        | order(_createdAt desc){
+        | order(publishedAt desc, _createdAt desc){
           title,
           description,
           duration,
+          publishedAt,
           _createdAt,
           "slug": slug.current,
-          "image": thumbnail.asset->url,
+          "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
           "author": author->{
             name,
             "slug": slug.current
           },
           "categories": categories[0]->{
-            "title": title[language == $lang][0].value,
+            "title": title[_key == $lang][0].value,
             "slug": slug.current
           }
         }
@@ -54,12 +55,10 @@ export async function getStaticPaths({ paginate }) {
 
       const paginated = paginate(posts, {
         pageSize: 6,
-
         params: {
           lang,
           category: category.slug,
         },
-
         props: {
           categoryTitle: category.title,
         },
@@ -73,26 +72,11 @@ export async function getStaticPaths({ paginate }) {
 }
 
 const locale = Astro.params.lang;
-
 const { page, categoryTitle } = Astro.props;
-
 const totalPages = Math.ceil(page.total / page.size);
-
-const postsCategories = await client.fetch(
-  `
-  *[_type == "category"]
-  | order(_createdAt desc){
-    "title": title[language == $lang][0].value,
-    "slug": slug.current
-  }
-  `,
-  {
-    lang: locale,
-  }
-);
 ---
 
-<Layout title={`Blog | category: ${categoryTitle}`}>
+<Layout title={`Blog | ${categoryTitle}`}>
   <Hero title="Magazine" />
 
   <section class="mt-10">
@@ -103,15 +87,15 @@ const postsCategories = await client.fetch(
           class="btn btn-link text-inherit uppercase no-underline group p-0"
         >
           <i class="fa-solid fa-arrow-left group-hover:translate-x-1"></i>
-          Go Back
+          Voltar
         </a>
 
         <h1 class="h2 w-full lg:w-auto">
-          Category: {categoryTitle}
+          Categoria: {categoryTitle}
         </h1>
 
         <p>
-          Page {page.currentPage} of {totalPages}
+          Página {page.currentPage} de {totalPages}
         </p>
       </div>
 
