@@ -12,12 +12,17 @@ jobs:
     env:
       VITE_SANITY_PROJECT_ID: 1dh7sg5j
       VITE_SANITY_DATASET: production
+      SANITY_PREVIEW: "true"
+      SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: "npm"
+      - name: Verify preview credential
+        run: |
+          test -n "$SANITY_AUTH_TOKEN"
       - run: npm ci
       - run: npm run build
       - name: Prepare isolated project preview
@@ -37,22 +42,60 @@ jobs:
               s = re.sub(r'url\((["\']?)/(?!/)', rf'url(\1{base}/', s)
               p.write_text(s, encoding='utf-8')
           PY
-      - name: Validate pilot pages
+      - name: Validate all 86 VitaCerta articles
         run: |
-          test -f dist/index.html
-          test -f dist/pt-BR/index.html
-          grep -q 'noindex,nofollow' dist/index.html
-          HEART="dist/pt-BR/blog/10-habitos-simples-para-cuidar-do-coracao-todos-os-dias/index.html"
-          STRESS="dist/pt-BR/blog/16-alimentos-que-ajudam-a-aliviar-o-estresse-com-respaldo-cientifico/index.html"
-          NURSING="dist/pt-BR/blog/a-importancia-da-enfermagem-dentro-do-sistema-de-saude/index.html"
-          test -f "$HEART"
-          test -f "$STRESS"
-          test -f "$NURSING"
-          grep -q '10 hábitos simples para cuidar do coração todos os dias' "$HEART"
-          grep -q '16 alimentos que ajudam a aliviar o estresse' "$STRESS"
-          grep -q 'A Importância da Enfermagem Dentro do Sistema de Saúde' "$NURSING"
+          python - <<'PY'
+          import json, html, sys
+          from pathlib import Path
+
+          rows = json.loads(Path('migration/vitacerta-posts.json').read_text(encoding='utf-8'))
+          if len(rows) != 86:
+              raise SystemExit(f'Manifesto inesperado: {len(rows)} artigos')
+
+          required_pages = [
+              Path('dist/index.html'),
+              Path('dist/pt-BR/index.html'),
+              Path('dist/pt-BR/blog/index.html'),
+              Path('dist/pt-BR/blog/saude/index.html'),
+              Path('dist/pt-BR/blog/nutricao/index.html'),
+              Path('dist/pt-BR/blog/movimento/index.html'),
+              Path('dist/pt-BR/blog/mente/index.html'),
+              Path('dist/pt-BR/blog/longevidade/index.html'),
+          ]
+          for p in required_pages:
+              if not p.is_file():
+                  raise SystemExit(f'Pagina obrigatoria ausente: {p}')
+
+          missing = []
+          title_mismatch = []
+          too_small = []
+          for row in rows:
+              slug = row['slug']
+              p = Path('dist/pt-BR/blog') / slug / 'index.html'
+              if not p.is_file():
+                  missing.append(slug)
+                  continue
+              text = p.read_text(encoding='utf-8')
+              title = row['title']
+              if title not in text and html.escape(title, quote=False) not in text:
+                  title_mismatch.append(slug)
+              if len(text) < 3000:
+                  too_small.append(slug)
+
+          if missing or title_mismatch or too_small:
+              print('missing=', missing)
+              print('title_mismatch=', title_mismatch)
+              print('too_small=', too_small)
+              raise SystemExit('Falha na validacao dos artigos')
+
+          root = Path('dist/index.html').read_text(encoding='utf-8')
+          if 'noindex,nofollow' not in root:
+              raise SystemExit('Preview sem noindex')
+
+          print(f'VALIDADO: {len(rows)} artigos, home, listagem e 5 categorias')
+          PY
       - uses: actions/upload-artifact@v4
         with:
-          name: vitacerta-astro-preview
+          name: vitacerta-astro-preview-86
           path: dist
           retention-days: 3
