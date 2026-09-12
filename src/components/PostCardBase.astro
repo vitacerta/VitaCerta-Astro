@@ -6,6 +6,7 @@ const {
   description,
   duration,
   _createdAt,
+  publishedAt,
   slug,
   image,
   author,
@@ -13,8 +14,9 @@ const {
 } = Astro.props;
 
 const locale = Astro.currentLocale;
-
-//console.log("cat", categories);
+const displayDate = publishedAt || _createdAt;
+const categorySlug = categories?.slug?.current || categories?.slug;
+const authorSlug = author?.slug?.current || author?.slug;
 ---
 
 <article
@@ -34,24 +36,28 @@ const locale = Astro.currentLocale;
 >
   <div>
     <div class="flex flex-wrap justify-between in gap-4 mb-4">
-      <span>{formatDateTime(_createdAt)}</span>
-      <a
-        href={`/${locale}/blog/${categories.slug.current}`}
-        class="uppercase ml-auto btn btn-outline rounded-full py-1 px-4 h-auto hover:bg-black hover:text-white"
-      >
-        {categories.title}
-      </a>
+      <span>{formatDateTime(displayDate)}</span>
+      {categories && categorySlug && (
+        <a
+          href={`/${locale}/blog/${categorySlug}`}
+          class="uppercase ml-auto btn btn-outline rounded-full py-1 px-4 h-auto hover:bg-black hover:text-white"
+        >
+          {categories.title}
+        </a>
+      )}
     </div>
     <a href={`/${locale}/blog/${slug}`} class="mb-auto">
-      <Image
-        src={image}
-        alt={title}
-        width="150"
-        height="150"
-        format="webp"
-        quality={80}
-        class="aspect-square mx-auto h-auto w-full"
-      />
+      {image && (
+        <Image
+          src={image}
+          alt={title}
+          width="150"
+          height="150"
+          format="webp"
+          quality={80}
+          class="aspect-square mx-auto h-auto w-full"
+        />
+      )}
 
       <h3 class="mb-0 mt-4 group-hover:underline">{title}</h3>
     </a>
@@ -63,16 +69,16 @@ const locale = Astro.currentLocale;
       <p>{description}</p>
     </a>
     <div class="flex flex-wrap gap-x-6 gap-y-3 justify-start items-center mt-4">
-      {author && <p>
-        <b class="mr-2">Text</b>
-        <a href={`/${locale}/authors/${author.slug.current}`} class="hover:underline">
+      {author && authorSlug && <p>
+        <b class="mr-2">Texto</b>
+        <a href={`/${locale}/authors/${authorSlug}`} class="hover:underline">
           {author.name}
         </a>
       </p>}
-      <p>
-        <b class="mr-2">Duration</b>
-        <span>{duration} Min</span>
-      </p>
+      {duration != null && <p>
+        <b class="mr-2">Leitura</b>
+        <span>{duration} min</span>
+      </p>}
     </div>
   </div>
 </article>
