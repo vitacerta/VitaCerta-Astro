@@ -19,6 +19,7 @@ export async function getStaticPaths() {
       publishedAt,
       _createdAt,
       language,
+      canonicalURL,
       "slug": slug.current,
       "image": coalesce(mainImage.asset->url, thumbnail.asset->url, coverUrl),
       "author": author->{name, "slug": slug.current, "image": image.asset->url},
@@ -40,6 +41,7 @@ export async function getStaticPaths() {
 const locale = "pt-BR";
 const { post } = Astro.props;
 const displayDate = post.publishedAt || post._createdAt;
+const canonicalURL = post.canonicalURL || `https://vitacerta.com.br/conteudos/${post.slug}/`;
 
 const relatedPosts = await client.fetch(
   `
@@ -68,7 +70,13 @@ const socials = [
 ];
 ---
 
-<Layout title={post.title} description={post.description} image={post.image}>
+<Layout
+  title={post.title}
+  description={post.description}
+  image={post.image}
+  canonicalURL={canonicalURL}
+  lang={post.language || locale}
+>
   <section class="mt-10">
     <div class="container">
       <div class="flex itms-center justify-between flex-wrap gap-4">
