@@ -28,10 +28,8 @@ jobs:
           base = '/VitaCerta-Astro'
           for p in Path('dist').rglob('*.html'):
               s = p.read_text(encoding='utf-8')
-              # Preview must never be indexed.
               if '<head>' in s and 'name="robots"' not in s:
                   s = s.replace('<head>', '<head><meta name="robots" content="noindex,nofollow">', 1)
-              # Prefix root-relative navigation and generated assets only in preview output.
               s = re.sub(r'((?:href|src)=["\'])/(?!/)', rf'\1{base}/', s)
               p.write_text(s, encoding='utf-8')
           for p in Path('dist').rglob('*.css'):
@@ -42,6 +40,7 @@ jobs:
       - name: Validate pilot pages
         run: |
           test -f dist/index.html
+          test -f dist/pt-BR/index.html
           grep -q 'noindex,nofollow' dist/index.html
           HEART="dist/pt-BR/blog/10-habitos-simples-para-cuidar-do-coracao-todos-os-dias/index.html"
           STRESS="dist/pt-BR/blog/16-alimentos-que-ajudam-a-aliviar-o-estresse-com-respaldo-cientifico/index.html"
