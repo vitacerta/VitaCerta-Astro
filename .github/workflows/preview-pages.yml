@@ -95,6 +95,94 @@ jobs:
 
           print(f'VALIDADO: {len(rows)} artigos, home, listagem e 5 categorias')
           PY
+      - name: Audit 4 published pilots against canonical migration source
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs'
+          import path from 'node:path'
+          import {createClient} from '@sanity/client'
+
+          const batchDir = 'migration/sanity-batches'
+          const sourceRows = fs.readdirSync(batchDir)
+            .filter(name => /^batch-\d+\.json$/.test(name))
+            .sort()
+            .flatMap(name => JSON.parse(fs.readFileSync(path.join(batchDir, name), 'utf8')))
+
+          const sourceBySlug = new Map(sourceRows.map(row => [row.slug.current, row]))
+          const client = createClient({
+            projectId: process.env.VITE_SANITY_PROJECT_ID,
+            dataset: process.env.VITE_SANITY_DATASET,
+            token: process.env.SANITY_AUTH_TOKEN,
+            apiVersion: '2025-02-19',
+            useCdn: false,
+            perspective: 'raw',
+          })
+
+          const published = await client.fetch(`*[_type == "post" && !(_id in path("drafts.**"))]{
+            _id,
+            title,
+            "slug": slug.current,
+            description,
+            language,
+            duration,
+            publishedAt,
+            canonicalURL,
+            coverUrl,
+            legacyBodyHtml,
+            "categories": categories[]->slug.current
+          }`)
+
+          if (published.length !== 4) {
+            console.error('published_count=', published.length)
+            process.exit(1)
+          }
+
+          const fields = ['title','description','language','duration','publishedAt','canonicalURL','coverUrl','legacyBodyHtml']
+          const problems = []
+          for (const doc of published) {
+            const src = sourceBySlug.get(doc.slug)
+            if (!src) {
+              problems.push({slug: doc.slug, problem: 'missing_from_source'})
+              continue
+            }
+            for (const field of fields) {
+              if ((doc[field] ?? null) !== (src[field] ?? null)) {
+                if (field === 'legacyBodyHtml') {
+                  const a = String(src[field] ?? '')
+                  const b = String(doc[field] ?? '')
+                  let firstDiff = -1
+                  const n = Math.min(a.length, b.length)
+                  for (let i = 0; i < n; i++) {
+                    if (a[i] !== b[i]) { firstDiff = i; break }
+                  }
+                  if (firstDiff === -1 && a.length !== b.length) firstDiff = n
+                  problems.push({
+                    slug: doc.slug,
+                    field,
+                    sourceLength: a.length,
+                    sanityLength: b.length,
+                    firstDiff,
+                    sourceSnippet: a.slice(Math.max(0, firstDiff - 60), firstDiff + 120),
+                    sanitySnippet: b.slice(Math.max(0, firstDiff - 60), firstDiff + 120),
+                  })
+                } else {
+                  problems.push({slug: doc.slug, field, source: src[field] ?? null, sanity: doc[field] ?? null})
+                }
+              }
+            }
+            if (!Array.isArray(doc.categories) || doc.categories.length === 0) {
+              problems.push({slug: doc.slug, field: 'categories', problem: 'missing_category'})
+            }
+          }
+
+          if (problems.length) {
+            console.error('PUBLISHED_INTEGRITY_PROBLEMS')
+            console.error(JSON.stringify(problems, null, 2))
+            process.exit(1)
+          }
+
+          console.log('PUBLISHED_INTEGRITY_OK: 4 published pilots match canonical source exactly')
+          NODE
       - uses: actions/upload-artifact@v4
         with:
           name: vitacerta-astro-preview-86
