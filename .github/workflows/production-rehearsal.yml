@@ -82,11 +82,21 @@ jobs:
               'celular-antes-de-dormir-o-que-a-ciencia-diz-sobre-o-seu-sono',
               'esta-apertando-os-olhos-para-enxergar-melhor-talvez-nao-seja-apenas-cansaco',
               'omega-3-faz-bem-para-o-coracao-o-que-as-pesquisas-realmente-descobriram',
+              'garganta-seca-ou-irritada-5-dicas-eficazes-para-aliviar-o-desconforto',
+              'maxxing-por-que-a-busca-pela-versao-otimizada-de-si-mesmo-pode-estar-te-adoecendo',
+              'comer-bem-nao-precisa-ser-complicado-o-guia-definitivo-para-uma-alimentacao-saudavel-no-di',
+              'efervescencia-coletiva-por-que-viver-experiencias-em-grupo-faz-tao-bem-para-a-sua-saude-me',
+              'relogio-que-mede-a-frequencia-cardiaca-vale-a-pena-5-modelos-populares-no-brasil-e-o-que-o',
+              'jejum-intermitente-como-funciona-quais-sao-os-beneficios-e-o-que-voce-precisa-saber-antes-',
+              'sindrome-do-intestino-irritavel-e-dor-pelvica-existe-uma-relacao',
+              'seu-cerebro-trabalha-muito-quando-voce-le-entenda-o-que-a-ciencia-descobriu',
+              'marmita-para-emagrecer-como-organizar-as-refeicoes-da-semana-sem-virar-refem-de-dieta',
+              'pressao-alta-veja-como-baixar-o-numero-de-baixo-a-diastolica-com-mudancas-simples-no-dia-a',
           }
           all_source_slugs = {row['slug'] for row in rows}
           expected_drafts = all_source_slugs - expected_published
 
-          if len(expected_published) != 34 or len(expected_drafts) != 52:
+          if len(expected_published) != 44 or len(expected_drafts) != 42:
               raise SystemExit('Contagem esperada inconsistente para o ensaio')
 
           article_root = Path('dist/conteudos')
@@ -147,12 +157,12 @@ jobs:
               if f'/conteudos/{slug}/' in rss:
                   raise SystemExit(f'Rascunho vazou para RSS: {slug}')
 
-          print('PRODUCTION_REHEARSAL_OK: 34 publicados visiveis, 52 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
+          print('PRODUCTION_REHEARSAL_OK: 44 publicados visiveis, 42 rascunhos ocultos, canonical/pt-BR/sitemap/RSS corretos, sem noindex e sem rotas antigas')
           PY
 
       - name: Upload production rehearsal artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vitacerta-production-rehearsal-34
+          name: vitacerta-production-rehearsal-44
           path: dist
           retention-days: 3
