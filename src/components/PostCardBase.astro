@@ -13,7 +13,7 @@ const {
   categories,
 } = Astro.props;
 
-const locale = Astro.currentLocale;
+const locale = Astro.currentLocale || "pt-BR";
 const displayDate = publishedAt || _createdAt;
 const categorySlug = categories?.slug?.current || categories?.slug;
 const authorSlug = author?.slug?.current || author?.slug;
