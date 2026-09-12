@@ -39,13 +39,19 @@ jobs:
               s = re.sub(r'url\((["\']?)/(?!/)', rf'url(\1{base}/', s)
               p.write_text(s, encoding='utf-8')
           PY
-      - name: Validate preview paths
+      - name: Validate pilot pages
         run: |
           test -f dist/index.html
           grep -q 'noindex,nofollow' dist/index.html
-          test -f "dist/pt-BR/blog/10-habitos-simples-para-cuidar-do-coracao-todos-os-dias/index.html"
-          test -f "dist/pt-BR/blog/16-alimentos-que-ajudam-a-aliviar-o-estresse-com-respaldo-cientifico/index.html"
-          test -f "dist/pt-BR/blog/a-importancia-da-enfermagem-dentro-do-sistema-de-saude/index.html"
+          HEART="dist/pt-BR/blog/10-habitos-simples-para-cuidar-do-coracao-todos-os-dias/index.html"
+          STRESS="dist/pt-BR/blog/16-alimentos-que-ajudam-a-aliviar-o-estresse-com-respaldo-cientifico/index.html"
+          NURSING="dist/pt-BR/blog/a-importancia-da-enfermagem-dentro-do-sistema-de-saude/index.html"
+          test -f "$HEART"
+          test -f "$STRESS"
+          test -f "$NURSING"
+          grep -q '10 hábitos simples para cuidar do coração todos os dias' "$HEART"
+          grep -q '16 alimentos que ajudam a aliviar o estresse' "$STRESS"
+          grep -q 'A Importância da Enfermagem Dentro do Sistema de Saúde' "$NURSING"
       - uses: actions/upload-artifact@v4
         with:
           name: vitacerta-astro-preview
