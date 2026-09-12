@@ -1,0 +1,65 @@
+[
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Tipos de Terapia: Conheça as Principais Abordagens e Como Escolher a Ideal Para Você",
+    "slug": {
+      "_type": "slug",
+      "current": "tipos-de-terapia-conheca-as-principais-abordagens-e-como-escolher-a-ideal-para-voce"
+    },
+    "description": "Decidir começar terapia já é um passo importante. Mas, na hora de procurar um profissional, é comum se deparar com uma lista de siglas e abordagens que…",
+    "duration": 6,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-mente",
+        "_ref": "56db7347-e6c3-4bb5-96e2-0a2539ada4d6"
+      }
+    ],
+    "publishedAt": "2026-08-23T15:04:41.246-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/tipos-de-terapia-conheca-as-principais-abordagens-e-como-escolher-a-ideal-para-voce/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEgvCap86vDSH2vfjkZwSQfTylUxs06LWfLvC3yfgVXwOtCWc-NEmHl9GFz-sjDaN3SoJaPQXomDAhD--Qveg8ps9xEkz2EFXtUfAS871LJXf0FHok5nOQiJsAY-nib_Uq39yldWLn3gledwcPBqzTKoXpJklhqbk8nmRaxLHp0w7IzH47ek4B0VO0bEKQP5"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Treino de Força Depois dos 40: Por Que a Musculação Se Torna Ainda Mais Importante",
+    "slug": {
+      "_type": "slug",
+      "current": "treino-de-forca-depois-dos-40-por-que-a-musculacao-se-torna-ainda-mais-importante"
+    },
+    "description": "Se você sempre viu a musculação como coisa de gente \"querendo malhar\", vale rever esse conceito — principalmente depois dos 40. Como já mostramos no artigo…",
+    "duration": 4,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-movimento",
+        "_ref": "b3720af3-6d9c-42f5-8b72-481e486742d5"
+      }
+    ],
+    "publishedAt": "2026-08-24T02:19:20.840-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/treino-de-forca-depois-dos-40-por-que-a-musculacao-se-torna-ainda-mais-importante/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEhTKvnTsSpO_fVlpXu9VyYKjQJYLdDJGLDWgm3OFUF3OryWkKw5IFW1npN7fE8_aXs02Mib-S8Ynf9fuwWh8uu5kyOICDDgARiSh1OcLQktqVlvwDX6yxezkXIreTjLFgr52v7AAjGZQ2pZ5L5ytZzzLPXLbsc4IsWIJrenaBkasf6C44XJf5O_yB15SbWZ"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Vitamina B12: A Deficiência Silenciosa Que Afeta Vegetarianos, Idosos e Quem Toma Certos Remédios",
+    "slug": {
+      "_type": "slug",
+      "current": "vitamina-b12-a-deficiencia-silenciosa-que-afeta-vegetarianos-idosos-e-quem-toma-certos-rem"
+    },
+    "description": "Formigamento nas mãos. Memória mais falha do que o normal. Um cansaço que parece não ter explicação. São sintomas fáceis de atribuir a mil outras coisas —…",
+    "duration": 6,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-nutricao",
+        "_ref": "42558655-90d9-495e-9a67-5ae87a4427b5"
+      }
+    ],
+    "publishedAt": "2026-08-28T18:02:28.108-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/vitamina-b12-a-deficiencia-silenciosa-que-afeta-vegetarianos-idosos-e-quem-toma-certos-rem/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEi0tCzvG-SF5PwZuSDrWBe15y2A7aEm-K-odfhXu7woLsVsz_q8kZesi3-JXdFaSMu4MiM7irzOgs6d7CuMSGZ1R6jHjszqte45JXjKm6KNvuMc49b8JqcREr2SEAlTrVSChd168pqneGPXRWnxPvE0LwcUAQePeWS-gvkNN3wxhJdqNnD2TaQt14aWxMPP"
+  }
+]

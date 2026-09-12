@@ -1,0 +1,65 @@
+[
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Osteoporose: como preservar a saúde dos ossos antes dos 50",
+    "slug": {
+      "_type": "slug",
+      "current": "osteoporose-como-preservar-a-saude-dos-ossos-antes-dos-50"
+    },
+    "description": "Cuidar dos ossos não deveria começar depois que aparece uma fratura ou quando um exame mostra perda de massa óssea. A saúde do esqueleto é construída ao…",
+    "duration": 7,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-saude",
+        "_ref": "b20b81f2-2907-4ffd-b71d-6e37f91e5d9e"
+      }
+    ],
+    "publishedAt": "2026-08-23T15:18:41.069-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/osteoporose-como-preservar-a-saude-dos-ossos-antes-dos-50/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEjTWRyE-7YK3V73vXlcwkvayukKHkfq_JawMf0-XwRYGHylFAVnOKjeLryX7YpZ-CgJz8ZWBgA6_v79cIONU4FBK6QskrCQ8V8vhqdVyUYiAmKOBXod03n5iYKhWyHMPxq3dlEC9MiBOQPxMT5ukv2Fnr5ooK4zJ0VHNJDLYUWjlmwRYtZV0LQYBR5-KFS7"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Passou dos 40 e está muito tempo sentado? O que caminhar todos os dias pode mudar na sua saúde",
+    "slug": {
+      "_type": "slug",
+      "current": "passou-dos-40-e-esta-muito-tempo-sentado-o-que-caminhar-todos-os-dias-pode-mudar-na-sua-sa"
+    },
+    "description": "Depois dos 40, a rotina pode ficar cada vez mais sedentária. Trabalho sentado, deslocamentos de carro, horas diante do computador ou da televisão e pouco…",
+    "duration": 11,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-movimento",
+        "_ref": "b3720af3-6d9c-42f5-8b72-481e486742d5"
+      }
+    ],
+    "publishedAt": "2026-08-11T03:07:42.607-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/passou-dos-40-e-esta-muito-tempo-sentado-o-que-caminhar-todos-os-dias-pode-mudar-na-sua-sa/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEj2gQgcF8b19WlTU7ZHjSzfnFTyXzgPs_7NsjtnmiSKuwNuxZ3jS5OIzH3XwfLsVvFq5F0iF3jnl5MUzcL_kKZCT6yV31DErsY1ZW-tmCHoFFZblPco4WV8bFa38_b5RqoI39JUPTDkB6mBePhtu7a8rfgur3GSEqrmGdXlNFcvSie4MeSI9YrmHL9tVmIh"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Platô de emagrecimento: por que o peso trava mesmo fazendo tudo certo (e o que a ciência sugere para destravar)",
+    "slug": {
+      "_type": "slug",
+      "current": "plato-de-emagrecimento-por-que-o-peso-trava-mesmo-fazendo-tudo-certo-e-o-que-a-ciencia-sug"
+    },
+    "description": "Você começou a perder peso, viu resultados animadores nas primeiras semanas — e, do nada, a balança simplesmente parou de se mexer. Mesmo mantendo a mesma…",
+    "duration": 7,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-nutricao",
+        "_ref": "42558655-90d9-495e-9a67-5ae87a4427b5"
+      }
+    ],
+    "publishedAt": "2026-08-22T19:03:43.749-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/plato-de-emagrecimento-por-que-o-peso-trava-mesmo-fazendo-tudo-certo-e-o-que-a-ciencia-sug/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEgQRKbmb3M6r-0U59TyBwJjvw5g60LSNpYPOtnS8cXMqoPTzyRdOQMkylH1RTOEP169a3d4p0s-JTOi2otYoZTgkJ53moSWNvbH1kk8ptEATMiD4d68os7HX-_PWMrcexw2mSE69ooOK36oNcKQOUhNS-jREyPVDQ-kUUtqssrmY3OvW0xrL2PKEqzRD3Ox"
+  }
+]

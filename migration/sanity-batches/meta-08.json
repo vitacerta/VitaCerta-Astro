@@ -1,0 +1,65 @@
+[
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "\"Depois eu faço\": quando a procrastinação começa a atrapalhar sua vida",
+    "slug": {
+      "_type": "slug",
+      "current": "depois-eu-faco-quando-a-procrastinacao-comeca-a-atrapalhar-sua-vida"
+    },
+    "description": "Você sabe que precisa fazer. Pensa na tarefa várias vezes ao longo do dia. Talvez até se sinta incomodado por ainda não ter resolvido. Mesmo assim, quando…",
+    "duration": 7,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-mente",
+        "_ref": "56db7347-e6c3-4bb5-96e2-0a2539ada4d6"
+      }
+    ],
+    "publishedAt": "2026-08-20T14:22:43.434-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/depois-eu-faco-quando-a-procrastinacao-comeca-a-atrapalhar-sua-vida/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEjo2jsxco5mieRBL8YFD6nk_swqXyQss2y3iSR_0i6FxGjf48krzEAhs1k4nTOE13Kdo02L6asjUo-wC2j7raHctx1T5WeQw5Ji8YCS34Dc9Cq47EVFOxCeM8i1FJnC7I3NTXVVzshXXBnvHnBucp15_hzxPwmb0ui9hw90ImooXadAczdvlkU2W9R5CFI8"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Depressão Também Dói no Corpo: Os Sintomas Físicos Que Muita Gente Não Reconhece",
+    "slug": {
+      "_type": "slug",
+      "current": "depressao-tambem-doi-no-corpo-os-sintomas-fisicos-que-muita-gente-nao-reconhece"
+    },
+    "description": "Dor nas costas que não passa com analgésico. Enxaqueca recorrente sem causa aparente nos exames. Um cansaço que nenhuma noite de sono resolve. A pessoa…",
+    "duration": 6,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-mente",
+        "_ref": "56db7347-e6c3-4bb5-96e2-0a2539ada4d6"
+      }
+    ],
+    "publishedAt": "2026-09-01T05:28:56.550-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/depressao-tambem-doi-no-corpo-os-sintomas-fisicos-que-muita-gente-nao-reconhece/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEjhPq9S8WkDyLhOC54u5sWZkJ1TSlu4HsUnA18q6ixHmNSqfo8wZfjc69hDpFMDvpi-vI0pFbu1p5g1G12Qy3K6f7Bxntz9zla-RkbjDb-JydU4Vtw419LcsrPwb38soZlNnXu-LUrCMARLO87Dt9znB3qcK8fBakpDTkO3sl-m8EaR-DbeZggFjbYZ-TOv"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Dieta Cetogênica: O Que a Ciência Realmente Diz Sobre Essa Forma de Alimentação?",
+    "slug": {
+      "_type": "slug",
+      "current": "dieta-cetogenica-o-que-a-ciencia-realmente-diz-sobre-essa-forma-de-alimentacao"
+    },
+    "description": "A dieta cetogênica, também conhecida como dieta keto, ganhou enorme popularidade nos últimos anos. Nas redes sociais, ela costuma aparecer associada a…",
+    "duration": 10,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-nutricao",
+        "_ref": "42558655-90d9-495e-9a67-5ae87a4427b5"
+      }
+    ],
+    "publishedAt": "2026-08-29T00:39:41.104Z",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/dieta-cetogenica-o-que-a-ciencia-realmente-diz-sobre-essa-forma-de-alimentacao/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEhLfoY_Q6RXFxl7XO7B5yCPDukx6BaHCW70JbDxW2TrW-wwYeFkfzlgv41ksMLfd7OTcgGSLPN4DO7jtsz8gNZgy4OHcQk-z5WhiD3cajNL3Wv2v5mA8ATbrHPZCJxDmgQRZsqEzPKDRkcoDNMgShb1JuHmSxBvesY9Kwdm4f-wMOVehavVJaVqvwTQnKou"
+  }
+]

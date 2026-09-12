@@ -1,0 +1,65 @@
+[
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Dieta DASH: a alimentação criada para ajudar a controlar a pressão arterial",
+    "slug": {
+      "_type": "slug",
+      "current": "dieta-dash-a-alimentacao-criada-para-ajudar-a-controlar-a-pressao-arterial"
+    },
+    "description": "A pressão arterial elevada é um dos principais fatores de risco para doenças cardiovasculares. E, embora muita gente associe seu controle apenas à redução…",
+    "duration": 8,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-nutricao",
+        "_ref": "42558655-90d9-495e-9a67-5ae87a4427b5"
+      }
+    ],
+    "publishedAt": "2026-08-30T04:55:24.700-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/dieta-dash-a-alimentacao-criada-para-ajudar-a-controlar-a-pressao-arterial/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEjyOSf0N4dUTkcIz67v8ah18LSqPj17hFqVwlEpCY-OhyXzbOSq5rR6kzIcbxiF6IUXA_WeIoSWxAjsSc-8CQG-yAePkobCaMEppKbPS-Da4MToSnBwLrNuMZ0T8a2Fv8gOiZGXxXl_YS-CMDUSrvsF7_u5ZMm_0Bc-oIH1qJTL5VFOD_jhz1Yrr_7ElhFj"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Dieta Mediterrânea: por que ela é considerada uma das mais saudáveis pela ciência?",
+    "slug": {
+      "_type": "slug",
+      "current": "dieta-mediterranea-por-que-ela-e-considerada-uma-das-mais-saudaveis-pela-ciencia"
+    },
+    "description": "A dieta mediterrânea está entre os padrões alimentares mais estudados pela ciência e costuma aparecer entre as estratégias alimentares associadas à saúde…",
+    "duration": 8,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-nutricao",
+        "_ref": "42558655-90d9-495e-9a67-5ae87a4427b5"
+      }
+    ],
+    "publishedAt": "2026-08-27T03:16:37.373-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/dieta-mediterranea-por-que-ela-e-considerada-uma-das-mais-saudaveis-pela-ciencia/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEid6UoY40gjf54ht6nZ028ZqgqAc7lxkG8PXj7OINPlHAv7NmQCNWeIPGpe5mSOLqO9VKSsotCzVED3qdP05NIyaLsqcrCZt3M7CKTZypjpniVKiOniHhoRlA3qNElzY_HsAOVsUX0RRt9rQkrJXUlWwHsSqtnpd9N26vUoa1Twe-oG2bwOuGohhpX7qZ2d"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Dieta Vegetariana: O Que Acontece com a Saúde Quando a Carne Sai do Prato?",
+    "slug": {
+      "_type": "slug",
+      "current": "dieta-vegetariana-o-que-acontece-com-a-saude-quando-a-carne-sai-do-prato"
+    },
+    "description": "Retirar a carne da alimentação não significa necessariamente comer de forma mais saudável. Da mesma forma, consumir carne não significa automaticamente ter…",
+    "duration": 9,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-nutricao",
+        "_ref": "42558655-90d9-495e-9a67-5ae87a4427b5"
+      }
+    ],
+    "publishedAt": "2026-09-01T05:39:59.031-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/dieta-vegetariana-o-que-acontece-com-a-saude-quando-a-carne-sai-do-prato/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEjOmllFEMKbu3ZtNDGAlB-6MOT8o7NtbtZLGdv84282UR4M1BN1-1WsS4VcnCXdyxpgkEeqQZdoppyLXt8dMuROWJnHPc_0nETO0Iwx5mDAiPTYbForQZuMNxVvDffAkt8BBTfw6twOo3wFAuVNNlMXnD0_gWWeaPv2r4pr_jLknahOUTevHfjuME2T5QKp"
+  }
+]

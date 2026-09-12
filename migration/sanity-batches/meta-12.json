@@ -1,0 +1,65 @@
+[
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Está Apertando os Olhos Para Enxergar Melhor? Talvez Não Seja Apenas Cansaço",
+    "slug": {
+      "_type": "slug",
+      "current": "esta-apertando-os-olhos-para-enxergar-melhor-talvez-nao-seja-apenas-cansaco"
+    },
+    "description": "Você já percebeu que está apertando os olhos para conseguir enxergar melhor uma placa, ler uma legenda na televisão ou identificar alguma coisa à distância?…",
+    "duration": 5,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-saude",
+        "_ref": "b20b81f2-2907-4ffd-b71d-6e37f91e5d9e"
+      }
+    ],
+    "publishedAt": "2026-08-21T02:26:14.768-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/esta-apertando-os-olhos-para-enxergar-melhor-talvez-nao-seja-apenas-cansaco/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEhjJ5u34JA7bHjKkwu9SXJO8WgxxL4sOMItOCnKmggHovpYm3VVwWLc16u7EMo_m-3N1om-DhgwkQAA1-LSCwHC5XjXypoA3y07z1fzRMCGqk6_G2l0YtELL5Ax2PE9rtBlxYoXesbsdO-PMQ2dkIui8hEBrbn9je0JjZDa0Qj4OK21IUqSnz5nYhBkVk3J"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Exercício em Jejum Emagrece Mais? O Que Dizem os Estudos",
+    "slug": {
+      "_type": "slug",
+      "current": "exercicio-em-jejum-emagrece-mais-o-que-dizem-os-estudos"
+    },
+    "description": "reinar de estômago vazio, logo ao acordar, virou rotina para muita gente que busca emagrecer mais rápido. A lógica por trás disso parece fazer sentido: sem…",
+    "duration": 4,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-nutricao",
+        "_ref": "42558655-90d9-495e-9a67-5ae87a4427b5"
+      }
+    ],
+    "publishedAt": "2026-08-24T02:25:23.951-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/exercicio-em-jejum-emagrece-mais-o-que-dizem-os-estudos/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEgWZgVjTODDwyGtMb0XF2uoBvqtynnmwncDM8gR-eMjpL06qvd7BHVd7Gvyvft1B_bRC-HTZDDPJZJtTNtaoofaq2gb3MfPJSN9l4TC3nbxTPqrMFkjgzxU1aMWahsHggjdEeJYJ3WgqHi4sWmmYmRyK9McvtihT177miicctO0LB7GD441l9FsROtp_8-K"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Ferro: Para Que Serve, Sinais de Deficiência e Por Que as Mulheres São as Mais Afetadas",
+    "slug": {
+      "_type": "slug",
+      "current": "ferro-para-que-serve-sinais-de-deficiencia-e-por-que-as-mulheres-sao-as-mais-afetadas"
+    },
+    "description": "Cansaço que não passa nem com uma boa noite de sono, queda de cabelo difusa, unhas fracas, dificuldade de concentração. São sintomas fáceis de atribuir à…",
+    "duration": 6,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-nutricao",
+        "_ref": "42558655-90d9-495e-9a67-5ae87a4427b5"
+      }
+    ],
+    "publishedAt": "2026-08-27T02:43:27.885-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/ferro-para-que-serve-sinais-de-deficiencia-e-por-que-as-mulheres-sao-as-mais-afetadas/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEh9JRXu_0aI5UnE1t-344bKVGUPgnP1TNM4envGE9KU7wvfursogzm-5cqoXC5h5q6s4u_dNNh6HDiVkhMsl8ETVheMVoY-nyNU7M7VXxriXPQ6wHHb-kpfukLCQGX8VaORC0IfGsqqRepH952cSoZWjCQafvgSiz79huljkrD0pxfDD5T7RlWj2zJC6zEc"
+  }
+]

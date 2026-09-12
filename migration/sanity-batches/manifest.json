@@ -4,6 +4,7 @@
   "batches": [
     {
       "file": "batch-01.json",
+      "metaFile": "meta-01.json",
       "count": 3,
       "slugs": [
         "10-habitos-simples-para-cuidar-do-coracao-todos-os-dias",
@@ -13,6 +14,7 @@
     },
     {
       "file": "batch-02.json",
+      "metaFile": "meta-02.json",
       "count": 3,
       "slugs": [
         "acucar-escondido-os-alimentos-saudaveis-que-tem-mais-acucar-do-que-parecem",
@@ -22,6 +24,7 @@
     },
     {
       "file": "batch-03.json",
+      "metaFile": "meta-03.json",
       "count": 3,
       "slugs": [
         "ansiedade-antecipatoria-por-que-voce-ja-sofre-antes-de-o-problema-acontecer",
@@ -31,6 +34,7 @@
     },
     {
       "file": "batch-04.json",
+      "metaFile": "meta-04.json",
       "count": 3,
       "slugs": [
         "calvicie-nao-e-so-estetica-o-que-ela-pode-revelar-sobre-sua-saude-hormonal",
@@ -40,6 +44,7 @@
     },
     {
       "file": "batch-05.json",
+      "metaFile": "meta-05.json",
       "count": 3,
       "slugs": [
         "celular-antes-de-dormir-o-que-a-ciencia-diz-sobre-o-seu-sono",
@@ -49,6 +54,7 @@
     },
     {
       "file": "batch-06.json",
+      "metaFile": "meta-06.json",
       "count": 3,
       "slugs": [
         "comer-mais-frutas-vermelhas-e-cha-pode-mudar-como-voce-envelhece-um-estudo-de-24-anos-inve",
@@ -58,6 +64,7 @@
     },
     {
       "file": "batch-07.json",
+      "metaFile": "meta-07.json",
       "count": 3,
       "slugs": [
         "creatina-para-mulheres-tudo-o-que-voce-precisa-saber-antes-de-usar",
@@ -67,6 +74,7 @@
     },
     {
       "file": "batch-08.json",
+      "metaFile": "meta-08.json",
       "count": 3,
       "slugs": [
         "depois-eu-faco-quando-a-procrastinacao-comeca-a-atrapalhar-sua-vida",
@@ -76,6 +84,7 @@
     },
     {
       "file": "batch-09.json",
+      "metaFile": "meta-09.json",
       "count": 3,
       "slugs": [
         "dieta-dash-a-alimentacao-criada-para-ajudar-a-controlar-a-pressao-arterial",
@@ -85,6 +94,7 @@
     },
     {
       "file": "batch-10.json",
+      "metaFile": "meta-10.json",
       "count": 3,
       "slugs": [
         "disfuncao-eretil-pode-ser-um-alerta-cardiovascular-anos-antes-do-infarto",
@@ -94,6 +104,7 @@
     },
     {
       "file": "batch-11.json",
+      "metaFile": "meta-11.json",
       "count": 3,
       "slugs": [
         "efervescencia-coletiva-por-que-viver-experiencias-em-grupo-faz-tao-bem-para-a-sua-saude-me",
@@ -103,6 +114,7 @@
     },
     {
       "file": "batch-12.json",
+      "metaFile": "meta-12.json",
       "count": 3,
       "slugs": [
         "esta-apertando-os-olhos-para-enxergar-melhor-talvez-nao-seja-apenas-cansaco",
@@ -112,6 +124,7 @@
     },
     {
       "file": "batch-13.json",
+      "metaFile": "meta-13.json",
       "count": 3,
       "slugs": [
         "fim-de-semana-sem-tela-7-ideias-de-lazer-para-descansar-a-mente-e-aproveitar-melhor-o-temp",
@@ -121,6 +134,7 @@
     },
     {
       "file": "batch-14.json",
+      "metaFile": "meta-14.json",
       "count": 3,
       "slugs": [
         "guia-definitivo-dos-efeitos-colaterais-do-ozempic-como-aliviar-sintomas-e-proteger-os-musc",
@@ -130,6 +144,7 @@
     },
     {
       "file": "batch-15.json",
+      "metaFile": "meta-15.json",
       "count": 3,
       "slugs": [
         "longevidade-os-habitos-que-realmente-aumentam-os-anos-de-vida-com-saude",
@@ -139,6 +154,7 @@
     },
     {
       "file": "batch-16.json",
+      "metaFile": "meta-16.json",
       "count": 3,
       "slugs": [
         "maxxing-por-que-a-busca-pela-versao-otimizada-de-si-mesmo-pode-estar-te-adoecendo",
@@ -148,6 +164,7 @@
     },
     {
       "file": "batch-17.json",
+      "metaFile": "meta-17.json",
       "count": 3,
       "slugs": [
         "nao-gosta-de-academia-7-atividades-de-lazer-que-ajudam-a-manter-o-corpo-em-movimento",
@@ -157,6 +174,7 @@
     },
     {
       "file": "batch-18.json",
+      "metaFile": "meta-18.json",
       "count": 3,
       "slugs": [
         "o-medo-do-infarto-fez-homens-evitarem-a-reposicao-de-testosterona-veja-o-que-mudou",
@@ -166,6 +184,7 @@
     },
     {
       "file": "batch-19.json",
+      "metaFile": "meta-19.json",
       "count": 3,
       "slugs": [
         "o-que-significa-aquela-pontada-no-peito-que-surge-quando-voce-respira-fundo",
@@ -175,6 +194,7 @@
     },
     {
       "file": "batch-20.json",
+      "metaFile": "meta-20.json",
       "count": 3,
       "slugs": [
         "osteoporose-como-preservar-a-saude-dos-ossos-antes-dos-50",
@@ -184,6 +204,7 @@
     },
     {
       "file": "batch-21.json",
+      "metaFile": "meta-21.json",
       "count": 3,
       "slugs": [
         "por-que-minhas-pernas-parecem-pesadas-no-fim-do-dia-cansaco-ou-circulacao",
@@ -193,6 +214,7 @@
     },
     {
       "file": "batch-22.json",
+      "metaFile": "meta-22.json",
       "count": 3,
       "slugs": [
         "pressao-alta-sem-sintomas-por-que-a-hipertensao-e-chamada-de-assassina-silenciosa",
@@ -202,6 +224,7 @@
     },
     {
       "file": "batch-23.json",
+      "metaFile": "meta-23.json",
       "count": 3,
       "slugs": [
         "quais-exames-toda-mulher-deve-fazer-apos-os-40-anos",
@@ -211,6 +234,7 @@
     },
     {
       "file": "batch-24.json",
+      "metaFile": "meta-24.json",
       "count": 3,
       "slugs": [
         "relogio-que-mede-a-frequencia-cardiaca-vale-a-pena-5-modelos-populares-no-brasil-e-o-que-o",
@@ -220,6 +244,7 @@
     },
     {
       "file": "batch-25.json",
+      "metaFile": "meta-25.json",
       "count": 3,
       "slugs": [
         "seu-cerebro-trabalha-muito-quando-voce-le-entenda-o-que-a-ciencia-descobriu",
@@ -229,6 +254,7 @@
     },
     {
       "file": "batch-26.json",
+      "metaFile": "meta-26.json",
       "count": 3,
       "slugs": [
         "sintomas-da-falta-de-vitamina-d-sinais-grupos-de-risco-e-quando-suplementar",
@@ -238,6 +264,7 @@
     },
     {
       "file": "batch-27.json",
+      "metaFile": "meta-27.json",
       "count": 3,
       "slugs": [
         "tipos-de-terapia-conheca-as-principais-abordagens-e-como-escolher-a-ideal-para-voce",
@@ -247,6 +274,7 @@
     },
     {
       "file": "batch-28.json",
+      "metaFile": "meta-28.json",
       "count": 3,
       "slugs": [
         "vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante",
@@ -256,6 +284,7 @@
     },
     {
       "file": "batch-29.json",
+      "metaFile": "meta-29.json",
       "count": 2,
       "slugs": [
         "zinco-o-mineral-esquecido-que-ajuda-na-imunidade-e-na-cicatrizacao",

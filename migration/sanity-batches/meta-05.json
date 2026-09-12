@@ -1,0 +1,65 @@
+[
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Celular antes de dormir: o que a ciência diz sobre o seu sono",
+    "slug": {
+      "_type": "slug",
+      "current": "celular-antes-de-dormir-o-que-a-ciencia-diz-sobre-o-seu-sono"
+    },
+    "description": "Série Ciência Vital Uma série editorial que aproxima a ciência da vida real. Partimos de pesquisas científicas para transformar descobertas em conhecimento,…",
+    "duration": 5,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-mente",
+        "_ref": "56db7347-e6c3-4bb5-96e2-0a2539ada4d6"
+      }
+    ],
+    "publishedAt": "2026-08-20T16:39:31.077-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/celular-antes-de-dormir-o-que-a-ciencia-diz-sobre-o-seu-sono/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEj0WLtZbTjVy_gSRh6hIr_iWW6-R2ugqLeeJ0IV4MKvEvKheJjY-a4PCo-YrbZgN53TNuzU5hXoqPsVnp7SGXC4vx_zjL-Obp2sC-lo1LPXqmAfcHhnGt2kizjELXqN7QYq30eRTduvKj2RjVmBtrgbru2f2wolDNb2BVHRx1xKZDfDtPaEeZ9tBrXq9DcE"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Check-up de Homens Depois dos 40: Os Exames Que Costumam Ficar de Fora",
+    "slug": {
+      "_type": "slug",
+      "current": "check-up-de-homens-depois-dos-40-os-exames-que-costumam-ficar-de-fora"
+    },
+    "description": "Segundo uma pesquisa da Sociedade Brasileira de Urologia (SBU), 46% dos homens acima de 40 anos só procuram atendimento médico quando já sentem algum…",
+    "duration": 6,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-longevidade",
+        "_ref": "2d8d5604-6572-4d40-b865-a8a5b9d398a0"
+      }
+    ],
+    "publishedAt": "2026-08-25T17:37:43.731-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/check-up-de-homens-depois-dos-40-os-exames-que-costumam-ficar-de-fora/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEhepvPDs-dUy6CVIcGiVjRGRfLeGHl76NC7IBRgjKW9W0A4cRvgxu0cZLBNYuPigD5jiTtIFus8cqZxgvkh2PPutxTesv4ln__9sxibYJigcWRjrUUEQcl-ze4g0NCJUDsmepT74nnOfP3_QOauwDIgtsMiosgrjxBlhlj3_S-EoDeCdsv1ZvWJUfyreblX"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Comer bem não precisa ser complicado: o guia definitivo para uma alimentação saudável no dia a dia",
+    "slug": {
+      "_type": "slug",
+      "current": "comer-bem-nao-precisa-ser-complicado-o-guia-definitivo-para-uma-alimentacao-saudavel-no-di"
+    },
+    "description": "Você já deve ter ouvido falar bastante sobre \"como comer de forma saudável\" — mas colocar isso em prática, no meio da correria do dia a dia, costuma ser bem…",
+    "duration": 8,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-nutricao",
+        "_ref": "42558655-90d9-495e-9a67-5ae87a4427b5"
+      }
+    ],
+    "publishedAt": "2026-08-22T18:50:28.929-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/comer-bem-nao-precisa-ser-complicado-o-guia-definitivo-para-uma-alimentacao-saudavel-no-di/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEjmmZ0fzFqGWdhczCog0njPaGkSDEkPJ4w_l1HooPrdFFRLiDrV9UKDYlXsRE_D6SEWNNlUqYYJYec0EAAO_D50rvTzpZL3lsdV5vdxEIk4GJtq-r3u7Czy4OiRuRtG2e2zkUHth_NgbYBJ6td6PGLLpmyvmZ9OeS5GMxg0KtyBLXmmmRnmF-u7ABsm1t1m"
+  }
+]

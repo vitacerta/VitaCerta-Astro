@@ -1,0 +1,65 @@
+[
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Açúcar Escondido: Os Alimentos \"Saudáveis\" Que Têm Mais Açúcar do Que Parecem",
+    "slug": {
+      "_type": "slug",
+      "current": "acucar-escondido-os-alimentos-saudaveis-que-tem-mais-acucar-do-que-parecem"
+    },
+    "description": "Trocar o refrigerante pelo suco de caixinha, o biscoito recheado pela barra de cereal, o doce pela \"granola fit\". Na teoria, são escolhas mais saudáveis —…",
+    "duration": 6,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-nutricao",
+        "_ref": "42558655-90d9-495e-9a67-5ae87a4427b5"
+      }
+    ],
+    "publishedAt": "2026-08-24T16:18:16.400-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/acucar-escondido-os-alimentos-saudaveis-que-tem-mais-acucar-do-que-parecem/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEhhMma-WRzNP7XM5KTxTPHK1k12KejBwLeC37IMH7wYiRhea2Q1CzkDJIRKGLhuqO_vSp923LCXZPnxn3EbbNkak2xTwoeDOMbXyfwhhpZX0yVELyZxftbNtudbwk-jbQEi_Uykyt5wU9zg3Y5h0AJ6du2LURZoBLoeNyje2JG_UHipcITmVzFlOJK2dUOs"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Alongamento Antes ou Depois do Treino? O Momento Certo Para Cada Tipo",
+    "slug": {
+      "_type": "slug",
+      "current": "alongamento-antes-ou-depois-do-treino-o-momento-certo-para-cada-tipo"
+    },
+    "description": "\"Sempre alongue antes de treinar\" é um daqueles conselhos passados de geração em geração na academia, tão repetido que quase ninguém questiona. Só que a…",
+    "duration": 6,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-movimento",
+        "_ref": "b3720af3-6d9c-42f5-8b72-481e486742d5"
+      }
+    ],
+    "publishedAt": "2026-08-26T17:08:34.965-07:00",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/alongamento-antes-ou-depois-do-treino-o-momento-certo-para-cada-tipo/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEguDUxUqBvBO67j0ULxbUwnyz8sH6e-S3nKEmgFNQiVakFo9pqdY2jsEtrmWkv3ifg7t7XpN9UG7SYbaiXumYUZZJ-4zR4bQKk_NiSTM0cYdYSlZugDFd4f9vPKfV9z3NOfMbbAt6oTpXQqdN1BhkzzDxuotQG76m0CH_4e2s1S6HL8CsxT2k8WiLk9zn8K"
+  },
+  {
+    "_type": "post",
+    "language": "pt-BR",
+    "title": "Alzheimer: quais são os primeiros sinais que merecem atenção?",
+    "slug": {
+      "_type": "slug",
+      "current": "alzheimer-quais-sao-os-primeiros-sinais-que-merecem-atencao"
+    },
+    "description": "Esquecer onde colocou as chaves, repetir uma pergunta ou precisar de alguns segundos para lembrar o nome de alguém pode acontecer com qualquer pessoa. Mas…",
+    "duration": 8,
+    "categories": [
+      {
+        "_type": "reference",
+        "_key": "cat-saude",
+        "_ref": "b20b81f2-2907-4ffd-b71d-6e37f91e5d9e"
+      }
+    ],
+    "publishedAt": "2026-08-27T09:53:39.840Z",
+    "canonicalURL": "https://vitacerta.com.br/conteudos/alzheimer-quais-sao-os-primeiros-sinais-que-merecem-atencao/",
+    "coverUrl": "https://blogger.googleusercontent.com/img/a/AVvXsEgVhmEw2sLB3lxykEM1OhgGizUbgDXxWuG1aUi6xqNg84TRluhjQyQwiASC8ypKqnJ6R5ClM-BgRTe-QRWyH2nY5mAl48pTxeqcqmjQksVYKmuT5bHai733xY3pZ90wwr0_EJjmydPPnd1tgYMS4yYHbriBDN4lGFKJUjVj1xeyMS17gUKnXhEHGRDzg2xz"
+  }
+]
