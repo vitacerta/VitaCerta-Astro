@@ -1,0 +1,47 @@
+---
+import Layout from "../../layouts/Base.astro";
+import Hero from "../../components/Hero.astro";
+import PostCard from "../../components/PostCardBase.astro";
+import { client } from "../../lib/sanity";
+
+const posts = await client.fetch(`
+  *[_type == "post" && language == "pt-BR"]
+  | order(publishedAt desc, _createdAt desc)
+  {
+    title,
+    description,
+    publishedAt,
+    _createdAt,
+    "slug": slug.current,
+    "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
+    "categories": categories[0]->{
+      "title": title[_key == "pt-BR"][0].value,
+      "slug": slug.current
+    }
+  }
+`);
+---
+
+<Layout
+  title="Todos os Conteúdos | VitaCerta"
+  description="Informação para entender melhor sua saúde e fazer escolhas mais conscientes. Explore os conteúdos do VitaCerta e encontre as publicações mais recentes."
+  lang="pt-BR"
+>
+  <Hero title="TODOS OS CONTEÚDOS" />
+
+  <section class="mt-10">
+    <div class="container">
+      <p class="text-lg max-w-4xl">
+        Informação para entender melhor sua saúde e fazer escolhas mais conscientes. Explore os conteúdos do VitaCerta por tema ou encontre as publicações mais recentes.
+      </p>
+    </div>
+  </section>
+
+  <section class="section mt-5!">
+    <div class="container">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-10">
+        {posts.map((post) => <PostCard {...post} />)}
+      </div>
+    </div>
+  </section>
+</Layout>
