@@ -4,22 +4,19 @@ import Hero from "../../components/Hero.astro";
 import Topline from "../../components/Topline.astro";
 import Demo from "../../components/DemoPost.astro";
 import Posts from "../../components/Posts.astro";
-import Podcasts from "../../components/Podcasts.astro";
-import Authors from "../../components/Authors.astro";
 import { LOCALES } from "../../i18n";
-const locale = Astro.currentLocale;
 
 export const getStaticPaths = () =>
-  Object.keys(LOCALES).map((lang) => ({
-    params: { lang },
-  }));
+  Object.keys(LOCALES).map((lang) => ({ params: { lang } }));
 ---
 
-<Layout title="Homepage">
-  <Hero title="Art & Life" />
+<Layout
+  title="Saúde, Ciência e Qualidade de Vida"
+  description="Informação baseada em ciência para melhores decisões sobre saúde e qualidade de vida. Conteúdos sobre nutrição, mente, movimento, longevidade e bem-estar."
+  lang="pt-BR"
+>
+  <Hero title="SAÚDE & BEM-ESTAR" />
   <Topline />
   <Demo />
   <Posts />
-  <Podcasts />
-  <Authors />
 </Layout>
