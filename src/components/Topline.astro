@@ -1,16 +1,21 @@
+---
+import { client } from "../lib/sanity";
+const locale = Astro.currentLocale || "pt-BR";
+const highlights = await client.fetch(`
+  *[_type == "post" && language == $locale] | order(publishedAt desc, _createdAt desc)[0...5]{
+    title,
+    "slug": slug.current
+  }
+`, { locale });
+---
+
 <section class="my-4">
   <div class="container">
     <div class="bg-black text-white overflow-x-hidden flex gap-4 p-4">
-      <p class="shrink-0">
-        <b>News Ticker+++</b>
-      </p>
-      {
-        Array.from({ length: 5 }).map((_) => (
-          <p class="shrink-0">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit +++
-          </p>
-        ))
-      }
+      <p class="shrink-0"><b>EM DESTAQUE +++</b></p>
+      {highlights.map((post) => (
+        <a class="shrink-0 hover:underline" href={`/conteudos/${post.slug}`}>{post.title} +++</a>
+      ))}
     </div>
   </div>
 </section>
