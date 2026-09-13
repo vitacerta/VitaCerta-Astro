@@ -1,58 +1,37 @@
 ---
 import PostCardRow from "../components/PostCardRow.astro";
 import Subscribe from "../components/Subscride.astro";
-import Banner from "../components/Banner.astro";
-import MostPopularPosts from "../components/MostPopularPosts.astro";
-
 import { client } from "../lib/sanity";
-const locale = Astro.currentLocale;
+const locale = Astro.currentLocale || "pt-BR";
 
-const posts = await client.fetch(
-  `
-  *[_type == "post" && language == $locale]
-  | order(publishedAt desc, _createdAt desc)
-  [1...7]{
+const posts = await client.fetch(`
+  *[_type == "post" && language == $locale] | order(publishedAt desc, _createdAt desc)[1...7]{
     title,
     description,
-    duration,
     "date": coalesce(publishedAt, _createdAt),
     "slug": slug.current,
     "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
-    "author": author->{name, "slug": slug.current},
     "categories": categories[0]->{
       "title": title[_key == $locale][0].value,
       "slug": slug.current
     }
   }
-`,
-  { locale },
-);
+`, { locale });
 ---
 
-{
-  posts.length > 0 ? (
-    <section class="section section-posts">
-      <div class="container">
-        <div class="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-10">
-          <div>
-            <div class="grid gap-10">
-              {posts.map((post) => <PostCardRow {...post} />)}
-            </div>
-            <a
-              href={`/${locale}/blog`}
-              class="btn btn-link mt-10 text-inherit uppercase no-underline group p-0"
-            >
-              Todos os artigos
-              <i class="fa-solid fa-arrow-right group-hover:translate-x-1" />
-            </a>
-          </div>
-          <aside class="lg:flex flex-col gap-10 hidden">
-            <Banner />
-            <MostPopularPosts />
-            <Subscribe />
-          </aside>
+{posts.length > 0 ? (
+  <section class="section section-posts">
+    <div class="container">
+      <div class="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-10">
+        <div>
+          <h2 class="h1 mb-10">CONTEÚDOS RECENTES</h2>
+          <div class="grid gap-10">{posts.map((post) => <PostCardRow {...post} />)}</div>
+          <a href={`/${locale}/blog`} class="btn btn-link mt-10 text-inherit uppercase no-underline group p-0">
+            TODOS OS CONTEÚDOS <i class="fa-solid fa-arrow-right group-hover:translate-x-1" />
+          </a>
         </div>
+        <aside class="lg:flex flex-col gap-10 hidden"><Subscribe /></aside>
       </div>
-    </section>
-  ) : null
-}
+    </div>
+  </section>
+) : null}
