@@ -1,0 +1,142 @@
+---
+import { client } from '../../lib/sanity.js';
+
+const categories = await client.fetch(`
+  *[_type == "category"] | order(slug.current asc){
+    _id,
+    "slug": slug.current
+  }
+`);
+
+const categoryLabel = (value) => String(value || '')
+  .split('-')
+  .map((part) => part ? part.charAt(0).toUpperCase() + part.slice(1) : '')
+  .join(' ');
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Novo artigo | VitaCerta Admin</title>
+    <style>
+      :root{--bg:#f4f6f4;--panel:#fff;--text:#1f2f28;--muted:#66736d;--line:#dfe6e1;--brand:#245640;--soft:#e8f0eb;--warn:#8a6220}
+      *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+      button,input,select,textarea{font:inherit}.topbar{position:sticky;top:0;z-index:8;background:#fff;border-bottom:1px solid var(--line)}
+      .topbar-inner,.main{max-width:1100px;margin:auto;padding-left:20px;padding-right:20px}.topbar-inner{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+      .brand{font-size:21px;font-weight:800}.brand small{margin-left:8px;color:var(--muted);font-size:13px;font-weight:500}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:750;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.btn-primary{background:var(--brand);color:#fff}.btn-secondary{background:#edf1ee;color:var(--text)}.btn-outline{background:#fff;border:1px solid #cdd8d1;color:var(--brand)}
+      .main{padding-top:28px;padding-bottom:60px}.breadcrumb{margin-bottom:16px}.breadcrumb a{color:var(--brand);text-decoration:none;font-weight:700}.heading{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.heading h1{margin:0 0 5px;font-size:clamp(28px,4vw,38px);letter-spacing:-.04em}.muted{color:var(--muted)}
+      .editor-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}.field{margin-bottom:18px}.field:last-child{margin-bottom:0}.label{display:block;margin-bottom:7px;font-size:14px;font-weight:750}.hint{margin-top:6px;color:var(--muted);font-size:12px}.control{width:100%;border:1px solid #ccd7d0;border-radius:10px;padding:12px;background:#fff;color:var(--text);outline:none}.control:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(36,86,64,.10)}textarea.control{resize:vertical;min-height:90px}.html-editor{min-height:420px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;line-height:1.55}
+      .tabs{display:flex;gap:8px;margin-bottom:10px}.tab{border:1px solid var(--line);border-radius:9px;background:#fff;padding:9px 12px;font-weight:750;cursor:pointer}.tab.active{background:var(--soft);border-color:#bdd0c3;color:var(--brand)}.preview-shell{display:none;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}.preview-shell.active{display:block}.preview-top{padding:10px 14px;border-bottom:1px solid var(--line);background:#fafcfb;color:var(--muted);font-size:12px}.preview-frame{padding:30px;max-width:820px;margin:auto}.preview-frame h1{font-size:36px;line-height:1.12;margin:0 0 16px}.preview-frame h2{font-size:27px;margin-top:34px}.preview-frame h3{font-size:21px;margin-top:26px}.preview-frame p,.preview-frame li{font-size:17px;line-height:1.75}.preview-frame img{max-width:100%;height:auto;border-radius:12px}.preview-frame a{color:#245640}.empty-preview{color:var(--muted);text-align:center;padding:50px 20px}
+      .side-title{margin:0 0 14px;font-size:16px}.check{display:flex;gap:10px;align-items:flex-start;margin:12px 0}.check input{margin-top:3px}.status{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:#fff7e8;color:var(--warn);font-weight:750;font-size:13px}.status-dot{width:8px;height:8px;border-radius:50%;background:#c28b2c}.actions{display:grid;gap:10px;margin-top:18px}.safe-note{margin-top:14px;padding:12px;border-radius:10px;background:#f5f7f5;color:var(--muted);font-size:12px;line-height:1.5}
+      .footer-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}.message{display:none;margin-top:14px;padding:12px;border-radius:10px;background:#eef4ef;color:#31563f;font-size:13px}.message.show{display:block}
+      @media(max-width:820px){.editor-grid{grid-template-columns:1fr}.heading{flex-direction:column}.topbar-inner,.main{padding-left:14px;padding-right:14px}.preview-frame{padding:20px}.preview-frame h1{font-size:30px}.footer-actions{flex-direction:column-reverse}.footer-actions .btn{width:100%}}
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">VitaCerta <small>Admin</small></div>
+        <a class="btn btn-secondary" href="/admin/">← Artigos</a>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="breadcrumb"><a href="/admin/">Artigos</a> <span class="muted">/ Novo artigo</span></div>
+      <div class="heading">
+        <div><h1>Novo artigo</h1><div class="muted">Cole o HTML, visualize como artigo e só depois publique.</div></div>
+      </div>
+
+      <div class="editor-grid">
+        <section class="panel">
+          <div class="field"><label class="label" for="title">Título</label><input class="control" id="title" type="text" placeholder="Título do artigo" /></div>
+          <div class="field"><label class="label" for="slug">Slug</label><input class="control" id="slug" type="text" placeholder="gerado-automaticamente-pelo-titulo" /><div class="hint">Gerado automaticamente; pode ser ajustado antes da publicação.</div></div>
+          <div class="field"><label class="label" for="description">Resumo / descrição</label><textarea class="control" id="description" maxlength="300" placeholder="Resumo curto usado em cards e SEO"></textarea><div class="hint"><span id="descriptionCount">0</span>/300 caracteres</div></div>
+          <div class="field"><label class="label" for="category">Categoria</label><select class="control" id="category"><option value="">Selecione uma categoria</option>{categories.map((category) => <option value={category._id}>{categoryLabel(category.slug)}</option>)}</select></div>
+          <div class="field"><label class="label" for="cover">Imagem de capa 16:9</label><input class="control" id="cover" type="file" accept="image/*" /><div class="hint">Nesta etapa a imagem serve para a prévia local. O envio seguro para o Sanity entra junto da camada de publicação.</div></div>
+
+          <div class="field">
+            <label class="label">Conteúdo do artigo</label>
+            <div class="tabs"><button class="tab active" id="htmlTab" type="button">HTML</button><button class="tab" id="previewTab" type="button">Visualizar</button></div>
+            <div id="htmlPanel"><textarea class="control html-editor" id="htmlContent" spellcheck="false" placeholder="Cole aqui o HTML gerado pela IA…"></textarea></div>
+            <div class="preview-shell" id="previewPanel"><div class="preview-top">Prévia local — não publicada</div><article class="preview-frame" id="previewFrame"><div class="empty-preview">Cole o HTML e clique em Visualizar.</div></article></div>
+          </div>
+
+          <div class="message" id="message">Prévia gerada localmente. Nada foi publicado.</div>
+        </section>
+
+        <aside class="panel">
+          <div class="status"><span class="status-dot"></span>Rascunho local</div>
+          <h2 class="side-title" style="margin-top:20px">Exibição</h2>
+          <label class="check"><input id="homeFeatured" type="checkbox" /><span><strong>Destaque principal da Home</strong><br><span class="muted">Usar este artigo como principal.</span></span></label>
+          <label class="check"><input id="highlights" type="checkbox" /><span><strong>Em Destaque</strong><br><span class="muted">Incluir na faixa de destaques.</span></span></label>
+          <label class="check"><input id="cienciaVital" type="checkbox" /><span><strong>Ciência Vital</strong><br><span class="muted">Marcar como parte da série.</span></span></label>
+          <div class="actions"><button class="btn btn-outline" id="visualizeSide" type="button">Visualizar artigo</button><button class="btn btn-secondary" type="button" disabled>Salvar rascunho</button><button class="btn btn-primary" type="button" disabled>Publicar</button></div>
+          <div class="safe-note"><strong>Segurança do MVP:</strong> Salvar e Publicar permanecem desativados até conectarmos a camada segura ao Sanity. Nenhuma chave de escrita ficará exposta nesta página.</div>
+        </aside>
+      </div>
+    </main>
+
+    <script>
+      const title = document.querySelector('#title');
+      const slug = document.querySelector('#slug');
+      const description = document.querySelector('#description');
+      const descriptionCount = document.querySelector('#descriptionCount');
+      const htmlContent = document.querySelector('#htmlContent');
+      const htmlTab = document.querySelector('#htmlTab');
+      const previewTab = document.querySelector('#previewTab');
+      const htmlPanel = document.querySelector('#htmlPanel');
+      const previewPanel = document.querySelector('#previewPanel');
+      const previewFrame = document.querySelector('#previewFrame');
+      const visualizeSide = document.querySelector('#visualizeSide');
+      const message = document.querySelector('#message');
+      const cover = document.querySelector('#cover');
+      let slugTouched = false;
+      let coverUrl = '';
+
+      const slugify = (value) => value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,96);
+      title.addEventListener('input', () => { if (!slugTouched) slug.value = slugify(title.value); });
+      slug.addEventListener('input', () => { slugTouched = true; slug.value = slugify(slug.value); });
+      description.addEventListener('input', () => { descriptionCount.textContent = String(description.value.length); });
+      cover.addEventListener('change', () => { if (coverUrl) URL.revokeObjectURL(coverUrl); coverUrl = cover.files?.[0] ? URL.createObjectURL(cover.files[0]) : ''; });
+
+      const allowedTags = new Set(['P','H2','H3','H4','UL','OL','LI','STRONG','B','EM','I','A','BLOCKQUOTE','HR','BR','FIGURE','FIGCAPTION','IMG','TABLE','THEAD','TBODY','TR','TH','TD','DIV','SPAN']);
+      const allowedAttrs = { A:new Set(['href','title','target','rel']), IMG:new Set(['src','alt','title','width','height','loading']), DIV:new Set(['class']), SPAN:new Set(['class']), TABLE:new Set(['class']), TH:new Set(['scope','colspan','rowspan']), TD:new Set(['colspan','rowspan']) };
+
+      function sanitizeHtml(input){
+        const doc = new DOMParser().parseFromString(`<div>${input}</div>`,'text/html');
+        const root = doc.body.firstElementChild;
+        [...root.querySelectorAll('*')].forEach((el) => {
+          if (!allowedTags.has(el.tagName)) { el.replaceWith(...el.childNodes); return; }
+          [...el.attributes].forEach((attr) => {
+            const allowed = allowedAttrs[el.tagName];
+            if (!allowed || !allowed.has(attr.name.toLowerCase())) el.removeAttribute(attr.name);
+          });
+          if (el.tagName === 'A') {
+            const href = el.getAttribute('href') || '';
+            if (/^javascript:/i.test(href)) el.removeAttribute('href');
+            if (el.getAttribute('target') === '_blank') el.setAttribute('rel','noopener noreferrer');
+          }
+          if (el.tagName === 'IMG') {
+            const src = el.getAttribute('src') || '';
+            if (!/^(https?:|data:image\/)/i.test(src)) el.removeAttribute('src');
+            el.setAttribute('loading','lazy');
+          }
+        });
+        return root.innerHTML;
+      }
+
+      function showPreview(){
+        const clean = sanitizeHtml(htmlContent.value);
+        const safeTitle = title.value.trim() || 'Título do artigo';
+        const imageHtml = coverUrl ? `<img src="${coverUrl}" alt="Prévia da capa" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin:0 0 26px">` : '';
+        previewFrame.innerHTML = `${imageHtml}<h1>${safeTitle.replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}</h1>${clean || '<div class="empty-preview">Nenhum conteúdo HTML inserido.</div>'}`;
+        htmlPanel.style.display = 'none'; previewPanel.classList.add('active'); htmlTab.classList.remove('active'); previewTab.classList.add('active'); message.classList.add('show');
+      }
+      function showHtml(){ htmlPanel.style.display = 'block'; previewPanel.classList.remove('active'); htmlTab.classList.add('active'); previewTab.classList.remove('active'); }
+      htmlTab.addEventListener('click', showHtml); previewTab.addEventListener('click', showPreview); visualizeSide.addEventListener('click', showPreview);
+    </script>
+  </body>
+</html>
