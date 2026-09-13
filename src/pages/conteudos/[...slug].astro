@@ -21,6 +21,7 @@ export async function getStaticPaths() {
       canonicalURL,
       "slug": slug.current,
       "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
+      "categoryId": categories[0]->_id,
       "categories": categories[0]->{
         "title": title[_key == $lang][0].value,
         "slug": slug.current
@@ -55,23 +56,45 @@ const normalizeLegacyInternalLinks = (html = "") => html
 
 const legacyBodyHtml = normalizeLegacyInternalLinks(post.legacyBodyHtml || "");
 
-const relatedPosts = await client.fetch(
-  `
-  *[_type == "post" && language == $lang && slug.current != $currentSlug]
-  | order(publishedAt desc, _createdAt desc)[0...3]{
-    title,
-    description,
-    "date": coalesce(publishedAt, _createdAt),
-    "slug": slug.current,
-    "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
-    "categories": categories[0]->{
-      "title": title[_key == $lang][0].value,
-      "slug": slug.current
-    }
+const relatedProjection = `{
+  title,
+  description,
+  "date": coalesce(publishedAt, _createdAt),
+  "slug": slug.current,
+  "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
+  "categories": categories[0]->{
+    "title": title[_key == $lang][0].value,
+    "slug": slug.current
   }
-  `,
-  { lang: locale, currentSlug: post.slug },
-);
+}`;
+
+let relatedPosts = [];
+
+if (post.categoryId) {
+  relatedPosts = await client.fetch(
+    `
+    *[_type == "post" && language == $lang && slug.current != $currentSlug && references($categoryId)]
+    | order(publishedAt desc, _createdAt desc)[0...3]${relatedProjection}
+    `,
+    { lang: locale, currentSlug: post.slug, categoryId: post.categoryId },
+  );
+}
+
+if (relatedPosts.length < 3) {
+  const excludedSlugs = [post.slug, ...relatedPosts.map((item) => item.slug)];
+  const fallbackPosts = await client.fetch(
+    `
+    *[_type == "post" && language == $lang && !(slug.current in $excludedSlugs)]
+    | order(publishedAt desc, _createdAt desc)[0...$remaining]${relatedProjection}
+    `,
+    {
+      lang: locale,
+      excludedSlugs,
+      remaining: 3 - relatedPosts.length,
+    },
+  );
+  relatedPosts = [...relatedPosts, ...fallbackPosts];
+}
 ---
 
 <Layout
