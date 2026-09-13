@@ -9,7 +9,7 @@ export const menu = [
     title: "CONTEÚDOS",
   },
   {
-    url: "/#ciencia-vital",
+    url: "/ciencia-vital",
     title: "CIÊNCIA VITAL",
   },
   {
