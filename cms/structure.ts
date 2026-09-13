@@ -1,54 +1,24 @@
-import type { StructureResolver } from 'sanity/structure'
-
-const languageSection = (
-  S: any,
-  type: string,
-  title: string
-) =>
-  S.listItem()
-    .title(title)
-    .child(
-      S.list()
-        .title(title)
-        .items([
-          S.listItem()
-            .title('EN')
-            .child(
-              S.documentTypeList(type)
-                .title(`EN ${title}`)
-                .filter('_type == $type && language == $language')
-                .params({
-                  type,
-                  language: 'en',
-                })
-            ),
-
-          S.listItem()
-            .title('UA')
-            .child(
-              S.documentTypeList(type)
-                .title(`UA ${title}`)
-                .filter('_type == $type && language == $language')
-                .params({
-                  type,
-                  language: 'ua',
-                })
-            ),
-        ])
-    )
+import type {StructureResolver} from 'sanity/structure'
 
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title('Content')
+    .title('VitaCerta')
     .items([
-      languageSection(S, 'post', 'Posts'),
+      S.listItem()
+        .title('Artigos')
+        .child(
+          S.documentTypeList('post')
+            .title('Artigos')
+            .filter('_type == "post" && language == "pt-BR"')
+        ),
 
-      languageSection(S, 'author', 'Authors'),
+      S.listItem()
+        .title('Categorias')
+        .child(S.documentTypeList('category').title('Categorias')),
 
       S.divider(),
 
-      ...S.documentTypeListItems().filter(
-        (listItem) =>
-          !['post', 'author'].includes(listItem.getId()!)
-      ),
+      S.listItem()
+        .title('Autores (interno)')
+        .child(S.documentTypeList('author').title('Autores (interno)')),
     ])
