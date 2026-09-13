@@ -4,20 +4,39 @@ import { client } from "../lib/sanity";
 import { formatDate } from "../utils/dateFormatter";
 const locale = Astro.currentLocale || "pt-BR";
 
-const post = await client.fetch(`
-  *[_type == "post" && language == $locale] | order(publishedAt desc, _createdAt desc)[0]{
-    title,
-    description,
-    publishedAt,
-    _createdAt,
-    "slug": slug.current,
-    "image": coalesce(mainImage.asset->url, thumbnail.asset->url, coverUrl),
-    "categories": categories[0]->{
-      "title": title[_key == $locale][0].value,
-      "slug": slug.current
+const featured = await client.fetch(`
+  *[_type == "post" && language == $locale && isHomeFeatured == true]
+    | order(_updatedAt desc, publishedAt desc, _createdAt desc)[0]{
+      title,
+      description,
+      publishedAt,
+      _createdAt,
+      "slug": slug.current,
+      "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
+      "categories": categories[0]->{
+        "title": title[_key == $locale][0].value,
+        "slug": slug.current
+      }
     }
-  }
 `, { locale });
+
+const fallback = featured ? null : await client.fetch(`
+  *[_type == "post" && language == $locale]
+    | order(publishedAt desc, _createdAt desc)[0]{
+      title,
+      description,
+      publishedAt,
+      _createdAt,
+      "slug": slug.current,
+      "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
+      "categories": categories[0]->{
+        "title": title[_key == $locale][0].value,
+        "slug": slug.current
+      }
+    }
+`, { locale });
+
+const post = featured || fallback;
 const displayDate = post?.publishedAt || post?._createdAt;
 ---
 
