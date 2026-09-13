@@ -1,19 +1,19 @@
-// Place any global data in this file.
-// You can import this data from anywhere in your site by using the `import` keyword.
+// Dados globais do VitaCerta.
 
-export const SITE_TITLE = 'FYRRE MAGAZINE';
-export const SITE_DESCRIPTION = 'A fast and modern starter template designed to help teams build and launch magazines, blogs, or brand websites efficiently, with a focus on performance and scalability.';
+export const SITE_TITLE = 'VitaCerta';
+export const SITE_DESCRIPTION = 'Informação baseada em ciência para melhores decisões sobre saúde e qualidade de vida. Conteúdos sobre nutrição, mente, movimento, longevidade e bem-estar.';
+
 export const menu = [
   {
-    url: "/blog",
-    title: "Magazine",
+    url: "/pt-BR/blog",
+    title: "CONTEÚDOS",
   },
   {
-    url: "/podcast",
-    title: "Podcast",
+    url: "/#ciencia-vital",
+    title: "CIÊNCIA VITAL",
   },
   {
-    url: "/authors",
-    title: "Authors",
+    url: "/#sobre",
+    title: "SOBRE",
   },
 ];
