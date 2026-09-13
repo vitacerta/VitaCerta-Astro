@@ -43,14 +43,12 @@ export const structure: StructureResolver = (S) =>
     .items([
       languageSection(S, 'post', 'Posts'),
 
-      languageSection(S, 'podcast', 'Podcasts'),
-
       languageSection(S, 'author', 'Authors'),
 
       S.divider(),
 
       ...S.documentTypeListItems().filter(
         (listItem) =>
-          !['post', 'podcast', 'author'].includes(listItem.getId()!)
+          !['post', 'author'].includes(listItem.getId()!)
       ),
     ])
