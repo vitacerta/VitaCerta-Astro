@@ -26,7 +26,7 @@ export default defineConfig({
     }),
     documentInternationalization({
       supportedLanguages: languages,
-      schemaTypes: ['post', 'author', 'podcast'],
+      schemaTypes: ['post', 'author'],
       languageField: 'language',
       weakReferences: true,
       bulkPublish: true,
