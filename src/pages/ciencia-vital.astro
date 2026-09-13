@@ -1,0 +1,47 @@
+---
+import Layout from "../layouts/Base.astro";
+import PostCardRow from "../components/PostCardRow.astro";
+import { client } from "../lib/sanity";
+
+const locale = "pt-BR";
+const posts = await client.fetch(`
+  *[_type == "post" && language == $locale && isCienciaVital == true]
+  | order(publishedAt desc, _createdAt desc){
+    title,
+    description,
+    "date": coalesce(publishedAt, _createdAt),
+    "slug": slug.current,
+    "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
+    "categories": categories[0]->{
+      "title": title[_key == $locale][0].value,
+      "slug": slug.current
+    }
+  }
+`, { locale });
+---
+
+<Layout
+  title="Ciência Vital"
+  description="Partimos de artigos científicos qualificados e trazemos suas descobertas para a vida real, preservando o rigor científico em uma linguagem clara e compreensível."
+  lang="pt-BR"
+>
+  <section class="section">
+    <div class="container">
+      <div class="max-w-4xl">
+        <p class="uppercase mb-4">SÉRIE EDITORIAL</p>
+        <h1 class="h1 mb-6">CIÊNCIA VITAL</h1>
+        <p class="text-lg">Partimos de artigos científicos qualificados e trazemos suas descobertas para a vida real, preservando o rigor científico em uma linguagem clara e compreensível.</p>
+      </div>
+    </div>
+  </section>
+
+  {posts.length > 0 && (
+    <section class="section section-posts">
+      <div class="container">
+        <div class="max-w-5xl grid gap-10">
+          {posts.map((post) => <PostCardRow {...post} />)}
+        </div>
+      </div>
+    </section>
+  )}
+</Layout>
