@@ -7,6 +7,7 @@ export default defineType({
   type: 'document',
   groups: [
     {name: 'editorial', title: 'Publicação', default: true},
+    {name: 'featured', title: 'Destaques'},
     {name: 'technical', title: 'Dados técnicos'},
   ],
   fields: [
@@ -62,6 +63,31 @@ export default defineType({
       type: 'blockContent',
       group: 'editorial',
       description: 'Campo de edição dos novos artigos. As referências e fontes permanecem dentro do próprio texto.',
+    }),
+
+    defineField({
+      name: 'isHomeFeatured',
+      title: 'Destaque principal da Home',
+      type: 'boolean',
+      group: 'featured',
+      description: 'Marque quando esta matéria deve ocupar o destaque principal da página inicial.',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'showInHighlights',
+      title: 'Exibir em “Em Destaque”',
+      type: 'boolean',
+      group: 'featured',
+      description: 'Inclui a matéria na faixa “Em Destaque +++”. O site exibirá no máximo 5 matérias selecionadas.',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'isCienciaVital',
+      title: 'Ciência Vital',
+      type: 'boolean',
+      group: 'featured',
+      description: 'Marca a matéria como parte da série editorial Ciência Vital, sem alterar sua categoria principal.',
+      initialValue: false,
     }),
 
     defineField({
@@ -136,9 +162,14 @@ export default defineType({
     }),
   ],
   preview: {
-    select: {title: 'title', media: 'thumbnail'},
+    select: {title: 'title', media: 'thumbnail', isHomeFeatured: 'isHomeFeatured', showInHighlights: 'showInHighlights', isCienciaVital: 'isCienciaVital'},
     prepare(selection) {
-      return {...selection, subtitle: 'VitaCerta'}
+      const flags = [
+        selection.isHomeFeatured ? 'Home' : null,
+        selection.showInHighlights ? 'Em Destaque' : null,
+        selection.isCienciaVital ? 'Ciência Vital' : null,
+      ].filter(Boolean)
+      return {...selection, subtitle: flags.length ? flags.join(' · ') : 'VitaCerta'}
     },
   },
 })
