@@ -12,8 +12,6 @@ on:
       - ".github/workflows/deploy-pages.yml"
   repository_dispatch:
     types: [sanity-publish]
-  schedule:
-    - cron: "2-57/5 * * * *"
   workflow_dispatch:
 
 permissions:
