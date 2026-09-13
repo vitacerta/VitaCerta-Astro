@@ -39,7 +39,7 @@ export default defineType({
       title: 'Imagem de capa 16:9',
       type: 'image',
       group: 'editorial',
-      description: 'Imagem obrigatória para novos artigos. Use formato horizontal 16:9 e sem texto sobre a imagem.',
+      description: 'Obrigatória para novos artigos. Use formato horizontal 16:9 e sem texto sobre a imagem. Artigos migrados podem manter a capa legada.',
       fields: [
         defineField({
           name: 'alt',
@@ -49,6 +49,12 @@ export default defineType({
         }),
       ],
       options: {hotspot: true},
+      validation: (Rule) => Rule.custom((value, context) => {
+        const document = context.document
+        if (value?.asset) return true
+        if (document?.mainImage?.asset || document?.coverUrl) return true
+        return 'Adicione uma imagem de capa 16:9 antes de publicar.'
+      }),
     }),
     defineField({
       name: 'publishedAt',
@@ -75,7 +81,12 @@ export default defineType({
       title: 'Conteúdo',
       type: 'blockContent',
       group: 'editorial',
-      description: 'Campo de edição dos novos artigos. As referências e fontes permanecem dentro do próprio texto.',
+      description: 'Obrigatório para novos artigos. As referências e fontes permanecem dentro do próprio texto. Artigos migrados podem manter o conteúdo legado.',
+      validation: (Rule) => Rule.custom((value, context) => {
+        if (Array.isArray(value) && value.length > 0) return true
+        if (context.document?.legacyBodyHtml) return true
+        return 'Adicione o conteúdo do artigo antes de publicar.'
+      }),
     }),
 
     defineField({
