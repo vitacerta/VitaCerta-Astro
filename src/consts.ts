@@ -5,7 +5,7 @@ export const SITE_DESCRIPTION = 'Informação baseada em ciência para melhores 
 
 export const menu = [
   {
-    url: "/pt-BR/blog",
+    url: "/conteudos/",
     title: "CONTEÚDOS",
   },
   {
