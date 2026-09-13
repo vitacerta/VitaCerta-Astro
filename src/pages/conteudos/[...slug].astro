@@ -8,221 +8,31 @@ import { formatDate } from "../../utils/dateFormatter";
 
 export async function getStaticPaths() {
   const locale = "pt-BR";
-  const posts = await client.fetch(
-    `
-    *[_type == "post" && language == $lang]{
-      title,
-      description,
-      body,
-      legacyBodyHtml,
-      publishedAt,
-      editoriallyUpdatedAt,
-      _createdAt,
-      language,
-      canonicalURL,
-      "slug": slug.current,
-      "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
-      "categoryId": categories[0]->_id,
-      "categories": categories[0]->{
-        "title": title[_key == $lang][0].value,
-        "slug": slug.current
-      }
-    }
-    `,
-    { lang: locale },
-  );
-
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  const posts = await client.fetch(`*[_type == "post" && language == $lang]{title,description,bodyHtml,body,legacyBodyHtml,publishedAt,editoriallyUpdatedAt,_createdAt,language,canonicalURL,"slug":slug.current,"image":coalesce(thumbnail.asset->url,mainImage.asset->url,coverUrl),"categoryId":categories[0]->_id,"categories":categories[0]->{"title":title[_key == $lang][0].value,"slug":slug.current}}`,{lang:locale});
+  return posts.map((post)=>({params:{slug:post.slug},props:{post}}));
 }
-
-const locale = "pt-BR";
-const { post } = Astro.props;
-const displayDate = post.publishedAt || post._createdAt;
-const canonicalURL = post.canonicalURL || `https://vitacerta.com.br/conteudos/${post.slug}/`;
-const encodedURL = encodeURIComponent(canonicalURL);
-const encodedShareText = encodeURIComponent(`${post.title} ${canonicalURL}`);
-
-const normalizeLegacyInternalLinks = (html = "") => html
-  .replace(
-    /https?:\/\/(?:www\.)?vitacerta\.com\.br\/pt-BR\/blog\/([a-z0-9-]+)\/?/gi,
-    "/conteudos/$1/",
-  )
-  .replace(
-    /\/pt-BR\/blog\/([a-z0-9-]+)\/?/gi,
-    "/conteudos/$1/",
-  );
-
-const legacyBodyHtml = normalizeLegacyInternalLinks(post.legacyBodyHtml || "");
-
-const relatedProjection = `{
-  title,
-  description,
-  "date": coalesce(publishedAt, _createdAt),
-  "slug": slug.current,
-  "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
-  "categories": categories[0]->{
-    "title": title[_key == $lang][0].value,
-    "slug": slug.current
-  }
-}`;
-
-let relatedPosts = [];
-
-if (post.categoryId) {
-  relatedPosts = await client.fetch(
-    `
-    *[_type == "post" && language == $lang && slug.current != $currentSlug && references($categoryId)]
-    | order(publishedAt desc, _createdAt desc)[0...3]${relatedProjection}
-    `,
-    { lang: locale, currentSlug: post.slug, categoryId: post.categoryId },
-  );
-}
-
-if (relatedPosts.length < 3) {
-  const excludedSlugs = [post.slug, ...relatedPosts.map((item) => item.slug)];
-  const fallbackPosts = await client.fetch(
-    `
-    *[_type == "post" && language == $lang && !(slug.current in $excludedSlugs)]
-    | order(publishedAt desc, _createdAt desc)[0...$remaining]${relatedProjection}
-    `,
-    {
-      lang: locale,
-      excludedSlugs,
-      remaining: 3 - relatedPosts.length,
-    },
-  );
-  relatedPosts = [...relatedPosts, ...fallbackPosts];
-}
+const locale="pt-BR";
+const {post}=Astro.props;
+const displayDate=post.publishedAt||post._createdAt;
+const canonicalURL=post.canonicalURL||`https://vitacerta.com.br/conteudos/${post.slug}/`;
+const encodedURL=encodeURIComponent(canonicalURL);
+const encodedShareText=encodeURIComponent(`${post.title} ${canonicalURL}`);
+const normalizeInternalLinks=(html="")=>html.replace(/https?:\/\/(?:www\.)?vitacerta\.com\.br\/pt-BR\/blog\/([a-z0-9-]+)\/?/gi,"/conteudos/$1/").replace(/\/pt-BR\/blog\/([a-z0-9-]+)\/?/gi,"/conteudos/$1/");
+const editorialBodyHtml=normalizeInternalLinks(post.bodyHtml||"");
+const legacyBodyHtml=normalizeInternalLinks(post.legacyBodyHtml||"");
+const relatedProjection=`{title,description,"date":coalesce(publishedAt,_createdAt),"slug":slug.current,"image":coalesce(thumbnail.asset->url,mainImage.asset->url,coverUrl),"categories":categories[0]->{"title":title[_key == $lang][0].value,"slug":slug.current}}`;
+let relatedPosts=[];
+if(post.categoryId){relatedPosts=await client.fetch(`*[_type == "post" && language == $lang && slug.current != $currentSlug && references($categoryId)]|order(publishedAt desc,_createdAt desc)[0...3]${relatedProjection}`,{lang:locale,currentSlug:post.slug,categoryId:post.categoryId});}
+if(relatedPosts.length<3){const excludedSlugs=[post.slug,...relatedPosts.map((item)=>item.slug)];const fallbackPosts=await client.fetch(`*[_type == "post" && language == $lang && !(slug.current in $excludedSlugs)]|order(publishedAt desc,_createdAt desc)[0...$remaining]${relatedProjection}`,{lang:locale,excludedSlugs,remaining:3-relatedPosts.length});relatedPosts=[...relatedPosts,...fallbackPosts];}
 ---
-
-<Layout
-  title={post.title}
-  description={post.description}
-  image={post.image}
-  canonicalURL={canonicalURL}
-  lang={post.language || locale}
->
-  <section class="mt-10">
-    <div class="container">
-      <div class="flex items-center justify-between flex-wrap gap-4">
-        <a href="/conteudos/" class="btn btn-link text-inherit uppercase no-underline group p-0">
-          <i class="fa-solid fa-arrow-left group-hover:translate-x-1"></i> Voltar
-        </a>
-        <p class="font-semibold text-3xl uppercase">VitaCerta</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
-        <h1>{post.title}</h1>
-        <p class="text-lg font-semibold">{post.description}</p>
-      </div>
-      <div>
-        <div class="flex flex-wrap gap-x-6 gap-y-3 justify-between items-center mb-5">
-          <div class="flex flex-wrap gap-x-6 gap-y-2">
-            <p><b class="mr-2">Data</b><span>{formatDate(displayDate)}</span></p>
-            {post.editoriallyUpdatedAt && (
-              <p><b class="mr-2">Atualizado em</b><span>{formatDate(post.editoriallyUpdatedAt)}</span></p>
-            )}
-          </div>
-          {post.categories && (
-            <a href={`/${locale}/blog/${post.categories.slug}`} class="ml-auto btn btn-outline rounded-full py-1 px-4 h-auto hover:bg-black hover:text-white">
-              {post.categories.title}
-            </a>
-          )}
-        </div>
-        {post.image && (
-          <Image src={post.image} alt={post.title} width="1600" height="900" format="webp" fetchpriority="high" quality={55} loading="eager" class="aspect-video w-full h-auto object-cover" />
-        )}
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="max-w-4xl mx-auto">
-        {post.body ? (
-          <div class="post"><PortableComponent body={post.body} /></div>
-        ) : legacyBodyHtml ? (
-          <div class="post" set:html={legacyBodyHtml}></div>
-        ) : null}
-
-        <div class="border-t mt-12 pt-6">
-          <p class="text-sm">
-            O conteúdo do VitaCerta tem caráter informativo e educativo e não substitui orientação, diagnóstico ou tratamento realizado por profissionais de saúde.
-          </p>
-        </div>
-
-        <div class="border-t mt-8 pt-6">
-          <div class="flex flex-wrap items-center gap-3">
-            <b class="mr-2">Compartilhar</b>
-            <a
-              href={`https://wa.me/?text=${encodedShareText}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-outline rounded-full py-1 px-4 h-auto"
-            >
-              WhatsApp
-            </a>
-            <a
-              href={`https://www.facebook.com/sharer/sharer.php?u=${encodedURL}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-outline rounded-full py-1 px-4 h-auto"
-            >
-              Facebook
-            </a>
-            <button
-              type="button"
-              class="btn btn-outline rounded-full py-1 px-4 h-auto js-copy-link"
-              data-url={canonicalURL}
-            >
-              Copiar link
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {relatedPosts.length > 0 && (
-    <section class="section">
-      <div class="container">
-        <div class="border-t pt-10">
-          <div class="flex flex-wrap gap-4 justify-between items-center">
-            <h2 class="uppercase">CONTINUE LENDO</h2>
-            <a href="/conteudos/" class="btn btn-link text-inherit uppercase no-underline group p-0">Ver todos <i class="fa-solid fa-arrow-right group-hover:translate-x-1" /></a>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10">
-            {relatedPosts.map((post) => <PostCardBase {...post} />)}
-          </div>
-        </div>
-      </div>
-    </section>
-  )}
-
-  <script is:inline>
-    document.querySelectorAll('.js-copy-link').forEach((button) => {
-      button.addEventListener('click', async () => {
-        const url = button.getAttribute('data-url');
-        if (!url) return;
-
-        try {
-          await navigator.clipboard.writeText(url);
-          const originalText = button.textContent;
-          button.textContent = 'Link copiado';
-          setTimeout(() => {
-            button.textContent = originalText;
-          }, 1800);
-        } catch (error) {
-          window.prompt('Copie o link:', url);
-        }
-      });
-    });
-  </script>
+<Layout title={post.title} description={post.description} image={post.image} canonicalURL={canonicalURL} lang={post.language||locale}>
+<section class="mt-10"><div class="container"><div class="flex items-center justify-between flex-wrap gap-4"><a href="/conteudos/" class="btn btn-link text-inherit uppercase no-underline group p-0"><i class="fa-solid fa-arrow-left group-hover:translate-x-1"></i> Voltar</a><p class="font-semibold text-3xl uppercase">VitaCerta</p></div></div></section>
+<section class="section"><div class="container"><div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10"><h1>{post.title}</h1><p class="text-lg font-semibold">{post.description}</p></div><div><div class="flex flex-wrap gap-x-6 gap-y-3 justify-between items-center mb-5"><div class="flex flex-wrap gap-x-6 gap-y-2"><p><b class="mr-2">Data</b><span>{formatDate(displayDate)}</span></p>{post.editoriallyUpdatedAt&&<p><b class="mr-2">Atualizado em</b><span>{formatDate(post.editoriallyUpdatedAt)}</span></p>}</div>{post.categories&&<a href={`/${locale}/blog/${post.categories.slug}`} class="ml-auto btn btn-outline rounded-full py-1 px-4 h-auto hover:bg-black hover:text-white">{post.categories.title}</a>}</div>{post.image&&<Image src={post.image} alt={post.title} width="1600" height="900" format="webp" fetchpriority="high" quality={55} loading="eager" class="aspect-video w-full h-auto object-cover" />}</div></div></section>
+<section class="section"><div class="container"><div class="max-w-4xl mx-auto">
+{editorialBodyHtml?<div class="post" set:html={editorialBodyHtml}></div>:post.body?<div class="post"><PortableComponent body={post.body}/></div>:legacyBodyHtml?<div class="post" set:html={legacyBodyHtml}></div>:null}
+<div class="border-t mt-12 pt-6"><p class="text-sm">O conteúdo do VitaCerta tem caráter informativo e educativo e não substitui orientação, diagnóstico ou tratamento realizado por profissionais de saúde.</p></div>
+<div class="border-t mt-8 pt-6"><div class="flex flex-wrap items-center gap-3"><b class="mr-2">Compartilhar</b><a href={`https://wa.me/?text=${encodedShareText}`} target="_blank" rel="noopener noreferrer" class="btn btn-outline rounded-full py-1 px-4 h-auto">WhatsApp</a><a href={`https://www.facebook.com/sharer/sharer.php?u=${encodedURL}`} target="_blank" rel="noopener noreferrer" class="btn btn-outline rounded-full py-1 px-4 h-auto">Facebook</a><button type="button" class="btn btn-outline rounded-full py-1 px-4 h-auto js-copy-link" data-url={canonicalURL}>Copiar link</button></div></div>
+</div></div></section>
+{relatedPosts.length>0&&<section class="section"><div class="container"><div class="border-t pt-10"><div class="flex flex-wrap gap-4 justify-between items-center"><h2 class="uppercase">CONTINUE LENDO</h2><a href="/conteudos/" class="btn btn-link text-inherit uppercase no-underline group p-0">Ver todos <i class="fa-solid fa-arrow-right group-hover:translate-x-1" /></a></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10">{relatedPosts.map((post)=><PostCardBase {...post}/>)}</div></div></div></section>}
+<script is:inline>document.querySelectorAll('.js-copy-link').forEach((button)=>{button.addEventListener('click',async()=>{const url=button.getAttribute('data-url');if(!url)return;try{await navigator.clipboard.writeText(url);const originalText=button.textContent;button.textContent='Link copiado';setTimeout(()=>{button.textContent=originalText;},1800);}catch(error){window.prompt('Copie o link:',url);}});});</script>
 </Layout>
