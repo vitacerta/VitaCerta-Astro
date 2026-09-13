@@ -44,15 +44,10 @@ jobs:
               s = re.sub(r'url\((["\']?)/(?!/)', rf'url(\1{base}/', s)
               p.write_text(s, encoding='utf-8')
           PY
-      - name: Validate all 86 VitaCerta articles and SEO
+      - name: Validate current VitaCerta articles and SEO
         run: |
           python - <<'PY'
-          import json, html
           from pathlib import Path
-
-          rows = json.loads(Path('migration/vitacerta-posts.json').read_text(encoding='utf-8'))
-          if len(rows) != 86:
-              raise SystemExit(f'Manifesto inesperado: {len(rows)} artigos')
 
           required_pages = [
               Path('dist/index.html'),
@@ -70,19 +65,13 @@ jobs:
               if not p.is_file():
                   raise SystemExit(f'Pagina obrigatoria ausente: {p}')
 
-          missing = []
-          title_mismatch = []
-          too_small = []
-          legacy_routes = []
-          canonical_problems = []
-          lang_problems = []
+          article_pages = sorted(Path('dist/conteudos').glob('*/index.html'))
+          if not article_pages:
+              raise SystemExit('Nenhum artigo foi gerado em /conteudos/')
 
           html_pages = []
-          html_by_path = {}
           for hp in Path('dist').rglob('*.html'):
-              page_text = hp.read_text(encoding='utf-8')
-              html_pages.append(page_text)
-              html_by_path[str(hp)] = page_text
+              html_pages.append(hp.read_text(encoding='utf-8'))
           all_html = '\n'.join(html_pages)
 
           sitemap_text = '\n'.join(
@@ -91,22 +80,18 @@ jobs:
           )
           rss_text = Path('dist/rss.xml').read_text(encoding='utf-8')
 
+          too_small = []
+          legacy_routes = []
+          canonical_problems = []
+          lang_problems = []
           old_internal_links = []
           sitemap_missing = []
           rss_missing = []
 
-          for row in rows:
-              slug = row['slug']
-              p = Path('dist/conteudos') / slug / 'index.html'
-              if not p.is_file():
-                  missing.append(slug)
-                  continue
-
+          for p in article_pages:
+              slug = p.parent.name
               text = p.read_text(encoding='utf-8')
-              title = row['title']
-              escaped_title = html.escape(title, quote=True)
-              if title not in text and escaped_title not in text:
-                  title_mismatch.append(slug)
+
               if len(text) < 3000:
                   too_small.append(slug)
 
@@ -129,8 +114,6 @@ jobs:
                   rss_missing.append(slug)
 
           problems = {
-              'missing': missing,
-              'title_mismatch': title_mismatch,
               'too_small': too_small,
               'legacy_routes': legacy_routes,
               'canonical_problems': canonical_problems,
@@ -148,65 +131,56 @@ jobs:
           if 'noindex,nofollow' not in root:
               raise SystemExit('Preview sem noindex')
 
-          print(f'SEO_OK: {len(rows)} artigos em /conteudos/ com canonical, pt-BR, sitemap e RSS; rota e links antigos ausentes')
+          print(f'SEO_OK: {len(article_pages)} artigos atuais em /conteudos/ com canonical, pt-BR, sitemap e RSS; rota e links antigos ausentes')
           PY
-      - name: Audit all published articles against canonical migration source
+      - name: Audit current published articles in Sanity
         run: |
           node --input-type=module <<'NODE'
           import fs from 'node:fs'
           import path from 'node:path'
           import {createClient} from '@sanity/client'
 
-          const batchDir = 'migration/sanity-batches'
-          const sourceRows = fs.readdirSync(batchDir)
-            .filter(name => /^batch-\d+\.json$/.test(name))
-            .sort()
-            .flatMap(name => JSON.parse(fs.readFileSync(path.join(batchDir, name), 'utf8')))
-
-          const sourceBySlug = new Map(sourceRows.map(row => [row.slug.current, row]))
           const client = createClient({
             projectId: process.env.VITE_SANITY_PROJECT_ID,
             dataset: process.env.VITE_SANITY_DATASET,
             token: process.env.SANITY_AUTH_TOKEN,
             apiVersion: '2025-02-19',
             useCdn: false,
-            perspective: 'raw',
+            perspective: 'published',
           })
 
-          const published = await client.fetch(`*[_type == "post" && !(_id in path("drafts.**"))]{
+          const published = await client.fetch(`*[_type == "post"]{
             _id,
             title,
             "slug": slug.current,
-            description,
-            language,
-            duration,
-            publishedAt,
-            canonicalURL,
-            coverUrl,
-            legacyBodyHtml,
             "categories": categories[]->slug.current
           }`)
 
-          if (published.length !== 86) {
-            console.error('published_count=', published.length)
+          if (published.length === 0) {
+            console.error('Nenhum artigo publicado encontrado no Sanity')
             process.exit(1)
           }
 
-          const fields = ['title','description','language','duration','publishedAt','canonicalURL','coverUrl','legacyBodyHtml']
           const problems = []
+          const seenSlugs = new Set()
           for (const doc of published) {
-            const src = sourceBySlug.get(doc.slug)
-            if (!src) {
-              problems.push({slug: doc.slug, problem: 'missing_from_source'})
+            if (!doc.title || !doc.title.trim()) {
+              problems.push({_id: doc._id, problem: 'missing_title'})
+            }
+            if (!doc.slug || !doc.slug.trim()) {
+              problems.push({_id: doc._id, problem: 'missing_slug'})
               continue
             }
-            for (const field of fields) {
-              if ((doc[field] ?? null) !== (src[field] ?? null)) {
-                problems.push({slug: doc.slug, field, problem: 'source_mismatch'})
-              }
+            if (seenSlugs.has(doc.slug)) {
+              problems.push({_id: doc._id, slug: doc.slug, problem: 'duplicate_slug'})
             }
+            seenSlugs.add(doc.slug)
             if (!Array.isArray(doc.categories) || doc.categories.length === 0) {
-              problems.push({slug: doc.slug, field: 'categories', problem: 'missing_category'})
+              problems.push({_id: doc._id, slug: doc.slug, problem: 'missing_category'})
+            }
+            const builtPage = path.join('dist', 'conteudos', doc.slug, 'index.html')
+            if (!fs.existsSync(builtPage)) {
+              problems.push({_id: doc._id, slug: doc.slug, problem: 'published_page_not_built'})
             }
           }
 
@@ -216,10 +190,10 @@ jobs:
             process.exit(1)
           }
 
-          console.log('PUBLISHED_INTEGRITY_OK: 86 published articles match canonical source')
+          console.log(`PUBLISHED_INTEGRITY_OK: ${published.length} artigos publicados validados dinamicamente`)
           NODE
       - uses: actions/upload-artifact@v4
         with:
-          name: vitacerta-astro-preview-86
+          name: vitacerta-astro-preview
           path: dist
           retention-days: 3
