@@ -4,20 +4,15 @@ import Hero from "../components/Hero.astro";
 import Topline from "../components/Topline.astro";
 import Demo from "../components/DemoPost.astro";
 import Posts from "../components/Posts.astro";
-import Podcasts from "../components/Podcasts.astro";
-import Authors from "../components/Authors.astro";
-const locale = Astro.url.pathname.split("/")[1];
-
-// if (!["en", "uk", "de"].includes(locale)) {
-//   return Astro.redirect("/en" + Astro.url.pathname);
-// }
 ---
 
-<Layout title="Homepage">
-  <Hero title="Art & Life" />
+<Layout
+  title="Saúde, Ciência e Qualidade de Vida"
+  description="Informação baseada em ciência para melhores decisões sobre saúde e qualidade de vida. Conteúdos sobre nutrição, mente, movimento, longevidade e bem-estar."
+  lang="pt-BR"
+>
+  <Hero title="SAÚDE & BEM-ESTAR" />
   <Topline />
   <Demo />
   <Posts />
-  <Podcasts />
-  <Authors />
 </Layout>
