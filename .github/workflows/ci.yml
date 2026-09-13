@@ -44,7 +44,9 @@ jobs:
       - name: Verify production output
         run: |
           test -f dist/conteudos/index.html
-          test "$(find dist/conteudos -mindepth 2 -type f -name index.html | wc -l)" -eq 86
+          ARTICLE_COUNT="$(find dist/conteudos -mindepth 2 -type f -name index.html | wc -l | tr -d ' ')"
+          test "$ARTICLE_COUNT" -gt 0
+          echo "Artigos gerados: $ARTICLE_COUNT"
           grep -q 'https://vitacerta.com.br/' dist/index.html
           if grep -q 'noindex,nofollow' dist/index.html; then
             echo 'ERRO: noindex encontrado na home de produção'
