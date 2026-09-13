@@ -2,129 +2,46 @@
 const today = new Date();
 import Logo from "./Logo.astro";
 import Socials from "./Socials.astro";
-const locale = Astro.currentLocale;
-
-const navbar = [
-  {
-    links: [
-      {
-        url: "#",
-        title: "Art",
-      },
-      {
-        url: "#",
-        title: "Design",
-      },
-      {
-        url: "#",
-        title: "Architecture",
-      },
-    ],
-  },
-  {
-    links: [
-      {
-        url: "/blog",
-        title: "Magazine",
-      },
-
-      {
-        url: "/podcast",
-        title: "Podcast",
-      },
-      {
-        url: "/authors",
-        title: "Authors",
-      },
-    ],
-  },
-  {
-    links: [
-      {
-        url: "#",
-        title: "Styleguide",
-      },
-      {
-        url: "#",
-        title: "Licensing",
-      },
-      {
-        url: "#",
-        title: "Changelog",
-      },
-    ],
-  },
-];
+import { menu } from "../consts";
 ---
 
 <footer class="footer bg-black text-white pb-10 pt-5">
-  <div
-    class="footer-topline overflow-hidden uppercase flex gap-4 overflow-x-hidden w-full"
-  >
-    {Array.from({ length: 100 }).map((_) => <span>Newsletter+++</span>)}
+  <div class="footer-topline overflow-hidden uppercase flex gap-4 overflow-x-hidden w-full">
+    {Array.from({ length: 30 }).map((_) => <span>VITACERTA+++</span>)}
   </div>
   <div class="footer-top w-full">
     <div class="container">
-      <div
-        class="grid grid-cols-1 md:grid-cols-[1fr_auto] xl:grid-cols-[1fr_2fr] gap-10 items-center"
-      >
+      <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] xl:grid-cols-[1fr_2fr] gap-10 items-start">
         <div>
-          <h2 class="text-4xl sm:text-5xl uppercase font-bold">
-            Design News to your inbox
-          </h2>
+          <h2 class="text-4xl sm:text-5xl uppercase font-bold">INFORMAÇÃO QUE VALE A PENA RECEBER</h2>
+          <p class="mt-4">Uma seleção dos melhores conteúdos do VitaCerta, novas evidências e descobertas relevantes sobre saúde diretamente no seu e-mail. Sem excesso. Só o que merece sua atenção.</p>
         </div>
-        <div>
-          <form
-            action="/"
-            method="GET"
-            class="flex flex-wrap gap-3 items-center md:ml-auto lg:max-w-sm"
-          >
-            <input
-              type="text"
-              required
-              name="subscribe_email"
-              id="subscribe-email"
-              placeholder="Email"
-              class="input text-black rounded-none flex-1"
-            />
-            <button
-              class="btn bg-white rounded-none shadow-none hover:bg-neutral hover:text-white uppercase"
-              type="submit">Sign Up</button
-            >
-          </form>
-        </div>
+        <form action="/" method="GET" class="flex flex-wrap gap-3 items-center md:ml-auto lg:max-w-sm">
+          <input type="email" required name="subscribe_email" id="subscribe-email" placeholder="Email" class="input text-black rounded-none flex-1" />
+          <button class="btn bg-white rounded-none shadow-none hover:bg-neutral hover:text-white uppercase" type="submit">QUERO RECEBER</button>
+        </form>
       </div>
     </div>
   </div>
   <div class="footer-mdl w-full">
     <div class="container">
       <div class="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-10">
+        <div><Logo /></div>
         <div>
-          <Logo />
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-3">
-          {
-            navbar.map((item) => (
-              <nav class="grid gap-0">
-                {item.links.map((link) => (
-                  <a href={`/${locale}${link.url}`} class="hover:underline px-4 py-2">
-                    {link.title}
-                  </a>
-                ))}
-              </nav>
-            ))
-          }
+          <p class="mb-4">VitaCerta — Informação baseada em ciência para melhores decisões sobre saúde e qualidade de vida.</p>
+          <p class="font-semibold mb-6">A informação é nossa responsabilidade. A escolha é sua.</p>
+          <nav class="flex flex-wrap gap-6">{menu.map((link) => <a href={link.url} class="hover:underline">{link.title}</a>)}</nav>
         </div>
       </div>
     </div>
   </div>
   <div class="footer-btm w-full">
-    <div class="container flex flex-wrap gap-4 justify-between items-center">
-      <p class="text-xs opacity-50">
-        &copy; {today.getFullYear()} Made by Anastasiia Berest - Powered by Astro
-        + Sanity CMS
-      </p>
-      <Socials />
+    <div class="container grid gap-4">
+      <p class="text-xs opacity-70">O conteúdo do VitaCerta tem caráter informativo e educativo e não substitui orientação, diagnóstico ou tratamento realizado por profissionais de saúde.</p>
+      <div class="flex flex-wrap gap-4 justify-between items-center">
+        <p class="text-xs opacity-50">&copy; {today.getFullYear()} VitaCerta</p>
+        <Socials />
+      </div>
     </div>
   </div>
 </footer>
