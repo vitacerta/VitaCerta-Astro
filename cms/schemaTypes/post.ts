@@ -58,6 +58,19 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'editoriallyUpdatedAt',
+      title: 'Atualizado em',
+      type: 'datetime',
+      group: 'editorial',
+      description: 'Preencha somente quando houver uma atualização editorial relevante no conteúdo. Correções de digitação ou ajustes visuais não devem alterar esta data.',
+      validation: (Rule) => Rule.custom((value, context) => {
+        if (!value) return true
+        const publishedAt = context.document?.publishedAt
+        if (!publishedAt) return true
+        return new Date(value) >= new Date(publishedAt) || 'A data de atualização não pode ser anterior à publicação.'
+      }),
+    }),
+    defineField({
       name: 'body',
       title: 'Conteúdo',
       type: 'blockContent',
