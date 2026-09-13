@@ -123,12 +123,6 @@ jobs:
               needle = f'/pt-BR/blog/{slug}'
               if needle in all_html:
                   old_internal_links.append(slug)
-                  for page_path, page_text in html_by_path.items():
-                      start = page_text.find(needle)
-                      if start != -1:
-                          left = max(0, start - 180)
-                          right = min(len(page_text), start + len(needle) + 180)
-                          print('OLD_LINK_CONTEXT', slug, page_path, repr(page_text[left:right]))
               if expected not in sitemap_text:
                   sitemap_missing.append(slug)
               if f'/conteudos/{slug}/' not in rss_text:
@@ -156,7 +150,7 @@ jobs:
 
           print(f'SEO_OK: {len(rows)} artigos em /conteudos/ com canonical, pt-BR, sitemap e RSS; rota e links antigos ausentes')
           PY
-      - name: Audit 4 published pilots against canonical migration source
+      - name: Audit all published articles against canonical migration source
         run: |
           node --input-type=module <<'NODE'
           import fs from 'node:fs'
@@ -193,7 +187,7 @@ jobs:
             "categories": categories[]->slug.current
           }`)
 
-          if (published.length !== 4) {
+          if (published.length !== 86) {
             console.error('published_count=', published.length)
             process.exit(1)
           }
@@ -208,27 +202,7 @@ jobs:
             }
             for (const field of fields) {
               if ((doc[field] ?? null) !== (src[field] ?? null)) {
-                if (field === 'legacyBodyHtml') {
-                  const a = String(src[field] ?? '')
-                  const b = String(doc[field] ?? '')
-                  let firstDiff = -1
-                  const n = Math.min(a.length, b.length)
-                  for (let i = 0; i < n; i++) {
-                    if (a[i] !== b[i]) { firstDiff = i; break }
-                  }
-                  if (firstDiff === -1 && a.length !== b.length) firstDiff = n
-                  problems.push({
-                    slug: doc.slug,
-                    field,
-                    sourceLength: a.length,
-                    sanityLength: b.length,
-                    firstDiff,
-                    sourceSnippet: a.slice(Math.max(0, firstDiff - 60), firstDiff + 120),
-                    sanitySnippet: b.slice(Math.max(0, firstDiff - 60), firstDiff + 120),
-                  })
-                } else {
-                  problems.push({slug: doc.slug, field, source: src[field] ?? null, sanity: doc[field] ?? null})
-                }
+                problems.push({slug: doc.slug, field, problem: 'source_mismatch'})
               }
             }
             if (!Array.isArray(doc.categories) || doc.categories.length === 0) {
@@ -242,7 +216,7 @@ jobs:
             process.exit(1)
           }
 
-          console.log('PUBLISHED_INTEGRITY_OK: 4 published pilots match canonical source exactly')
+          console.log('PUBLISHED_INTEGRITY_OK: 86 published articles match canonical source')
           NODE
       - uses: actions/upload-artifact@v4
         with:
