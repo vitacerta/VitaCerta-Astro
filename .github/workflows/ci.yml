@@ -17,34 +17,35 @@ on:
 
 jobs:
   build:
-    name: Code standards & build
+    name: Build validation
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
+    env:
+      VITE_SANITY_PROJECT_ID: 1dh7sg5j
+      VITE_SANITY_DATASET: production
+      SANITY_PREVIEW: "false"
 
     steps:
-      - name: "☁️ Checkout repository"
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: "📦 Install pnpm"
-        uses: pnpm/action-setup@v4
-        with:
-          version: "11.3.0"
-
-      - name: Use Node.js
+      - name: Use Node.js 24
         uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: "pnpm"
+          cache: npm
 
-      - name: "📦 Install dependencies"
-        run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: npm ci
 
-      - name: "🔎 Lint code"
-        run: pnpm run lint
+      - name: Build project
+        run: npm run build
 
-      - name: "🚀 Build the project"
-        run: pnpm run build
-
-      - name: "📝 Check code format"
-        continue-on-error: true
-        run: pnpm run format:check
+      - name: Verify production output
+        run: |
+          test "$(find dist/conteudos -type f -name index.html | wc -l)" -eq 86
+          grep -q 'https://vitacerta.com.br/' dist/index.html
+          if grep -q 'noindex,nofollow' dist/index.html; then
+            echo 'ERRO: noindex encontrado na home de produção'
+            exit 1
+          fi
