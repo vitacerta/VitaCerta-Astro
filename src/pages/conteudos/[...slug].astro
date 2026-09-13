@@ -40,6 +40,8 @@ const locale = "pt-BR";
 const { post } = Astro.props;
 const displayDate = post.publishedAt || post._createdAt;
 const canonicalURL = post.canonicalURL || `https://vitacerta.com.br/conteudos/${post.slug}/`;
+const encodedURL = encodeURIComponent(canonicalURL);
+const encodedShareText = encodeURIComponent(`${post.title} ${canonicalURL}`);
 
 const normalizeLegacyInternalLinks = (html = "") => html
   .replace(
@@ -126,6 +128,35 @@ const relatedPosts = await client.fetch(
             O conteúdo do VitaCerta tem caráter informativo e educativo e não substitui orientação, diagnóstico ou tratamento realizado por profissionais de saúde.
           </p>
         </div>
+
+        <div class="border-t mt-8 pt-6">
+          <div class="flex flex-wrap items-center gap-3">
+            <b class="mr-2">Compartilhar</b>
+            <a
+              href={`https://wa.me/?text=${encodedShareText}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline rounded-full py-1 px-4 h-auto"
+            >
+              WhatsApp
+            </a>
+            <a
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodedURL}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline rounded-full py-1 px-4 h-auto"
+            >
+              Facebook
+            </a>
+            <button
+              type="button"
+              class="btn btn-outline rounded-full py-1 px-4 h-auto js-copy-link"
+              data-url={canonicalURL}
+            >
+              Copiar link
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -145,4 +176,24 @@ const relatedPosts = await client.fetch(
       </div>
     </section>
   )}
+
+  <script is:inline>
+    document.querySelectorAll('.js-copy-link').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const url = button.getAttribute('data-url');
+        if (!url) return;
+
+        try {
+          await navigator.clipboard.writeText(url);
+          const originalText = button.textContent;
+          button.textContent = 'Link copiado';
+          setTimeout(() => {
+            button.textContent = originalText;
+          }, 1800);
+        } catch (error) {
+          window.prompt('Copie o link:', url);
+        }
+      });
+    });
+  </script>
 </Layout>
