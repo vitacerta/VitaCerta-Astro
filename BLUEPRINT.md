@@ -228,6 +228,14 @@ Não usar conhecimento de conversas anteriores como requisito oculto. Toda infor
 
 ## 16. Estado deste documento
 
+### Atualização do Admin — 13/09/2026
+
+A camada do novo Worker `vitacerta-admin-api` foi implementada em desenvolvimento, com autenticação Cloudflare Access/JWT, sanitização server-side, categorias reais, rascunho, preview sem gravação, publicação e edição com revisão. O Admin e sua API usam a mesma origem protegida. O Worker de imagens permanece separado.
+
+Testes locais, teste de navegador com dados fictícios, build Astro e compilação simulada do Worker foram executados. **Isso não comprova implantação externa nem o fluxo completo de publicação.** Access, secret, hostname e teste Sanity → webhook → GitHub Actions → site ainda precisam de configuração e validação autorizadas. Despublicação/exclusão permanecem na etapa posterior.
+
+Procedimento, evidências e pendências: [`docs/ADMIN-DEPLOYMENT.md`](docs/ADMIN-DEPLOYMENT.md). Decisão e limitações de concorrência: [`ADR 0006`](docs/adr/0006-admin-autenticado-e-transacoes.md).
+
 Status: **vivo / em construção**.
 
 Este Blueprint deve acompanhar o projeto. Mudanças arquiteturais relevantes exigem atualização do Blueprint e, quando apropriado, um ADR. A versão final só será marcada após o Admin, segurança, publicação e teste de reconstrução estarem validados.

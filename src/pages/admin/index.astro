@@ -1,39 +1,4 @@
 ---
-import { client } from '../../lib/sanity.js';
-
-const articles = await client.fetch(`
-  *[_type == "post"] | order(_updatedAt desc){
-    _id,
-    title,
-    "slug": slug.current,
-    _updatedAt,
-    publishedAt,
-    "category": coalesce(categories[0]->slug.current, "sem-categoria"),
-    isHomeFeatured,
-    showInHighlights,
-    isCienciaVital
-  }
-`);
-
-const categories = [...new Set(
-  articles
-    .map((article) => typeof article.category === 'string' ? article.category : '')
-    .filter(Boolean)
-)].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-
-const formatDate = (value) => {
-  if (!value) return '—';
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(value));
-};
-
-const categoryLabel = (value) => value
-  .split('-')
-  .map((part) => part ? part.charAt(0).toUpperCase() + part.slice(1) : '')
-  .join(' ');
 ---
 
 <!doctype html>
@@ -85,7 +50,7 @@ const categoryLabel = (value) => value
       <div class="topbar-inner">
         <div class="brand">VitaCerta <small>Admin</small></div>
         <div>
-          <button class="btn btn-secondary" type="button">Sair</button>
+          <button class="btn btn-secondary" id="logout" type="button">Sair</button>
           <a class="btn btn-primary" href="/admin/novo/">+ Novo artigo</a>
         </div>
       </div>
@@ -97,7 +62,7 @@ const categoryLabel = (value) => value
           <h1>Artigos</h1>
           <p class="subtitle">Gerencie o conteúdo editorial do VitaCerta em uma tela simples.</p>
         </div>
-        <div class="count"><span id="visibleCount">{articles.length}</span> artigos</div>
+        <div class="count"><span id="visibleCount">0</span> artigos</div>
       </div>
 
       <section class="panel">
@@ -105,11 +70,11 @@ const categoryLabel = (value) => value
           <input class="control" id="search" type="search" placeholder="Buscar por título ou slug…" aria-label="Buscar artigos" />
           <select class="control" id="category" aria-label="Filtrar por categoria">
             <option value="">Todas as categorias</option>
-            {categories.map((category) => <option value={category}>{categoryLabel(category)}</option>)}
+
           </select>
           <select class="control" id="status" aria-label="Filtrar por status">
             <option value="">Todos os status</option>
-            <option value="published">Publicado</option>
+            <option value="published">Publicado</option><option value="draft">Rascunho</option>
           </select>
         </div>
 
@@ -117,59 +82,14 @@ const categoryLabel = (value) => value
           <table>
             <thead><tr><th>Artigo</th><th>Categoria</th><th>Status</th><th>Atualizado</th><th>Ação</th></tr></thead>
             <tbody id="articleRows">
-              {articles.map((article) => (
-                <tr data-title={(article.title || '').toLowerCase()} data-slug={(article.slug || '').toLowerCase()} data-category={article.category || ''} data-status="published">
-                  <td>
-                    <div class="article-title">{article.title}</div>
-                    <div class="slug">/{article.slug || 'sem-slug'}</div>
-                    <div class="flags">
-                      {article.isHomeFeatured && <span class="flag">Home</span>}
-                      {article.showInHighlights && <span class="flag">Em Destaque</span>}
-                      {article.isCienciaVital && <span class="flag">Ciência Vital</span>}
-                    </div>
-                  </td>
-                  <td>{categoryLabel(article.category || 'sem-categoria')}</td>
-                  <td><span class="badge"><span class="dot"></span>Publicado</span></td>
-                  <td>{formatDate(article._updatedAt || article.publishedAt)}</td>
-                  <td><a class="link" href={article.slug ? `/conteudos/${article.slug}/` : '#'} target="_blank">Ver artigo</a></td>
-                </tr>
-              ))}
             </tbody>
           </table>
         </div>
         <div class="empty" id="emptyState">Nenhum artigo encontrado com esses filtros.</div>
       </section>
-      <p class="note">Nesta etapa a listagem usa conteúdo publicado. Rascunhos e edição entrarão pela camada segura do Admin.</p>
+      <p class="note">Carregando artigos…</p>
     </main>
 
-    <script>
-      const search = document.querySelector('#search');
-      const category = document.querySelector('#category');
-      const status = document.querySelector('#status');
-      const rows = [...document.querySelectorAll('#articleRows tr')];
-      const visibleCount = document.querySelector('#visibleCount');
-      const emptyState = document.querySelector('#emptyState');
-
-      const applyFilters = () => {
-        const q = search.value.trim().toLowerCase();
-        const selectedCategory = category.value;
-        const selectedStatus = status.value;
-        let count = 0;
-        rows.forEach((row) => {
-          const matchesText = !q || row.dataset.title.includes(q) || row.dataset.slug.includes(q);
-          const matchesCategory = !selectedCategory || row.dataset.category === selectedCategory;
-          const matchesStatus = !selectedStatus || row.dataset.status === selectedStatus;
-          const visible = matchesText && matchesCategory && matchesStatus;
-          row.hidden = !visible;
-          if (visible) count += 1;
-        });
-        visibleCount.textContent = String(count);
-        emptyState.style.display = count === 0 ? 'block' : 'none';
-      };
-
-      search.addEventListener('input', applyFilters);
-      category.addEventListener('change', applyFilters);
-      status.addEventListener('change', applyFilters);
-    </script>
+    <script>import '../../lib/admin-list.js';</script>
   </body>
 </html>

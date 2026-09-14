@@ -1,17 +1,4 @@
 ---
-import { client } from '../../lib/sanity.js';
-
-const categories = await client.fetch(`
-  *[_type == "category"] | order(slug.current asc){
-    _id,
-    "slug": slug.current
-  }
-`);
-
-const categoryLabel = (value) => String(value || '')
-  .split('-')
-  .map((part) => part ? part.charAt(0).toUpperCase() + part.slice(1) : '')
-  .join(' ');
 ---
 
 <!doctype html>
@@ -54,89 +41,32 @@ const categoryLabel = (value) => String(value || '')
           <div class="field"><label class="label" for="title">Título</label><input class="control" id="title" type="text" placeholder="Título do artigo" /></div>
           <div class="field"><label class="label" for="slug">Slug</label><input class="control" id="slug" type="text" placeholder="gerado-automaticamente-pelo-titulo" /><div class="hint">Gerado automaticamente; pode ser ajustado antes da publicação.</div></div>
           <div class="field"><label class="label" for="description">Resumo / descrição</label><textarea class="control" id="description" maxlength="300" placeholder="Resumo curto usado em cards e SEO"></textarea><div class="hint"><span id="descriptionCount">0</span>/300 caracteres</div></div>
-          <div class="field"><label class="label" for="category">Categoria</label><select class="control" id="category"><option value="">Selecione uma categoria</option>{categories.map((category) => <option value={category._id}>{categoryLabel(category.slug)}</option>)}</select></div>
-          <div class="field"><label class="label" for="cover">Imagem de capa 16:9</label><input class="control" id="cover" type="file" accept="image/*" /><div class="hint">Nesta etapa a imagem serve para a prévia local. O envio seguro para o Sanity entra junto da camada de publicação.</div></div>
+          <div class="field"><label class="label" for="category">Categoria</label><select class="control" id="category"><option value="">Selecione uma categoria</option></select></div>
+          <div class="field"><label class="label" for="cover">Imagem de capa 16:9</label><input class="control" id="cover" type="file" accept="image/png,image/jpeg,image/webp" /><div class="hint">PNG, JPEG ou WebP, até 5 MB. A capa é enviada somente ao salvar ou publicar.</div></div>
 
+          <div class="field"><label class="label" for="coverAlt">Texto alternativo da capa</label><input class="control" id="coverAlt" type="text" maxlength="500" /></div>
           <div class="field">
             <label class="label">Conteúdo do artigo</label>
             <div class="tabs"><button class="tab active" id="htmlTab" type="button">HTML</button><button class="tab" id="previewTab" type="button">Visualizar</button></div>
             <div id="htmlPanel"><textarea class="control html-editor" id="htmlContent" spellcheck="false" placeholder="Cole aqui o HTML gerado pela IA…"></textarea></div>
-            <div class="preview-shell" id="previewPanel"><div class="preview-top">Prévia local — não publicada</div><article class="preview-frame" id="previewFrame"><div class="empty-preview">Cole o HTML e clique em Visualizar.</div></article></div>
+            <div class="preview-shell" id="previewPanel"><div class="preview-top">Prévia — não salva nem publicada</div><article class="preview-frame" id="previewFrame"><div class="empty-preview">Cole o HTML e clique em Visualizar.</div></article></div>
           </div>
 
           <div class="message" id="message">Prévia gerada localmente. Nada foi publicado.</div>
         </section>
 
         <aside class="panel">
-          <div class="status"><span class="status-dot"></span>Rascunho local</div>
+          <div class="status" id="editorStatus">Rascunho local</div>
           <h2 class="side-title" style="margin-top:20px">Exibição</h2>
           <label class="check"><input id="homeFeatured" type="checkbox" /><span><strong>Destaque principal da Home</strong><br><span class="muted">Usar este artigo como principal.</span></span></label>
           <label class="check"><input id="highlights" type="checkbox" /><span><strong>Em Destaque</strong><br><span class="muted">Incluir na faixa de destaques.</span></span></label>
           <label class="check"><input id="cienciaVital" type="checkbox" /><span><strong>Ciência Vital</strong><br><span class="muted">Marcar como parte da série.</span></span></label>
-          <div class="actions"><button class="btn btn-outline" id="visualizeSide" type="button">Visualizar artigo</button><button class="btn btn-secondary" type="button" disabled>Salvar rascunho</button><button class="btn btn-primary" type="button" disabled>Publicar</button></div>
-          <div class="safe-note"><strong>Segurança do MVP:</strong> Salvar e Publicar permanecem desativados até conectarmos a camada segura ao Sanity. Nenhuma chave de escrita ficará exposta nesta página.</div>
+          <div class="actions"><button class="btn btn-outline" id="visualizeSide" type="button">Visualizar artigo</button><button class="btn btn-secondary" id="saveDraft" type="button" disabled>Salvar rascunho</button><button class="btn btn-primary" id="publish" type="button" disabled>Publicar</button></div>
+          <div class="safe-note">Visualizar não salva nem publica. Salvar rascunho mantém o conteúdo fora do site. Publicar inicia a atualização do site.</div>
         </aside>
       </div>
     </main>
 
-    <script>
-      const title = document.querySelector('#title');
-      const slug = document.querySelector('#slug');
-      const description = document.querySelector('#description');
-      const descriptionCount = document.querySelector('#descriptionCount');
-      const htmlContent = document.querySelector('#htmlContent');
-      const htmlTab = document.querySelector('#htmlTab');
-      const previewTab = document.querySelector('#previewTab');
-      const htmlPanel = document.querySelector('#htmlPanel');
-      const previewPanel = document.querySelector('#previewPanel');
-      const previewFrame = document.querySelector('#previewFrame');
-      const visualizeSide = document.querySelector('#visualizeSide');
-      const message = document.querySelector('#message');
-      const cover = document.querySelector('#cover');
-      let slugTouched = false;
-      let coverUrl = '';
-
-      const slugify = (value) => value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,96);
-      title.addEventListener('input', () => { if (!slugTouched) slug.value = slugify(title.value); });
-      slug.addEventListener('input', () => { slugTouched = true; slug.value = slugify(slug.value); });
-      description.addEventListener('input', () => { descriptionCount.textContent = String(description.value.length); });
-      cover.addEventListener('change', () => { if (coverUrl) URL.revokeObjectURL(coverUrl); coverUrl = cover.files?.[0] ? URL.createObjectURL(cover.files[0]) : ''; });
-
-      const allowedTags = new Set(['P','H2','H3','H4','UL','OL','LI','STRONG','B','EM','I','A','BLOCKQUOTE','HR','BR','FIGURE','FIGCAPTION','IMG','TABLE','THEAD','TBODY','TR','TH','TD','DIV','SPAN']);
-      const allowedAttrs = { A:new Set(['href','title','target','rel']), IMG:new Set(['src','alt','title','width','height','loading']), DIV:new Set(['class']), SPAN:new Set(['class']), TABLE:new Set(['class']), TH:new Set(['scope','colspan','rowspan']), TD:new Set(['colspan','rowspan']) };
-
-      function sanitizeHtml(input){
-        const doc = new DOMParser().parseFromString(`<div>${input}</div>`,'text/html');
-        const root = doc.body.firstElementChild;
-        [...root.querySelectorAll('*')].forEach((el) => {
-          if (!allowedTags.has(el.tagName)) { el.replaceWith(...el.childNodes); return; }
-          [...el.attributes].forEach((attr) => {
-            const allowed = allowedAttrs[el.tagName];
-            if (!allowed || !allowed.has(attr.name.toLowerCase())) el.removeAttribute(attr.name);
-          });
-          if (el.tagName === 'A') {
-            const href = el.getAttribute('href') || '';
-            if (/^javascript:/i.test(href)) el.removeAttribute('href');
-            if (el.getAttribute('target') === '_blank') el.setAttribute('rel','noopener noreferrer');
-          }
-          if (el.tagName === 'IMG') {
-            const src = el.getAttribute('src') || '';
-            if (!/^(https?:|data:image\/)/i.test(src)) el.removeAttribute('src');
-            el.setAttribute('loading','lazy');
-          }
-        });
-        return root.innerHTML;
-      }
-
-      function showPreview(){
-        const clean = sanitizeHtml(htmlContent.value);
-        const safeTitle = title.value.trim() || 'Título do artigo';
-        const imageHtml = coverUrl ? `<img src="${coverUrl}" alt="Prévia da capa" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin:0 0 26px">` : '';
-        previewFrame.innerHTML = `${imageHtml}<h1>${safeTitle.replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}</h1>${clean || '<div class="empty-preview">Nenhum conteúdo HTML inserido.</div>'}`;
-        htmlPanel.style.display = 'none'; previewPanel.classList.add('active'); htmlTab.classList.remove('active'); previewTab.classList.add('active'); message.classList.add('show');
-      }
-      function showHtml(){ htmlPanel.style.display = 'block'; previewPanel.classList.remove('active'); htmlTab.classList.add('active'); previewTab.classList.remove('active'); }
-      htmlTab.addEventListener('click', showHtml); previewTab.addEventListener('click', showPreview); visualizeSide.addEventListener('click', showPreview);
-    </script>
+    <script>import '../../lib/admin-editor.js';</script>
   </body>
 </html>
