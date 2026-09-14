@@ -14,6 +14,16 @@ Base inspecionada: `admin-mvp`, commit `abe5dbf9ad8ab9779a7ba15f0f2c71477e0e0b12
 
 **Não concluído:** autenticação externa, configuração de credencial, implantação protegida, publicação real e cadeia Sanity → webhook → GitHub Actions → site. Despublicação/exclusão ficam para a etapa posterior ao MVP validado.
 
+## Verificações no GitHub — 14/09/2026
+
+Código verificado: commit `0c01e624a90a279b1fa07ed6846f4e345843cfd6`, branch `admin-api-secure-mvp`, [PR #1](https://github.com/vitacerta/VitaCerta-Astro/pull/1) contra `admin-mvp`.
+
+- [Testes e bundle do Worker](https://github.com/vitacerta/VitaCerta-Astro/actions/runs/34824590064): sucesso.
+- [Build de preview](https://github.com/vitacerta/VitaCerta-Astro/actions/runs/34824494101): sucesso.
+- [CI: build com npm ci e verificação da saída](https://github.com/vitacerta/VitaCerta-Astro/actions/runs/34824590055): sucesso.
+
+Essas execuções não publicam o novo Worker nem validam o webhook após uma mutação real. O PR permanece rascunho. A atualização posterior deste registro é documental; a referência acima identifica o código efetivamente testado.
+
 ## Arquivos
 
 - `workers/admin-api/src/`: implementação server-side.
@@ -36,7 +46,7 @@ node --test test/*.test.js
 node node_modules/wrangler/bin/wrangler.js deploy --dry-run --outdir dist
 ```
 
-O primeiro build local foi executado com dependências resolvidas pelo pnpm conforme os intervalos do `package.json` (Astro 6.4.8), sem alteração do lockfile da raiz. O CI existente usa `npm ci`; seu resultado precisa ser conferido separadamente. O Worker tem seu próprio `pnpm-lock.yaml` e foi testado com `jose 6.2.12`, `sanitize-html 2.17.7` e Wrangler 4.131.1.
+O primeiro build local foi executado com dependências resolvidas pelo pnpm conforme os intervalos do `package.json` (Astro 6.4.8), sem alteração do lockfile da raiz. O CI existente usa `npm ci`; seu build e a verificação da saída também passaram no GitHub (evidências abaixo). O Worker tem seu próprio `pnpm-lock.yaml` e foi testado com `jose 6.2.12`, `sanitize-html 2.17.7` e Wrangler 4.131.1.
 
 ## Sequência segura de ativação
 
