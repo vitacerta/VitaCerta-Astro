@@ -1,15 +1,28 @@
 // TEST ONLY: synthetic Sanity + authentication, bound exclusively to loopback.
 // Never imported by src/index.js or included in the Worker deployment.
 import http from 'node:http';
-import {readFile} from 'node:fs/promises';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {resolve,extname,sep} from 'node:path';
 import {createHandler} from '../src/index.js';
 import {fakeApi} from './fixture.js';
 const root=resolve('../../dist');
-const data=fakeApi();const query=data.query.bind(data);
+const categories=[
+  {_id:'category-1',slug:'saude'},
+  {_id:'category-2',slug:'nutricao'},
+  {_id:'category-3',slug:'movimento'},
+  {_id:'category-4',slug:'mente'},
+  {_id:'category-5',slug:'longevidade'},
+];
+let initial={};
+try { initial=JSON.parse(await readFile('.wrangler/browser-test-data.json','utf8')); } catch(error) { if(error.code !== 'ENOENT') throw error; }
+const data=fakeApi(initial);const query=data.query.bind(data);
+const mutate=data.mutate.bind(data);
+data.mutate=async mutations=>{await mutate(mutations);await mkdir('.wrangler',{recursive:true});await writeFile('.wrangler/browser-test-data.json',JSON.stringify(data.docs));};
 data.query=async(q,p)=>{
-  if(q.includes('order(slug.current'))return [{_id:'category-1',slug:'saude'}];
-  if(q.includes('order(_updatedAt'))return Object.values(data.docs).filter(d=>d._type==='post').map(d=>({...d,slug:d.slug.current,category:'saude'}));
+  if(q==='*[_id == $id][0]{url}')return null;
+  if(q.includes('order(slug.current'))return categories;
+  if(q.includes('_type == "category"'))return categories.some(category=>category._id===p?.id)?1:0;
+  if(q.includes('order(_updatedAt'))return Object.values(data.docs).filter(d=>d._type==='post').map(d=>({...d,slug:d.slug.current,category:categories.find(category=>category._id===d.categories?.[0]?._ref)?.slug || ''}));
   return query(q,p);
 };
 data.upload=async()=>({document:{_id:'image-abcdef-1600x900-jpg',url:''}});
