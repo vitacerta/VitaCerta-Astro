@@ -1,4 +1,4 @@
-import {authenticate} from './auth.js';
+import {authenticate,authRoute,loginPage} from './auth.js';
 import {assert, HttpError, cleanHtml} from './validation.js';
 import {sanity, readArticle, saveArticle} from './sanity.js';
 
@@ -24,7 +24,11 @@ export function createHandler({auth = authenticate, makeSanity = sanity} = {}) {
     try {
       const url = new URL(request.url);
       assert(env.ADMIN_ORIGIN && url.origin === env.ADMIN_ORIGIN,'Endereço do Admin não configurado ou não permitido.',503);
-      await auth(request,env);
+      if(url.pathname.startsWith('/auth/'))return await authRoute(request,env);
+      try{await auth(request,env);}catch(error){
+        if(error instanceof HttpError && error.status===401 && request.method==='GET' && (url.pathname==='/' || url.pathname.startsWith('/admin/')))return loginPage();
+        throw error;
+      }
       const isApi = url.pathname.startsWith('/api/');
       if (!isApi) {
         assert(request.method === 'GET' || request.method === 'HEAD','Método não permitido.',405);

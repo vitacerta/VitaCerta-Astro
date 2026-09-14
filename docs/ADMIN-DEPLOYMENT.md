@@ -10,7 +10,7 @@ Base inspecionada: `admin-mvp`, commit `abe5dbf9ad8ab9779a7ba15f0f2c71477e0e0b12
 - `wrangler deploy --dry-run` passou: bundle de aproximadamente 409 KiB, 96 KiB comprimido, sem publicação.
 - Teste no navegador local: prévia removeu script/handler, salvou rascunho fictício, listou e reabriu o rascunho, anexou capa de teste e publicou no armazenamento fictício.
 - Leitura real no Sanity confirmou cinco categorias e 86 posts publicados naquele momento. Nenhuma mutação foi enviada ao dataset real.
-- O usuário entrou no Cloudflare e a conta correta foi confirmada. A ativação do Zero Trust Free apresentou exigência de cartão, aceite de termos e autorização para cobrança por uso excedente; essa etapa foi deixada para o usuário. Não foram criados Worker, aplicação Access, secret, rota ou DNS. Não houve mudança em `main`, produção ou `vitacerta-image-worker`.
+- O usuário entrou no Cloudflare e a conta correta foi confirmada. A ativação do Zero Trust Free apresentou exigência de cartão, aceite de termos e autorização para cobrança por uso excedente; essa alternativa foi abandonada após a exigência de custo zero; ver ADR 0007. Não foram criados Worker, aplicação Access, secret, rota ou DNS. Não houve mudança em `main`, produção ou `vitacerta-image-worker`.
 
 **Não concluído:** autenticação externa, configuração de credencial, implantação protegida, publicação real e cadeia Sanity → webhook → GitHub Actions → site. Despublicação/exclusão ficam para a etapa posterior ao MVP validado.
 
@@ -48,24 +48,27 @@ node node_modules/wrangler/bin/wrangler.js deploy --dry-run --outdir dist
 
 O primeiro build local foi executado com dependências resolvidas pelo pnpm conforme os intervalos do `package.json` (Astro 6.4.8), sem alteração do lockfile da raiz. O CI existente usa `npm ci`; seu build e a verificação da saída também passaram no GitHub (evidências abaixo). O Worker tem seu próprio `pnpm-lock.yaml` e foi testado com `jose 6.2.12`, `sanitize-html 2.17.7` e Wrangler 4.131.1.
 
-## Sequência segura de ativação
+## Sequência segura de ativação — GitHub OAuth / Workers Free
 
-1. Entrar diretamente no Cloudflare; não fornecer senhas ou tokens pelo chat.
-2. Confirmar conta que contém `vitacerta.com.br`. Não modificar `vitacerta-image-worker`.
-3. Definir um hostname exclusivo de validação, por exemplo `admin-preview.vitacerta.com.br`, e a lista exata de editores autorizados. Solicitar aprovação antes de criar permissões ou alterar DNS/rotas.
-4. Configurar uma aplicação Cloudflare Access para **todo o hostname**, com política Allow restrita aos e-mails aprovados, sessão curta e demais identidades negadas. Não usar política Bypass/Everyone. Confirmar a proteção antes de expor o Worker.
-5. Configurar o novo Worker e preencher `ADMIN_ORIGIN` com a origem HTTPS exata; `ACCESS_TEAM_DOMAIN` com `https://<equipe>.cloudflareaccess.com`; `ACCESS_AUD` com o público da aplicação; `ADMIN_EMAILS` com a lista aprovada separada por vírgula. Esses valores não são o token de escrita.
-6. Manter `WRITES_ENABLED=false`, `workers_dev=false` e `preview_urls=false`. Publicar somente a cópia compilada do novo Worker após aprovação para a ativação do endereço protegido.
-7. Validar acesso anônimo negado, editor não autorizado negado e editor autorizado aceito. Verificar que assets e API não são acessíveis por um endereço alternativo. Testar também JWT ausente, inválido e expirado.
-8. O usuário cria/insere `SANITY_WRITE_TOKEN` diretamente em **Settings → Variables and Secrets** do Worker. O token precisa acessar o projeto/dataset escolhido e as operações editoriais e assets necessárias; usar o menor escopo disponível. Nunca registrar o valor em código, comandos versionados, screenshots, chat ou GitHub. Se o plano não permitir restringir adequadamente o escopo, pedir aprovação para a permissão efetivamente disponível.
-9. Preferir um dataset privado de validação, separado de `production`, com categorias e um artigo fictício. A criação do dataset e credencial requer aprovação. Alterar `SANITY_DATASET` apenas no Worker de validação; manter o site público intacto. Validar leitura e prévia antes de habilitar escrita.
-10. Após aprovação, habilitar escrita no ambiente de validação e testar rascunho/publicação/edição. Somente depois solicitar autorização para conectar o Worker ao dataset `production` e fazer um artigo de teste público específico.
+Decisão aprovada em 14/09/2026: usar o login GitHub descrito no ADR 0007. Não ativar Cloudflare Access/Zero Trust nem aceitar cartão, cobrança por excedentes ou upgrade pago. As evidências de CI acima correspondem à implementação anterior; não comprovam o novo login. A nova versão passou 17 testes locais com provedores simulados; seu CI e teste externo continuam pendentes.
 
-Não há bypass de autenticação configurável para o Worker real. `test/browser-server.js` é apenas um servidor local de testes, não uma entrada de deploy.
+1. Confirmar Workers Free na conta existente. Criar somente `vitacerta-admin-api`, preservando o Worker de imagens. Usar endereço gratuito `workers.dev`, sem alterar DNS público. Confirmar o hostname atribuído antes de registrar OAuth.
+2. Preparar uma OAuth App dedicada no GitHub, sem permissões de repositório. Homepage: `https://<hostname>/admin/`; callback: `https://<hostname>/auth/callback`. O usuário conclui o registro e manipula a credencial diretamente na interface segura.
+3. Configurar `ADMIN_ORIGIN` com a origem HTTPS exata, `GITHUB_CLIENT_ID` com o identificador público e `ALLOWED_GITHUB_IDS=325269385` para a conta `vitacerta`. IDs adicionais exigem autorização explícita. O cliente solicita escopo vazio e rejeita tokens com escopos adicionais.
+4. O usuário insere os secrets `GITHUB_CLIENT_SECRET` e `SESSION_SECRET` (valor aleatório de pelo menos 32 caracteres) exclusivamente em Cloudflare → Settings → Variables and Secrets. Não incluir os valores em chat, GitHub, comandos versionados ou capturas.
+5. Após aprovação da implantação no novo endereço, ativar `workers_dev=true`, manter `preview_urls=false` e `WRITES_ENABLED=false`. Publicar código e assets a partir da branch de validação. A configuração incompleta bloqueia o acesso; toda requisição de API e assets passa pelo Worker autenticado.
+6. Verificar login real, callback fixo, conta autorizada, rejeição de acesso anônimo à API/assets, expiração e logout. O login mostra apenas uma página de entrada pública; não revela conteúdo editorial.
+7. O usuário cria/insere `SANITY_WRITE_TOKEN` diretamente nos secrets do Worker com o menor escopo disponível. Se o plano só oferecer permissão ampla, pedir aprovação para o escopo concreto. Nenhum token Sanity é enviado ao navegador ou ao GitHub.
+8. Preferir dataset separado de validação, se disponível na cota gratuita, com categorias reais desse dataset e conteúdo fictício. Sua criação exige aprovação. Validar leitura e prévia antes de habilitar escrita.
+9. Após aprovação, habilitar escrita no ambiente de validação e testar rascunho, publicação e edição. Só depois solicitar autorização para o teste específico no dataset `production` e no site público.
+
+A sessão criptografada dura uma hora e contém apenas o ID da conta. Remover o ID autorizado bloqueia suas sessões; rotacionar `SESSION_SECRET` invalida todas. Logout apaga o cookie do navegador, mas não revoga uma cópia roubada; revogar a autorização no GitHub também não encerra imediatamente uma sessão já emitida. Detalhes no ADR 0007.
+
+Não há bypass de autenticação configurável para o Worker real. `test/browser-server.js` é apenas o servidor local de dados fictícios. Cotas gratuitas podem interromper o serviço; não autorizar migração automática para planos pagos.
 
 ## Contrato de API
 
-Todas as rotas exigem sessão válida. POST exige `Origin` exato e `X-VitaCerta-Admin: 1`. Não há CORS entre origens; Admin e API são servidos juntos. Respostas são `no-store`.
+Todas as rotas de API abaixo exigem sessão válida. As rotas `/auth/login` e `/auth/callback` implementam o login público; `/auth/logout` aceita somente POST da mesma origem. POST exige `Origin` exato e `X-VitaCerta-Admin: 1`. Não há CORS entre origens; Admin e API são servidos juntos. Respostas são `no-store`.
 
 | Rota | Método | Efeito |
 | --- | --- | --- |
@@ -107,4 +110,5 @@ Reservas de slug evitam concorrência entre operações deste Admin. O Studio e 
 
 Uma capa enviada antes de um salvamento rejeitado pode ficar como asset sem referência. Sua limpeza é separada e exige revisão; não excluir automaticamente assets do dataset.
 
-Falha ou prazo excedido na resposta de escrita pode ocorrer após a transação ter sido aceita. Reabrir o artigo para conferir o estado antes de tentar de novo. Para suspender novas gravações, definir `WRITES_ENABLED=false` no novo Worker; manter Access ativo. O Studio permanece como operação técnica/emergencial.
+Falha ou prazo excedido na resposta de escrita pode ocorrer após a transação ter sido aceita. Reabrir o artigo para conferir o estado antes de tentar de novo. Para suspender novas gravações, definir `WRITES_ENABLED=false` no novo Worker; manter o login GitHub ativo. O Studio permanece como operação técnica/emergencial.
+

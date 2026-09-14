@@ -1,6 +1,6 @@
 # ADR 0006 — Admin autenticado e transações editoriais
 
-Status: implementado em branch de desenvolvimento; implantação e teste externo pendentes.
+Status: autenticação substituída pelo ADR 0007 (GitHub Login sem custo). As decisões de transações e compatibilidade abaixo permanecem aplicáveis. A descrição do Access é histórica, não uma instrução de implantação atual.
 
 ## Decisão
 

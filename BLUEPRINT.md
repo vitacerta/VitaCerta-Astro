@@ -230,9 +230,11 @@ Não usar conhecimento de conversas anteriores como requisito oculto. Toda infor
 
 ### Atualização do Admin — 13/09/2026
 
-A camada do novo Worker `vitacerta-admin-api` foi implementada em desenvolvimento, com autenticação Cloudflare Access/JWT, sanitização server-side, categorias reais, rascunho, preview sem gravação, publicação e edição com revisão. O Admin e sua API usam a mesma origem protegida. O Worker de imagens permanece separado.
+A camada do novo Worker `vitacerta-admin-api` foi implementada em desenvolvimento, com login GitHub no próprio Worker, sanitização server-side, categorias reais, rascunho, preview sem gravação, publicação e edição com revisão. O Admin e sua API usam a mesma origem protegida. O Worker de imagens permanece separado.
 
-Testes locais, teste de navegador com dados fictícios, build Astro e compilação simulada do Worker foram executados. **Isso não comprova implantação externa nem o fluxo completo de publicação.** Access, secret, hostname e teste Sanity → webhook → GitHub Actions → site ainda precisam de configuração e validação autorizadas. Despublicação/exclusão permanecem na etapa posterior.
+Testes locais, teste de navegador com dados fictícios, build Astro e compilação simulada da primeira revisão foram executados. A revisão com GitHub Login passou em 17 testes locais; o build desta revisão deve ser conferido no CI. **Isso não comprova implantação externa nem o fluxo completo de publicação.** OAuth App, secrets, hostname e teste Sanity → webhook → GitHub Actions → site ainda precisam de configuração e validação autorizadas. Despublicação/exclusão permanecem na etapa posterior.
+
+Restrição aprovada em 14/09/2026: manter custo zero de serviços, sem contratação ou autorização de cobrança por excedentes. Não ativar o Zero Trust Free, cujo checkout exigiu cartão. Usar Workers Free e hostname gratuito `workers.dev`; [ADR 0007](docs/adr/0007-login-github-sem-custo.md) substitui o Access por login GitHub. Não trocar automaticamente para planos pagos quando cotas forem atingidas.
 
 Procedimento, evidências e pendências: [`docs/ADMIN-DEPLOYMENT.md`](docs/ADMIN-DEPLOYMENT.md). Decisão e limitações de concorrência: [`ADR 0006`](docs/adr/0006-admin-autenticado-e-transacoes.md).
 

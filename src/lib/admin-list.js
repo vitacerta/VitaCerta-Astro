@@ -19,5 +19,8 @@ function render(){
   el('visibleCount').textContent=String(selected.length);el('emptyState').style.display=selected.length?'none':'block';
 }
 for(const id of ['search','category','status'])el(id).addEventListener('input',render);
-document.getElementById('logout').addEventListener('click',()=>location.assign('/cdn-cgi/access/logout'));
+document.getElementById('logout').addEventListener('click',async()=>{
+  const response=await fetch('/auth/logout',{method:'POST',credentials:'same-origin',headers:{'X-VitaCerta-Admin':'1'}});
+  if(response.ok)location.assign('/admin/');else document.querySelector('.note').textContent='Não foi possível sair. Tente novamente.';
+});
 api('articles').then(data=>{articles=data;for(const cat of [...new Set(data.map(x=>x.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'))){const option=document.createElement('option');option.value=cat;option.textContent=categoryLabel(cat);el('category').append(option);}render();document.querySelector('.note').textContent='Conteúdo atualizado do Sanity.';}).catch(error=>{document.querySelector('.note').textContent=error.message;});

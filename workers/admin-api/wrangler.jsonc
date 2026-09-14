@@ -11,9 +11,8 @@
     "SANITY_PROJECT_ID": "1dh7sg5j",
     "SANITY_DATASET": "production",
     "ADMIN_ORIGIN": "",
-    "ACCESS_TEAM_DOMAIN": "",
-    "ACCESS_AUD": "",
-    "ADMIN_EMAILS": "",
+    "GITHUB_CLIENT_ID": "",
+    "ALLOWED_GITHUB_IDS": "325269385",
     "WRITES_ENABLED": "false"
   }
 }
