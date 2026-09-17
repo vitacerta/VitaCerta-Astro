@@ -1,6 +1,17 @@
 # Implantação do Admin VitaCerta
 
-## Estado comprovado em 13/09/2026
+## Verificação atual — 17/09/2026
+
+A revisão com login GitHub `b965cec28e4c4dd1b83cf6b31889ad20cf6a2512` passou no GitHub:
+- [Testes e bundle do Worker](https://github.com/vitacerta/VitaCerta-Astro/actions/runs/34826629422).
+- [CI do Astro](https://github.com/vitacerta/VitaCerta-Astro/actions/runs/34826653494).
+- [Build de preview](https://github.com/vitacerta/VitaCerta-Astro/actions/runs/34826626112).
+
+O painel Cloudflare confirmou o Worker exclusivo `vitacerta-admin-api` e o endereço `https://vitacerta-admin-api.blc-comarela.workers.dev`. A versão inicial `a96d6330` contém somente o exemplo Hello World; o Admin autenticado ainda NÃO está implantado. Não há credenciais ou variáveis configuradas. Preview URLs desativadas; nenhum domínio personalizado ou rota do site foi adicionado.
+
+Pendente: o usuário entrar no GitHub pelo navegador para registrar a OAuth App; inserir secrets diretamente no Cloudflare; implantar a versão validada com escrita desabilitada; validar login real e depois o fluxo editorial autorizado. O site público e o Worker de imagens permanecem fora desta mudança.
+
+## Estado histórico comprovado em 13/09/2026
 
 Base inspecionada: `admin-mvp`, commit `abe5dbf9ad8ab9779a7ba15f0f2c71477e0e0b12`.
 
@@ -50,7 +61,7 @@ O primeiro build local foi executado com dependências resolvidas pelo pnpm conf
 
 ## Sequência segura de ativação — GitHub OAuth / Workers Free
 
-Decisão aprovada em 14/09/2026: usar o login GitHub descrito no ADR 0007. Não ativar Cloudflare Access/Zero Trust nem aceitar cartão, cobrança por excedentes ou upgrade pago. As evidências de CI acima correspondem à implementação anterior; não comprovam o novo login. A nova versão passou 17 testes locais com provedores simulados; seu CI e teste externo continuam pendentes.
+Decisão aprovada em 14/09/2026: usar o login GitHub descrito no ADR 0007. Não ativar Cloudflare Access/Zero Trust nem aceitar cartão, cobrança por excedentes ou upgrade pago. As evidências de CI acima correspondem à implementação anterior; não comprovam o novo login. A nova versão passou 17 testes locais com provedores simulados; seu CI passou (ver registro de 17/09 acima); o teste externo continua pendente.
 
 1. Confirmar Workers Free na conta existente. Criar somente `vitacerta-admin-api`, preservando o Worker de imagens. Usar endereço gratuito `workers.dev`, sem alterar DNS público. Confirmar o hostname atribuído antes de registrar OAuth.
 2. Preparar uma OAuth App dedicada no GitHub, sem permissões de repositório. Homepage: `https://<hostname>/admin/`; callback: `https://<hostname>/auth/callback`. O usuário conclui o registro e manipula a credencial diretamente na interface segura.
