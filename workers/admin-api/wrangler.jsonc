@@ -3,16 +3,23 @@
   "name": "vitacerta-admin-api",
   "main": "src/index.js",
   "compatibility_date": "2026-09-13",
-  "compatibility_flags": ["nodejs_compat"],
-  "workers_dev": false,
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": true,
   "preview_urls": false,
-  "assets": {"directory": "./public", "binding": "ASSETS", "run_worker_first": true},
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
   "vars": {
     "SANITY_PROJECT_ID": "1dh7sg5j",
     "SANITY_DATASET": "production",
-    "ADMIN_ORIGIN": "",
-    "GITHUB_CLIENT_ID": "",
+    "ADMIN_ORIGIN": "https://vitacerta-admin-api.blc-comarela.workers.dev",
+    "GITHUB_CLIENT_ID": "Ov23liKYzwW0XHrIWjAB",
     "ALLOWED_GITHUB_IDS": "325269385",
     "WRITES_ENABLED": "false"
-  }
+  },
+  "keep_vars": true
 }
