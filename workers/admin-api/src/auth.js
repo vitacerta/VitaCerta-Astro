@@ -60,7 +60,16 @@ export async function authRoute(request,env,fetcher=fetch){
     const response=await fetcher('https://github.com/login/oauth/access_token',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:env.GITHUB_CLIENT_ID,client_secret:env.GITHUB_CLIENT_SECRET,code,redirect_uri:`${env.ADMIN_ORIGIN}/auth/callback`,code_verifier:flow.verifier}),signal:AbortSignal.timeout(15000),redirect:'manual'});
     assert(response.ok,'Não foi possível concluir o login pelo GitHub.',502);
     const token=await response.json();
-    assert(typeof token.access_token==='string' && !token.error,'Código de login expirado ou inválido.',401);
+    const loginErrors={
+      incorrect_client_credentials:'O GitHub recusou a credencial do aplicativo. Confira o GITHUB_CLIENT_SECRET no Cloudflare.',
+      redirect_uri_mismatch:'O endereço de retorno do aplicativo GitHub não corresponde ao Admin.',
+      bad_verification_code:'Código de login expirado ou inválido. Inicie novamente pelo botão abaixo.',
+      unverified_user_email:'Confirme seu endereço de e-mail no GitHub antes de entrar.',
+      missing_code_verifier:'O GitHub não recebeu a verificação de segurança do login.',
+      incorrect_code_verifier:'O GitHub recusou a verificação de segurança do login.'
+    };
+    const loginError=Object.hasOwn(loginErrors,token.error)?loginErrors[token.error]:'O GitHub não autorizou o login. Confira a configuração do aplicativo.';
+    assert(typeof token.access_token==='string' && !token.error,loginError,401);
     // Public identity only: no repository, email or private profile permissions.
     assert(!token.scope || token.scope.trim()==='','O aplicativo solicitou permissões além da identidade pública. Revise sua configuração.',403);
     const identity=await fetcher('https://api.github.com/user',{headers:{Authorization:`Bearer ${token.access_token}`,Accept:'application/vnd.github+json','User-Agent':'VitaCerta-Admin','X-GitHub-Api-Version':'2022-11-28'},signal:AbortSignal.timeout(15000),redirect:'manual'});
