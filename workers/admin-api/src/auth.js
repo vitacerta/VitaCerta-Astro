@@ -57,13 +57,13 @@ export async function authRoute(request,env,fetcher=fetch){
     const flow=await unseal(cookies(request,FLOW),env,'oauth-flow');
     assert(typeof flow.state==='string' && flow.state===url.searchParams.get('state') && typeof flow.verifier==='string','Solicitação de login inválida. Tente novamente.',401);
     const code=url.searchParams.get('code');assert(code && code.length<=256,'Código de login inválido.',401);
-    const response=await fetcher('https://github.com/login/oauth/access_token',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:env.GITHUB_CLIENT_ID,client_secret:env.GITHUB_CLIENT_SECRET,code,redirect_uri:`${env.ADMIN_ORIGIN}/auth/callback`,code_verifier:flow.verifier}),signal:AbortSignal.timeout(15000),redirect:'error'});
+    const response=await fetcher('https://github.com/login/oauth/access_token',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:env.GITHUB_CLIENT_ID,client_secret:env.GITHUB_CLIENT_SECRET,code,redirect_uri:`${env.ADMIN_ORIGIN}/auth/callback`,code_verifier:flow.verifier}),signal:AbortSignal.timeout(15000),redirect:'manual'});
     assert(response.ok,'Não foi possível concluir o login pelo GitHub.',502);
     const token=await response.json();
     assert(typeof token.access_token==='string' && !token.error,'Código de login expirado ou inválido.',401);
     // Public identity only: no repository, email or private profile permissions.
     assert(!token.scope || token.scope.trim()==='','O aplicativo solicitou permissões além da identidade pública. Revise sua configuração.',403);
-    const identity=await fetcher('https://api.github.com/user',{headers:{Authorization:`Bearer ${token.access_token}`,Accept:'application/vnd.github+json','User-Agent':'VitaCerta-Admin','X-GitHub-Api-Version':'2022-11-28'},signal:AbortSignal.timeout(15000),redirect:'error'});
+    const identity=await fetcher('https://api.github.com/user',{headers:{Authorization:`Bearer ${token.access_token}`,Accept:'application/vnd.github+json','User-Agent':'VitaCerta-Admin','X-GitHub-Api-Version':'2022-11-28'},signal:AbortSignal.timeout(15000),redirect:'manual'});
     assert(identity.ok,'Não foi possível confirmar sua identidade no GitHub.',502);
     const user=await identity.json();
     assert(Number.isSafeInteger(user.id) && env.ALLOWED_GITHUB_IDS.split(',').includes(String(user.id)),'Esta conta GitHub não está autorizada a acessar o Admin.',403);

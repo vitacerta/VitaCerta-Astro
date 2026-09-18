@@ -16,6 +16,7 @@ async function complete({id=123,scope='',stateOverride,cookieOverride}={}){
   const req=new Request(env.ADMIN_ORIGIN+'/auth/callback?code=test-code&state='+(stateOverride || location.searchParams.get('state')),{headers:{Cookie:cookieOverride || cookie}});
   const response=await authRoute(req,env,async(url,init)=>{
     calls++;
+    assert.equal(init.redirect,'manual');
     if(url.endsWith('access_token')){
       const verifier=init.body.get('code_verifier');
       assert.equal(base64url.encode(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier)))),location.searchParams.get('code_challenge'));
@@ -75,4 +76,19 @@ test('sair exige POST da origem exata e apaga cookie de sessão',async()=>{
   await assert.rejects(authRoute(new Request(env.ADMIN_ORIGIN+'/auth/logout',{method:'POST',headers:{Origin:'https://evil.test','X-VitaCerta-Admin':'1'}}),env),{status:403});
   const response=await authRoute(new Request(env.ADMIN_ORIGIN+'/auth/logout',{method:'POST',headers:{Origin:env.ADMIN_ORIGIN,'X-VitaCerta-Admin':'1'}}),env);
   assert.match(response.headers.get('Set-Cookie'),/__Host-vc-session=;.*Max-Age=0/);
+});
+
+
+test('OAuth rejects redirects at both upstream steps without creating a session',async()=>{
+  for(const redirectStep of [1,2]){
+    const {cookie,location}=await start();let calls=0;
+    const request=new Request(env.ADMIN_ORIGIN+'/auth/callback?code=test-code&state='+location.searchParams.get('state'),{headers:{Cookie:cookie}});
+    const response=await authRoute(request,env,async(url,init)=>{
+      calls++;assert.equal(init.redirect,'manual');
+      if(calls===redirectStep)return new Response(null,{status:302,headers:{Location:'https://example.invalid/collect'}});
+      return Response.json({access_token:'test-token',scope:''});
+    });
+    assert.equal(response.status,502);assert.equal(calls,redirectStep);
+    assert.ok(!response.headers.getSetCookie().some(x=>x.startsWith('__Host-vc-session=')));
+  }
 });
