@@ -76,3 +76,51 @@ export async function saveArticle(api, input, publish, now = new Date().toISOStr
   const saved = await readArticle(api,input.id);
   return {id:input.id,expected:saved.expected,status:publish?'published':'draft'};
 }
+
+function validateAction(input) {
+  assert(input && typeof input === 'object' && /^[a-zA-Z0-9_-]{1,120}$/.test(input.id || ''), 'Identificador inválido.');
+  assert(input.expected && Object.keys(input.expected).length === 2 && ['draftRevision','publishedRevision'].every(key => input.expected[key] === null || typeof input.expected[key] === 'string'), 'Revisões inválidas.');
+}
+
+export async function unpublishArticle(api, input) {
+  validateAction(input);
+  const {draft,published,expected}=await readArticle(api,input.id);
+  assert(published,'O artigo já não está publicado.',409);
+  assert(Object.keys(expected).every(key => expected[key] === input.expected[key]),'O artigo mudou. Recarregue antes de despublicar.',409);
+  const mutations=[guard(published)];
+  if (draft) mutations.push(guard(draft));
+  else {
+    const document=Object.fromEntries(Object.entries(published).filter(([key])=>!key.startsWith('_')));
+    delete document.publishedAt;
+    document._id=`drafts.${input.id}`;
+    document._type='post';
+    document.adminBasePublishedRevision=null;
+    mutations.push({create:document});
+  }
+  mutations.push({delete:{id:published._id}});
+  await api.mutate(mutations);
+  const saved=await readArticle(api,input.id);
+  return {id:input.id,expected:saved.expected,status:'draft'};
+}
+
+export async function deleteArticle(api, input) {
+  validateAction(input);
+  const {draft,published,expected}=await readArticle(api,input.id);
+  assert(draft || published,'Artigo não encontrado.',404);
+  assert(Object.keys(expected).every(key => expected[key] === input.expected[key]),'O artigo mudou. Recarregue antes de excluir.',409);
+  const mutations=[];
+  if (published) mutations.push(guard(published));
+  if (draft) mutations.push(guard(draft));
+  if (published) mutations.push({delete:{id:published._id}});
+  if (draft) mutations.push({delete:{id:draft._id}});
+  const articleLock=await api.query('*[_id == $id][0]',{id:`adminArticle.${input.id}`});
+  if (articleLock) mutations.push({delete:{id:articleLock._id}});
+  const slug=draft?.slug?.current || published?.slug?.current;
+  if (slug) {
+    const slugLock=await api.query('*[_id == $id][0]',{id:`adminSlug.${slug}`});
+    if (slugLock?.owner === input.id) mutations.push({delete:{id:slugLock._id}});
+  }
+  await api.mutate(mutations);
+  return {id:input.id,status:'deleted'};
+}
+
