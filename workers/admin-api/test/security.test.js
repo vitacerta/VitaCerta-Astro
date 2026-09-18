@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import {cleanHtml, validateInput} from '../src/validation.js';
 
 import {createHandler} from '../src/index.js';
-import {saveArticle} from '../src/sanity.js';
+import {saveArticle,unpublishArticle,deleteArticle} from '../src/sanity.js';
 
 const env={ADMIN_ORIGIN:'https://admin.example.com',GITHUB_CLIENT_ID:'client',GITHUB_CLIENT_SECRET:'test-only',SESSION_SECRET:'test-only-secret-not-for-production-1234',ALLOWED_GITHUB_IDS:'123',WRITES_ENABLED:'true'};
 const input=()=>({id:'post-1',expected:{draftRevision:null,publishedRevision:null},title:'Artigo de teste',slug:'artigo-de-teste',description:'Descrição',categoryId:'category-1',bodyHtml:'<h2>Conteúdo</h2><p>Texto editorial.</p>',thumbnailId:'image-abcdef-1600x900-jpg',thumbnailAlt:'Capa',isHomeFeatured:false,showInHighlights:false,isCienciaVital:false});
@@ -61,3 +61,14 @@ test('publicação retira outros destaques Home atomicamente',async()=>{
   await saveArticle(api,{...input(),isHomeFeatured:true},true);
   assert.equal(api.docs.older.isHomeFeatured,false);assert.equal(api.docs['post-1'].isHomeFeatured,true);assert.equal(api.transactions.length,1);
 });
+test('despublicar mantém um rascunho e remove a versão pública',async()=>{
+  const api=fakeApi();const pub=await saveArticle(api,input(),true,'2026-09-13T12:00:00.000Z');
+  const result=await unpublishArticle(api,{id:'post-1',expected:pub.expected});
+  assert.equal(result.status,'draft');assert.ok(api.docs['drafts.post-1']);assert.equal(api.docs['post-1'],undefined);assert.equal(api.docs['drafts.post-1'].publishedAt,undefined);
+});
+test('excluir remove rascunho, publicação e reservas sem apagar assets',async()=>{
+  const api=fakeApi();const pub=await saveArticle(api,input(),true);const draft=await saveArticle(api,{...input(),title:'Editado',expected:pub.expected},false);
+  const result=await deleteArticle(api,{id:'post-1',expected:draft.expected});
+  assert.equal(result.status,'deleted');assert.equal(api.docs['post-1'],undefined);assert.equal(api.docs['drafts.post-1'],undefined);assert.equal(api.docs['adminArticle.post-1'],undefined);assert.equal(api.docs['adminSlug.artigo-de-teste'],undefined);
+});
+
