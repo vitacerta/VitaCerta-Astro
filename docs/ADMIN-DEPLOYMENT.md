@@ -123,3 +123,9 @@ Uma capa enviada antes de um salvamento rejeitado pode ficar como asset sem refe
 
 Falha ou prazo excedido na resposta de escrita pode ocorrer após a transação ter sido aceita. Reabrir o artigo para conferir o estado antes de tentar de novo. Para suspender novas gravações, definir `WRITES_ENABLED=false` no novo Worker; manter o login GitHub ativo. O Studio permanece como operação técnica/emergencial.
 
+
+## Conexão do Cloudflare — 17/09/2026
+
+Repositório conectado ao Worker exclusivo, branch `admin-api-secure-mvp`, previews de outras branches desativados. Usuário autorizou o token automático de builds após apresentação das permissões amplas da conta. Runtime mantém `WRITES_ENABLED=false`; painel confirmou os três secrets sob seus nomes corretos, sem leitura dos valores. `SANITY_DATASET` corrigido; nomes antigos com erro permanecem sem uso.
+
+Build usa Node 24, npm ci na raiz, leitura pública do Sanity, prepare-admin.mjs, dependências do Worker travadas via pnpm 11.19.0 e testes antes de wrangler deploy. Nenhum secret Sanity é fornecido ao GitHub ou ao build. Este commit inicia a primeira compilação; resultado externo e login ainda pendentes.
