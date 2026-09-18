@@ -1,6 +1,6 @@
 import {authenticate,authRoute,loginPage} from './auth.js';
 import {assert, HttpError, cleanHtml} from './validation.js';
-import {sanity, readArticle, saveArticle} from './sanity.js';
+import {sanity, readArticle, saveArticle, unpublishArticle, deleteArticle} from './sanity.js';
 
 const headers = {'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','X-Frame-Options':'DENY','X-Robots-Tag':'noindex, nofollow'};
 const json = (data, status = 200) => new Response(JSON.stringify(data), {status,headers:{...headers,'Content-Type':'application/json; charset=utf-8'}});
@@ -86,6 +86,11 @@ export function createHandler({auth = authenticate, makeSanity = sanity} = {}) {
         let input; try {input=JSON.parse(new TextDecoder().decode(await readBody(request,850000)));} catch(e) {if(e instanceof HttpError) throw e;throw new HttpError(400,'JSON inválido.');}
         return json(await saveArticle(api,input,url.pathname === '/api/publish'));
       }
+      if (['/api/unpublish','/api/delete'].includes(url.pathname) && request.method === 'POST') {
+        assert(request.headers.get('Content-Type')?.split(';')[0] === 'application/json','Envie JSON.',415);
+        let input; try {input=JSON.parse(new TextDecoder().decode(await readBody(request,5000)));} catch(e) {if(e instanceof HttpError) throw e;throw new HttpError(400,'JSON inválido.');}
+        return json(url.pathname === '/api/unpublish' ? await unpublishArticle(api,input) : await deleteArticle(api,input));
+      }
       throw new HttpError(404,'Operação não encontrada.');
     } catch(error) {
       return json({error:error instanceof HttpError ? error.message : 'Não foi possível concluir. Tente novamente.'},error instanceof HttpError ? error.status : 500);
@@ -93,3 +98,4 @@ export function createHandler({auth = authenticate, makeSanity = sanity} = {}) {
   };
 }
 export default {fetch:createHandler()};
+
