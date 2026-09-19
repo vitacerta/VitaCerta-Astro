@@ -1,0 +1,30 @@
+name: Validate Insights
+
+on:
+  push:
+    branches: [insights-mvp]
+    paths:
+      - "workers/insights/**"
+      - ".github/workflows/insights-check.yml"
+  pull_request:
+    paths:
+      - "workers/insights/**"
+      - ".github/workflows/insights-check.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: workers/insights
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: workers/insights/package-lock.json
+      - run: npm install --package-lock-only
+      - run: npm ci
+      - run: npm test
+      - run: npm run check
