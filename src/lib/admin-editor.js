@@ -16,24 +16,11 @@ async function preview(){
   if(busy)return;
   let previewWindow;
   try {
-    previewWindow=window.open('/admin/preview/','vitacerta-article-preview');
+    previewWindow=window.open('/admin/preview/?waiting=1','vitacerta-article-preview');
     if(!previewWindow)throw new Error('Permita a abertura da prévia em uma nova aba.');
     busy=true;controls();
-    let payload, previewReady=false;
-    const sendPreview=()=>{
-      if(!payload || previewWindow.closed)return;
-      previewWindow.postMessage(payload,location.origin);
-      window.removeEventListener('message',onReady);
-    };
-    const onReady=event=>{
-      if(event.origin===location.origin && event.source===previewWindow && event.data?.type==='vitacerta-preview-ready'){
-        previewReady=true;sendPreview();
-      }
-    };
-    window.addEventListener('message',onReady);
     const {bodyHtml}=await api('preview',{bodyHtml:el('htmlContent').value});
-    payload={
-      type:'vitacerta-article-preview',
+    const payload={
       title:el('title').value,
       description:el('description').value,
       category:el('category').selectedOptions[0]?.textContent || '',
@@ -42,7 +29,10 @@ async function preview(){
       coverAlt:el('coverAlt').value,
       bodyHtml
     };
-    if(previewReady)sendPreview();else setTimeout(sendPreview,1200);
+    const previewKey=crypto.randomUUID();
+    localStorage.setItem(`vitacerta-preview:${previewKey}`,JSON.stringify(payload));
+    previewWindow.location.replace(`/admin/preview/?key=${encodeURIComponent(previewKey)}`);
+    previewWindow.focus();
     message('Prévia fiel aberta em uma nova aba. Nada foi salvo ou publicado.');
   }catch(error){if(previewWindow&&!previewWindow.closed)previewWindow.close();message(error.message);}finally{busy=false;controls();}
 }
