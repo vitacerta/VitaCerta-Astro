@@ -13,6 +13,7 @@ export async function getStaticPaths() {
     *[_type == "post" && language == $lang]{
       title,
       description,
+      bodyHtml,
       body,
       legacyBodyHtml,
       publishedAt,
@@ -55,6 +56,7 @@ const normalizeLegacyInternalLinks = (html = "") => html
     "/conteudos/$1/",
   );
 
+const editorialBodyHtml = normalizeLegacyInternalLinks(post.bodyHtml || "");
 const legacyBodyHtml = normalizeLegacyInternalLinks(post.legacyBodyHtml || "");
 
 const relatedProjection = `{
@@ -146,7 +148,9 @@ if (relatedPosts.length < 3) {
   <section class="section">
     <div class="container">
       <div class="max-w-4xl mx-auto">
-        {post.body ? (
+        {editorialBodyHtml ? (
+          <div class="post" set:html={editorialBodyHtml}></div>
+        ) : post.body ? (
           <div class="post"><PortableComponent body={post.body} /></div>
         ) : legacyBodyHtml ? (
           <div class="post" set:html={legacyBodyHtml}></div>
