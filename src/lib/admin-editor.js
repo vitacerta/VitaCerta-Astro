@@ -16,23 +16,25 @@ async function preview(){
   if(busy)return;
   let previewWindow;
   try {
-    previewWindow=window.open('/admin/preview/?waiting=1','vitacerta-article-preview');
+    previewWindow=window.open('/admin/preview/','vitacerta-article-preview');
     if(!previewWindow)throw new Error('Permita a abertura da prévia em uma nova aba.');
     busy=true;controls();
     const {bodyHtml}=await api('preview',{bodyHtml:el('htmlContent').value});
-    const payload={
-      title:el('title').value,
-      description:el('description').value,
-      category:el('category').selectedOptions[0]?.textContent || '',
-      date:new Intl.DateTimeFormat('pt-BR').format(new Date()),
-      coverUrl,
-      coverAlt:el('coverAlt').value,
-      bodyHtml
+    const populate=()=>{
+      const doc=previewWindow.document;
+      doc.getElementById('previewTitle').textContent=el('title').value || 'Título do artigo';
+      doc.getElementById('previewDescription').textContent=el('description').value || '';
+      doc.getElementById('previewDate').textContent=new Intl.DateTimeFormat('pt-BR').format(new Date());
+      doc.getElementById('previewCategory').textContent=el('category').selectedOptions[0]?.textContent || '';
+      const cover=doc.getElementById('previewCover');
+      if(coverUrl){cover.src=coverUrl;cover.alt=el('coverAlt').value || el('title').value || 'Capa do artigo';cover.style.display='block';}
+      else{cover.removeAttribute('src');cover.style.display='none';}
+      doc.getElementById('previewBody').innerHTML=bodyHtml || '<p class="preview-empty">O artigo ainda não possui conteúdo.</p>';
+      doc.title=`${el('title').value || 'Prévia do artigo'} | VitaCerta`;
+      previewWindow.focus();
     };
-    const previewKey=crypto.randomUUID();
-    localStorage.setItem(`vitacerta-preview:${previewKey}`,JSON.stringify(payload));
-    previewWindow.location.replace(`/admin/preview/?key=${encodeURIComponent(previewKey)}`);
-    previewWindow.focus();
+    if(previewWindow.document.readyState==='complete' && previewWindow.document.getElementById('previewTitle'))populate();
+    else previewWindow.addEventListener('load',populate,{once:true});
     message('Prévia fiel aberta em uma nova aba. Nada foi salvo ou publicado.');
   }catch(error){if(previewWindow&&!previewWindow.closed)previewWindow.close();message(error.message);}finally{busy=false;controls();}
 }
