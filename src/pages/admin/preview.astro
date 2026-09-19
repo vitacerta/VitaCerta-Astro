@@ -44,10 +44,7 @@ import "../../styles/global.css";
       </div>
     </section>
     <script>
-      const origin = location.origin;
-      addEventListener('message', (event) => {
-        if (event.origin !== origin || event.data?.type !== 'vitacerta-article-preview') return;
-        const data = event.data;
+      const renderPreview = (data) => {
         document.getElementById('previewTitle').textContent = data.title || 'Título do artigo';
         document.getElementById('previewDescription').textContent = data.description || '';
         document.getElementById('previewDate').textContent = data.date || '';
@@ -63,8 +60,17 @@ import "../../styles/global.css";
         }
         document.getElementById('previewBody').innerHTML = data.bodyHtml || '<p class="preview-empty">O artigo ainda não possui conteúdo.</p>';
         document.title = `${data.title || 'Prévia do artigo'} | VitaCerta`;
-      });
-      window.opener?.postMessage({type:'vitacerta-preview-ready'}, origin);
+      };
+      const key = new URLSearchParams(location.search).get('key');
+      if (key) {
+        const storageKey = `vitacerta-preview:${key}`;
+        const raw = localStorage.getItem(storageKey);
+        localStorage.removeItem(storageKey);
+        if (raw) {
+          try { renderPreview(JSON.parse(raw)); }
+          catch { document.getElementById('previewBody').innerHTML = '<p class="preview-empty">Não foi possível abrir esta prévia.</p>'; }
+        }
+      }
     </script>
   </body>
 </html>
