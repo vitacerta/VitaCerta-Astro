@@ -1,0 +1,13 @@
+{
+  "name": "vitacerta-admin-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "check": "wrangler deploy --dry-run",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {"jose": "^6.1.0", "sanitize-html": "^2.17.0"},
+  "devDependencies": {"wrangler": "^4.0.0"}
+}

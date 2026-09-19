@@ -12,6 +12,7 @@ const {
 } = Astro.props;
 
 const displayDate = publishedAt || _createdAt;
+const isLegacyRemoteImage = typeof image === "string" && image.includes("blogger.googleusercontent.com");
 ---
 
 <article
@@ -39,16 +40,9 @@ const displayDate = publishedAt || _createdAt;
       )}
     </div>
     <a href={`/conteudos/${slug}/`} class="mb-auto">
-      {image && (
-        <Image
-          src={image}
-          alt={title}
-          width="1600"
-          height="900"
-          format="webp"
-          quality={80}
-          class="aspect-video object-cover mx-auto h-auto w-full"
-        />
+      {image && (isLegacyRemoteImage
+        ? <img src={image} alt={title} loading="lazy" class="aspect-video object-cover mx-auto h-auto w-full" />
+        : <Image src={image} alt={title} width="1600" height="900" format="webp" quality={80} class="aspect-video object-cover mx-auto h-auto w-full" />
       )}
 
       <h3 class="mb-0 mt-4 group-hover:underline">{title}</h3>
