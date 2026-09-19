@@ -43,7 +43,7 @@ import "../../styles/global.css";
         </div>
       </div>
     </section>
-    <script is:inline>
+    <script>
       const origin = location.origin;
       addEventListener('message', (event) => {
         if (event.origin !== origin || event.data?.type !== 'vitacerta-article-preview') return;
