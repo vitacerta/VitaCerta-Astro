@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vitacerta-insights",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-19",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": {
+    "INSIGHTS_ORIGIN": "https://vitacerta-insights.blc-comarela.workers.dev",
+    "GITHUB_CLIENT_ID": "Ov23li66KwPI2tZ18ac1",
+    "ALLOWED_GITHUB_IDS": "325269385",
+    "SITE_HOSTNAME": "vitacerta.com.br"
+  },
+  "keep_vars": true
+}
