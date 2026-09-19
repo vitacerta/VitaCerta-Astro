@@ -1,4 +1,5 @@
 import {api,categoryLabel} from './admin-api.js';
+import {createArticlePreviewHtml} from './admin-preview.js';
 const el = id => document.getElementById(id);
 let id = new URLSearchParams(location.search).get('id') || crypto.randomUUID();
 let expected={draftRevision:null,publishedRevision:null};
@@ -16,17 +17,15 @@ async function preview(){
   if(busy)return;busy=true;controls();
   try {
     const {bodyHtml}=await api('preview',{bodyHtml:el('htmlContent').value});
-    const frame=el('previewFrame');frame.replaceChildren();
-    const header=document.createElement('div');header.className='article-preview-header';
-    const title=document.createElement('h1');title.textContent=el('title').value || 'Título do artigo';
-    const description=document.createElement('p');description.className='article-preview-description';description.textContent=el('description').value || '';
-    header.append(title,description);frame.append(header);
-    const meta=document.createElement('div');meta.className='article-preview-meta';
-    const date=document.createElement('p');date.innerHTML='<b>Data</b> ';date.append(new Intl.DateTimeFormat('pt-BR').format(new Date()));meta.append(date);
-    if(el('category').value){const category=document.createElement('span');category.className='article-preview-category';category.textContent=el('category').selectedOptions[0]?.textContent || '';meta.append(category);}
-    frame.append(meta);
-    if(coverUrl){const image=document.createElement('img');image.className='article-preview-cover';image.src=coverUrl;image.alt=el('coverAlt').value || el('title').value || 'Capa do artigo';frame.append(image);}
-    const content=document.createElement('div');content.className='article-preview-body post';content.innerHTML=bodyHtml || '<p class="empty-preview">O artigo ainda não possui conteúdo.</p>';frame.append(content);
+    el('previewFrame').innerHTML=createArticlePreviewHtml({
+      title:el('title').value,
+      description:el('description').value,
+      category:el('category').value ? el('category').selectedOptions[0]?.textContent || '' : '',
+      date:new Intl.DateTimeFormat('pt-BR').format(new Date()),
+      coverUrl,
+      coverAlt:el('coverAlt').value,
+      bodyHtml
+    });
     el('htmlPanel').style.display='none';el('previewPanel').classList.add('active');el('htmlTab').classList.remove('active');el('previewTab').classList.add('active');
     message('Prévia exibida como no site. Nada foi salvo ou publicado.');
   }catch(error){message(error.message);}finally{busy=false;controls();}
