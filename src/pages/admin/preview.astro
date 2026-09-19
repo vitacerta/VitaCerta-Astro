@@ -1,0 +1,70 @@
+---
+import "../../styles/global.css";
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Prévia do artigo | VitaCerta</title>
+    <style>
+      body{background:#fff;color:#111}
+      .preview-banner{position:sticky;top:0;z-index:20;background:#eef4ef;border-bottom:1px solid #ccd8d0;padding:10px 16px;text-align:center;font:600 14px/1.4 system-ui,sans-serif;color:#245640}
+      .preview-cover{aspect-ratio:16/9;width:100%;height:auto;object-fit:cover}
+      .preview-empty{padding:36px 0;color:#66736d}
+    </style>
+  </head>
+  <body>
+    <div class="preview-banner">Prévia fiel do artigo — nada foi salvo ou publicado</div>
+    <section class="section">
+      <div class="container">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
+          <h1 id="previewTitle">Título do artigo</h1>
+          <p class="text-lg font-semibold" id="previewDescription"></p>
+        </div>
+        <div>
+          <div class="flex flex-wrap gap-x-6 gap-y-3 justify-between items-center mb-5">
+            <p><b class="mr-2">Data</b><span id="previewDate"></span></p>
+            <span class="ml-auto btn btn-outline rounded-full py-1 px-4 h-auto" id="previewCategory"></span>
+          </div>
+          <img class="preview-cover" id="previewCover" alt="" />
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="max-w-4xl mx-auto">
+          <div class="post" id="previewBody"><p class="preview-empty">Aguardando o conteúdo da prévia…</p></div>
+          <div class="border-t mt-12 pt-6">
+            <p class="text-sm">O conteúdo do VitaCerta tem caráter informativo e educativo e não substitui orientação, diagnóstico ou tratamento realizado por profissionais de saúde.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script is:inline>
+      const origin = location.origin;
+      addEventListener('message', (event) => {
+        if (event.origin !== origin || event.data?.type !== 'vitacerta-article-preview') return;
+        const data = event.data;
+        document.getElementById('previewTitle').textContent = data.title || 'Título do artigo';
+        document.getElementById('previewDescription').textContent = data.description || '';
+        document.getElementById('previewDate').textContent = data.date || '';
+        document.getElementById('previewCategory').textContent = data.category || '';
+        const cover = document.getElementById('previewCover');
+        if (data.coverUrl) {
+          cover.src = data.coverUrl;
+          cover.alt = data.coverAlt || data.title || 'Capa do artigo';
+          cover.style.display = 'block';
+        } else {
+          cover.removeAttribute('src');
+          cover.style.display = 'none';
+        }
+        document.getElementById('previewBody').innerHTML = data.bodyHtml || '<p class="preview-empty">O artigo ainda não possui conteúdo.</p>';
+        document.title = `${data.title || 'Prévia do artigo'} | VitaCerta`;
+      });
+      window.opener?.postMessage({type:'vitacerta-preview-ready'}, origin);
+    </script>
+  </body>
+</html>
