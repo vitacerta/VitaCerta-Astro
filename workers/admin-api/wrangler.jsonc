@@ -18,7 +18,8 @@
     "SANITY_DATASET": "production",
     "ADMIN_ORIGIN": "https://vitacerta-admin-api.blc-comarela.workers.dev",
     "GITHUB_CLIENT_ID": "Ov23li66KwPI2tZ18ac1",
-    "ALLOWED_GITHUB_IDS": "325269385"
+    "ALLOWED_GITHUB_IDS": "325269385",
+    "WRITES_ENABLED": "true"
   },
   "keep_vars": true
 }
