@@ -21,6 +21,6 @@ test('token fica no servidor e a consulta exclui tráfego interno da Cloudflare'
     received=init;return Response.json({data:{viewer:{zones:[{current:[],previous:[],topPages:[]}]}}});
   });
   assert.equal(received.headers.Authorization,'Bearer secret-token');
-  assert.match(received.body,/"requestSource":"eyeball"/);
+  assert.match(JSON.parse(received.body).query,/requestSource:"eyeball"/);
   assert.doesNotMatch(JSON.stringify(data),/secret-token/);
 });
