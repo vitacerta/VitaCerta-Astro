@@ -13,16 +13,38 @@ el('description').addEventListener('input',()=>{el('descriptionCount').textConte
 el('cover').addEventListener('change',()=>{if(coverUrl.startsWith('blob:')) URL.revokeObjectURL(coverUrl);coverUrl=el('cover').files[0] ? URL.createObjectURL(el('cover').files[0]) : '';});
 function showHtml(){el('htmlPanel').style.display='block';el('previewPanel').classList.remove('active');el('htmlTab').classList.add('active');el('previewTab').classList.remove('active');}
 async function preview(){
-  if(busy)return; busy=true;controls();
+  if(busy)return;
+  let previewWindow;
   try {
+    previewWindow=window.open('/admin/preview/','vitacerta-article-preview');
+    if(!previewWindow)throw new Error('Permita a abertura da prévia em uma nova aba.');
+    busy=true;controls();
+    let payload, previewReady=false;
+    const sendPreview=()=>{
+      if(!payload || previewWindow.closed)return;
+      previewWindow.postMessage(payload,location.origin);
+      window.removeEventListener('message',onReady);
+    };
+    const onReady=event=>{
+      if(event.origin===location.origin && event.source===previewWindow && event.data?.type==='vitacerta-preview-ready'){
+        previewReady=true;sendPreview();
+      }
+    };
+    window.addEventListener('message',onReady);
     const {bodyHtml}=await api('preview',{bodyHtml:el('htmlContent').value});
-    const frame=el('previewFrame');frame.replaceChildren();
-    if(coverUrl){const image=document.createElement('img');image.src=coverUrl;image.alt=el('coverAlt').value || 'Prévia da capa';frame.append(image);}
-    const title=document.createElement('h1');title.textContent=el('title').value || 'Título do artigo';frame.append(title);
-    const content=document.createElement('div');content.innerHTML=bodyHtml;frame.append(content);
-    el('htmlPanel').style.display='none';el('previewPanel').classList.add('active');el('htmlTab').classList.remove('active');el('previewTab').classList.add('active');
-    message('Prévia verificada. Nada foi salvo ou publicado.');
-  }catch(error){message(error.message);}finally{busy=false;controls();}
+    payload={
+      type:'vitacerta-article-preview',
+      title:el('title').value,
+      description:el('description').value,
+      category:el('category').selectedOptions[0]?.textContent || '',
+      date:new Intl.DateTimeFormat('pt-BR').format(new Date()),
+      coverUrl,
+      coverAlt:el('coverAlt').value,
+      bodyHtml
+    };
+    if(previewReady)sendPreview();else setTimeout(sendPreview,1200);
+    message('Prévia fiel aberta em uma nova aba. Nada foi salvo ou publicado.');
+  }catch(error){if(previewWindow&&!previewWindow.closed)previewWindow.close();message(error.message);}finally{busy=false;controls();}
 }
 async function save(publish){
   if(!ready || busy)return;
