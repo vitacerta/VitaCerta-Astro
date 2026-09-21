@@ -41,5 +41,13 @@ const {
       </div>
       <Drawer />
     </div>
+    {import.meta.env.PROD && (
+      <script
+        is:inline
+        type="module"
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token":"48278addb47d46ee8f9b39ea10424ca8"}'
+      ></script>
+    )}
   </body>
 </html>
