@@ -12,6 +12,40 @@
   background: #fffefd;
 }
 
+body {
+  color: #19312b;
+  background: #fffefd;
+}
+
+.header {
+  color: #fff;
+  background: #123b31;
+}
+
+.header > .container > div {
+  border-color: rgb(255 255 255 / 24%);
+}
+
+.header .logo {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.75rem;
+  letter-spacing: -0.035em;
+  text-transform: none;
+}
+
+.header nav a {
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+}
+
+.header .btn-ghost {
+  color: #fff;
+}
+
+.footer {
+  background: #123b31;
+}
+
 .home-shell {
   width: min(1180px, calc(100% - 2.4rem));
   margin-inline: auto;
