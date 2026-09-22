@@ -11,12 +11,12 @@ const highlights = await client.fetch(`
 ---
 
 {highlights.length > 0 ? (
-  <section class="my-4">
-    <div class="container">
-      <div class="bg-black text-white overflow-x-hidden flex gap-4 p-4">
-        <p class="shrink-0"><b>EM DESTAQUE +++</b></p>
+  <section class="home-highlights" aria-label="Conteúdos em destaque">
+    <div class="home-shell">
+      <div class="home-highlights-track">
+        <p class="home-highlights-label"><b>EM DESTAQUE</b></p>
         {highlights.map((post) => (
-          <a class="shrink-0 hover:underline" href={`/conteudos/${post.slug}`}>{post.title} +++</a>
+          <a href={`/conteudos/${post.slug}`}>{post.title}<span aria-hidden="true">↗</span></a>
         ))}
       </div>
     </div>
