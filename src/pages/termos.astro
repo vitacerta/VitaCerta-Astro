@@ -1,0 +1,42 @@
+---
+import Layout from "../layouts/Base.astro";
+
+const contactEmail = "contato@vitacerta.com.br";
+---
+
+<Layout
+  title="Termos de Uso"
+  description="Conheça as condições de uso dos conteúdos e serviços oferecidos pelo VitaCerta."
+  lang="pt-BR"
+>
+  <section class="section">
+    <div class="container">
+      <article class="post max-w-4xl mx-auto">
+        <p class="uppercase mb-4">CONDIÇÕES DE USO</p>
+        <h1>TERMOS DE USO</h1>
+        <p><strong>Última atualização:</strong> 21 de setembro de 2026.</p>
+
+        <p>Ao acessar o VitaCerta, você concorda em utilizar o site e seus conteúdos de forma responsável e de acordo com estes termos.</p>
+
+        <h2>Finalidade informativa</h2>
+        <p>Os conteúdos do VitaCerta têm finalidade informativa e educativa. Eles não substituem consulta, diagnóstico, prescrição ou tratamento realizado por profissional de saúde habilitado.</p>
+        <p>Em situações de urgência ou emergência, procure imediatamente o serviço de saúde adequado da sua região.</p>
+
+        <h2>Conteúdo editorial</h2>
+        <p>Buscamos apresentar informações claras e baseadas em fontes qualificadas. A ciência e as orientações de saúde evoluem, por isso um conteúdo pode ser corrigido ou atualizado quando surgirem novas evidências.</p>
+
+        <h2>Uso dos materiais</h2>
+        <p>Textos, elementos visuais, identidade e organização editorial do VitaCerta são protegidos pela legislação aplicável. É permitido compartilhar links para os conteúdos. Reprodução integral, uso comercial ou alteração dos materiais depende de autorização prévia.</p>
+
+        <h2>Links externos</h2>
+        <p>Algumas páginas podem direcionar para estudos, instituições ou serviços externos. Esses sites possuem regras e políticas próprias, e o VitaCerta não controla sua disponibilidade ou seu conteúdo.</p>
+
+        <h2>Disponibilidade</h2>
+        <p>Trabalhamos para manter o site acessível e correto, mas podem ocorrer interrupções, falhas técnicas ou alterações sem aviso prévio. Estes termos também podem ser atualizados para acompanhar mudanças no serviço.</p>
+
+        <h2>Contato</h2>
+        <p>Dúvidas sobre estes termos podem ser enviadas para <a class="underline" href={`mailto:${contactEmail}`}>{contactEmail}</a>.</p>
+      </article>
+    </div>
+  </section>
+</Layout>

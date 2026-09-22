@@ -9,13 +9,13 @@ const { totalPages, page } = Astro.props;
         href={page.url.prev}
         class="pagination-btn flex gap-2 items-center btn"
       >
-        <i class="fa-solid fa-arrow-left" /> Previous
+        <i class="fa-solid fa-arrow-left" /> Anterior
       </a>
     )
   }
 
   <span class="pagination-current">
-    Page {page.currentPage} of {totalPages}
+    Página {page.currentPage} de {totalPages}
   </span>
 
   {
@@ -24,7 +24,7 @@ const { totalPages, page } = Astro.props;
         href={page.url.next}
         class="pagination-btn flex gap-2 items-center btn"
       >
-        Next <i class="fa-solid fa-arrow-right" />
+        Próxima <i class="fa-solid fa-arrow-right" />
       </a>
     )
   }

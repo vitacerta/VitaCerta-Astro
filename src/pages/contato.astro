@@ -1,0 +1,28 @@
+---
+import Layout from "../layouts/Base.astro";
+
+const contactEmail = "contato@vitacerta.com.br";
+---
+
+<Layout
+  title="Contato"
+  description="Entre em contato com a equipe do VitaCerta para dúvidas, correções ou assuntos editoriais."
+  lang="pt-BR"
+>
+  <section class="section">
+    <div class="container">
+      <article class="post max-w-4xl mx-auto">
+        <p class="uppercase mb-4">FALE COM O VITACERTA</p>
+        <h1>CONTATO</h1>
+        <p>Para dúvidas sobre o site, sugestões de pauta, correções ou assuntos relacionados aos seus dados, escreva para:</p>
+        <p><a class="btn btn-neutral rounded-none" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+
+        <h2>Correções editoriais</h2>
+        <p>Ao informar uma possível correção, inclua o endereço do artigo e descreva o trecho que precisa ser revisado. A equipe avaliará a informação e atualizará o conteúdo quando necessário.</p>
+
+        <h2>Orientação de saúde</h2>
+        <p>O canal de contato não realiza consultas, diagnósticos ou orientações médicas individuais. Para decisões sobre sua saúde, procure um profissional habilitado. Em situações de urgência ou emergência, busque imediatamente o serviço de saúde adequado da sua região.</p>
+      </article>
+    </div>
+  </section>
+</Layout>

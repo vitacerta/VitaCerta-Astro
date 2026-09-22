@@ -1,6 +1,5 @@
 ---
 import PostCardRow from "../components/PostCardRow.astro";
-import Subscribe from "../components/Subscride.astro";
 import { client } from "../lib/sanity";
 const locale = Astro.currentLocale || "pt-BR";
 
@@ -22,15 +21,14 @@ const posts = await client.fetch(`
 {posts.length > 0 ? (
   <section class="section section-posts">
     <div class="container">
-      <div class="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-10">
+      <div>
         <div>
           <h2 class="h1 mb-10">CONTEÚDOS RECENTES</h2>
           <div class="grid gap-10">{posts.map((post) => <PostCardRow {...post} />)}</div>
-          <a href={`/${locale}/blog`} class="btn btn-link mt-10 text-inherit uppercase no-underline group p-0">
+          <a href="/conteudos/" class="btn btn-link mt-10 text-inherit uppercase no-underline group p-0">
             TODOS OS CONTEÚDOS <i class="fa-solid fa-arrow-right group-hover:translate-x-1" />
           </a>
         </div>
-        <aside class="lg:flex flex-col gap-10 hidden"><Subscribe /></aside>
       </div>
     </div>
   </section>
