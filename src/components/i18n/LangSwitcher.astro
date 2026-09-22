@@ -5,7 +5,7 @@ type Props = {
   locale?: string;
 };
 
-const { locale = "en" } = Astro.props as Props;
+const { locale = "pt-BR" } = Astro.props as Props;
 
 const currentPath = Astro.url.pathname;
 
@@ -37,9 +37,9 @@ const options = Object.entries(LOCALES).map(([lang, config]) => {
 });
 ---
 
-<div class="form-control w-fit">
+{options.length > 1 && <div class="form-control w-fit">
   <div class="input input-bordered flex items-center gap-2">
-    <label for="lang-switcher" class="sr-only"> Select language </label>
+    <label for="lang-switcher" class="sr-only"> Selecionar idioma </label>
 
     <select
       class="bg-transparent outline-none"
@@ -55,7 +55,7 @@ const options = Object.entries(LOCALES).map(([lang, config]) => {
       }
     </select>
   </div>
-</div>
+</div>}
 
 <script is:inline>
   document.querySelectorAll("[data-language-select]").forEach((select) => {

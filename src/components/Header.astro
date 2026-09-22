@@ -1,6 +1,5 @@
 ---
 import Logo from "./Logo.astro";
-import Socials from "./Socials.astro";
 import LangSwitcher from "./i18n/LangSwitcher.astro";
 import { menu } from "../consts";
 const locale = Astro.currentLocale;
@@ -15,10 +14,6 @@ const locale = Astro.currentLocale;
           <a class="hover:underline" href={link.url}>{link.title}</a>
         ))}
       </nav>
-      <div class="hidden md:flex gap-4 items-center">
-        &mdash;
-        <Socials />
-      </div>
       <div class="ml-auto md:ml-0">
         <LangSwitcher locale={locale} />
       </div>
