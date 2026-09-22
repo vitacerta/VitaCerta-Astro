@@ -64,7 +64,7 @@ const postsCategories = await client.fetch(
 );
 ---
 
-<Layout title="Blog">
+<Layout title="Blog" canonicalURL="/conteudos/">
   <Hero title="Magazine" />
 
   <section class="mt-10">
@@ -72,7 +72,7 @@ const postsCategories = await client.fetch(
       <p class="font-semibold uppercase">Categorias</p>
       <div class="flex flex-wrap items-center gap-4 justify-start">
         <a
-          href={`/${locale}/blog`}
+          href="/conteudos/"
           class="btn btn-outline rounded-full py-1 px-4 h-auto hover:bg-black hover:text-white uppercase"
         >
           TODAS
