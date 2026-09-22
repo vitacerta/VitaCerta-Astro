@@ -5,6 +5,7 @@ import { client } from "../../lib/sanity";
 import PostCardBase from "../../components/PostCardBase.astro";
 import PortableComponent from "../../components/builder/PortableComponent.astro";
 import { formatDate } from "../../utils/dateFormatter";
+import "../../styles/article.css";
 
 export async function getStaticPaths() {
   const locale = "pt-BR";
@@ -58,6 +59,19 @@ const normalizeLegacyInternalLinks = (html = "") => html
 
 const editorialBodyHtml = normalizeLegacyInternalLinks(post.bodyHtml || "");
 const legacyBodyHtml = normalizeLegacyInternalLinks(post.legacyBodyHtml || "");
+const portableText = Array.isArray(post.body)
+  ? post.body
+      .flatMap((block) => Array.isArray(block?.children) ? block.children : [])
+      .map((child) => child?.text || "")
+      .join(" ")
+  : "";
+const readableText = `${post.title || ""} ${post.description || ""} ${editorialBodyHtml || legacyBodyHtml}`
+  .replace(/<[^>]*>/g, " ")
+  .replace(/&[a-z0-9#]+;/gi, " ")
+  .concat(` ${portableText}`)
+  .replace(/\s+/g, " ")
+  .trim();
+const readingMinutes = Math.max(2, Math.ceil(readableText.split(" ").filter(Boolean).length / 220));
 
 const relatedProjection = `{
   title,
@@ -107,104 +121,108 @@ if (relatedPosts.length < 3) {
   canonicalURL={canonicalURL}
   lang={post.language || locale}
 >
-  <section class="mt-10">
-    <div class="container">
-      <div class="flex items-center justify-between flex-wrap gap-4">
-        <a href="/conteudos/" class="btn btn-link text-inherit uppercase no-underline group p-0">
-          <i class="fa-solid fa-arrow-left group-hover:translate-x-1"></i> Voltar
-        </a>
-        <p class="font-semibold text-3xl uppercase">VitaCerta</p>
+  <article class="editorial-article">
+    <nav class="article-breadcrumb" aria-label="Caminho da página">
+      <div class="article-shell breadcrumb-inner">
+        <a href="/">Início</a><span aria-hidden="true">›</span>
+        <a href="/conteudos/">Conteúdos</a>
+        {post.categories && <><span aria-hidden="true">›</span><span>{post.categories.title}</span></>}
       </div>
-    </div>
-  </section>
+    </nav>
 
-  <section class="section">
-    <div class="container">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
-        <h1>{post.title}</h1>
-        <p class="text-lg font-semibold">{post.description}</p>
-      </div>
-      <div>
-        <div class="flex flex-wrap gap-x-6 gap-y-3 justify-between items-center mb-5">
-          <div class="flex flex-wrap gap-x-6 gap-y-2">
-            <p><b class="mr-2">Data</b><span>{formatDate(displayDate)}</span></p>
-            {post.editoriallyUpdatedAt && (
-              <p><b class="mr-2">Atualizado em</b><span>{formatDate(post.editoriallyUpdatedAt)}</span></p>
-            )}
-          </div>
-          {post.categories && (
-            <a href={`/${locale}/blog/${post.categories.slug}`} class="ml-auto btn btn-outline rounded-full py-1 px-4 h-auto hover:bg-black hover:text-white">
-              {post.categories.title}
-            </a>
-          )}
-        </div>
-        {post.image && (
-          <Image src={post.image} alt={post.title} width="1600" height="900" format="webp" fetchpriority="high" quality={55} loading="eager" class="aspect-video w-full h-auto object-cover" />
+    <div class="article-shell article-layout">
+      <div class="article-main">
+        {post.categories && (
+          <a class="article-kicker" href={`/${locale}/blog/${post.categories.slug}/`}>
+            {post.categories.title}
+          </a>
         )}
-      </div>
-    </div>
-  </section>
+        <h1>{post.title}</h1>
+        <p class="article-dek">{post.description}</p>
 
-  <section class="section">
-    <div class="container">
-      <div class="max-w-4xl mx-auto">
-        {editorialBodyHtml ? (
-          <div class="post" set:html={editorialBodyHtml}></div>
-        ) : post.body ? (
-          <div class="post"><PortableComponent body={post.body} /></div>
-        ) : legacyBodyHtml ? (
-          <div class="post" set:html={legacyBodyHtml}></div>
-        ) : null}
-
-        <div class="border-t mt-12 pt-6">
-          <p class="text-sm">
-            O conteúdo do VitaCerta tem caráter informativo e educativo e não substitui orientação, diagnóstico ou tratamento realizado por profissionais de saúde.
+        <div class="editorial-byline">
+          <span class="editorial-icon" aria-hidden="true">✦</span>
+          <p>
+            Conteúdo produzido pelo <a href="/sobre/"><strong>VitaCerta Editorial</strong></a>
+            com base nas fontes apresentadas no artigo.
           </p>
         </div>
 
-        <div class="border-t mt-8 pt-6">
-          <div class="flex flex-wrap items-center gap-3">
-            <b class="mr-2">Compartilhar</b>
-            <a
-              href={`https://wa.me/?text=${encodedShareText}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-outline rounded-full py-1 px-4 h-auto"
-            >
-              WhatsApp
-            </a>
-            <a
-              href={`https://www.facebook.com/sharer/sharer.php?u=${encodedURL}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-outline rounded-full py-1 px-4 h-auto"
-            >
-              Facebook
-            </a>
-            <button
-              type="button"
-              class="btn btn-outline rounded-full py-1 px-4 h-auto js-copy-link"
-              data-url={canonicalURL}
-            >
-              Copiar link
-            </button>
+        <div class="article-dates">
+          <span>Publicado em {formatDate(displayDate)}</span>
+          {post.editoriallyUpdatedAt && <span>Atualizado em {formatDate(post.editoriallyUpdatedAt)}</span>}
+          <span>Leitura de {readingMinutes} minutos</span>
+        </div>
+
+        {post.image && (
+          <figure class="article-cover">
+            <Image
+              src={post.image}
+              alt={post.title}
+              width="1600"
+              height="900"
+              format="webp"
+              fetchpriority="high"
+              quality={62}
+              loading="eager"
+            />
+          </figure>
+        )}
+
+        <div class="editorial-copy" data-article-copy>
+          {editorialBodyHtml ? (
+            <div class="post" set:html={editorialBodyHtml}></div>
+          ) : post.body ? (
+            <div class="post"><PortableComponent body={post.body} /></div>
+          ) : legacyBodyHtml ? (
+            <div class="post" set:html={legacyBodyHtml}></div>
+          ) : null}
+        </div>
+
+        <div class="article-disclaimer">
+          <span class="editorial-icon" aria-hidden="true">i</span>
+          <p>Conteúdo educativo. Não substitui orientação, diagnóstico ou tratamento realizado por profissionais de saúde.</p>
+        </div>
+
+        <div class="article-share">
+          <strong>Compartilhar</strong>
+          <div class="share-actions">
+            <a href={`https://wa.me/?text=${encodedShareText}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodedURL}`} target="_blank" rel="noopener noreferrer">Facebook</a>
+            <button type="button" class="js-copy-link" data-url={canonicalURL}>Copiar link</button>
           </div>
         </div>
       </div>
+
+      <aside class="article-sidebar" aria-label="Informações editoriais">
+        <section class="editorial-card primary-card">
+          <span class="card-eyebrow">Transparência</span>
+          <h2>Como produzimos nossos conteúdos</h2>
+          <p>Conheça o propósito do VitaCerta, o compromisso com fontes confiáveis e os limites de nossos conteúdos.</p>
+          <a href="/sobre/">Conhecer o VitaCerta <span aria-hidden="true">→</span></a>
+        </section>
+
+        <section class="editorial-card article-summary" data-article-summary hidden>
+          <span class="card-eyebrow">Neste artigo</span>
+          <h2>Em resumo</h2>
+          <ol data-summary-list></ol>
+        </section>
+      </aside>
     </div>
-  </section>
+  </article>
 
   {relatedPosts.length > 0 && (
-    <section class="section">
+    <section class="related-reading">
       <div class="container">
-        <div class="border-t pt-10">
-          <div class="flex flex-wrap gap-4 justify-between items-center">
-            <h2 class="uppercase">CONTINUE LENDO</h2>
-            <a href="/conteudos/" class="btn btn-link text-inherit uppercase no-underline group p-0">Ver todos <i class="fa-solid fa-arrow-right group-hover:translate-x-1" /></a>
+        <div class="related-heading">
+          <div>
+            <span>Continue explorando</span>
+            <h2>Conteúdos relacionados</h2>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-10">
-            {relatedPosts.map((post) => <PostCardBase {...post} />)}
-          </div>
+          <a href="/conteudos/">Ver todos <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {relatedPosts.map((post) => <PostCardBase {...post} />)}
         </div>
       </div>
     </section>
@@ -228,5 +246,24 @@ if (relatedPosts.length < 3) {
         }
       });
     });
+
+    const copy = document.querySelector('[data-article-copy]');
+    const summary = document.querySelector('[data-article-summary]');
+    const summaryList = document.querySelector('[data-summary-list]');
+    const headings = copy ? [...copy.querySelectorAll('h2')].slice(0, 6) : [];
+
+    if (summary && summaryList && headings.length > 1) {
+      headings.forEach((heading, index) => {
+        if (!heading.id) heading.id = `secao-${index + 1}`;
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `#${heading.id}`;
+        link.textContent = heading.textContent || `Seção ${index + 1}`;
+        item.appendChild(link);
+        summaryList.appendChild(item);
+      });
+      summary.hidden = false;
+    }
   </script>
 </Layout>
+
