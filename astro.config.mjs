@@ -6,9 +6,19 @@ import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from "@tailwindcss/vite";
 import { DEFAULT_LOCALE_SETTING, LOCALES_SETTING } from './src/locales';
 
+const isCanonicalPage = (page) => {
+	const pathname = new URL(page).pathname;
+
+	if (pathname === '/pt-BR/' || pathname === '/pt-BR/blog/') {
+		return false;
+	}
+
+	return !/^\/pt-BR\/blog\/\d+\/$/.test(pathname);
+};
+
 export default defineConfig({
 	site: 'https://vitacerta.com.br/',
-	integrations: [mdx(), sitemap()],
+	integrations: [mdx(), sitemap({ filter: isCanonicalPage })],
 	image: { domains: ["cdn.sanity.io", "blogger.googleusercontent.com"], },
 	vite: {
 		plugins: [tailwindcss()],
