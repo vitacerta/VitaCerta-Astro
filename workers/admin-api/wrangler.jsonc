@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vitacerta-admin-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-13",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "vars": {
+    "SANITY_PROJECT_ID": "1dh7sg5j",
+    "SANITY_DATASET": "production",
+    "ADMIN_ORIGIN": "https://vitacerta-admin-api.blc-comarela.workers.dev",
+    "GITHUB_CLIENT_ID": "Ov23li66KwPI2tZ18ac1",
+    "ALLOWED_GITHUB_IDS": "325269385",
+    "WRITES_ENABLED": "true",
+    "CF_ACCOUNT_ID": "ecccc993e66cc06e8f349d0d413b44d5",
+    "CF_WEB_ANALYTICS_SITE_TAG": "0213438d85c049b985776e2763ad9bf5",
+    "CF_ANALYTICS_HOST": "vitacerta.com.br",
+    "ANALYTICS_START_DATE": "2026-09-21"
+  },
+  "keep_vars": true
+}

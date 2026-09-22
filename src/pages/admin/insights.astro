@@ -1,0 +1,115 @@
+---
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Acessos e SEO | VitaCerta Admin</title>
+    <style>
+      :root { --bg:#f4f6f4; --panel:#fff; --text:#1f2f28; --muted:#66736d; --line:#dfe6e1; --brand:#245640; --soft:#e8f0eb; --ok:#2e7049; --info:#315a78; }
+      * { box-sizing:border-box; }
+      body { margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); }
+      .topbar { background:var(--panel); border-bottom:1px solid var(--line); }
+      .topbar-inner,.main { max-width:1080px; margin:auto; padding-left:22px; padding-right:22px; }
+      .topbar-inner { min-height:72px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+      .brand { font-size:22px; font-weight:800; letter-spacing:-.03em; }
+      .brand small { margin-left:8px; color:var(--muted); font-size:14px; font-weight:500; }
+      .nav { display:flex; align-items:center; gap:8px; }
+      .btn { border-radius:10px; padding:11px 15px; font-weight:750; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; }
+      .btn-primary { background:var(--brand); color:#fff; }
+      .btn-secondary { background:#eef2ef; color:var(--text); }
+      .main { padding-top:38px; padding-bottom:56px; }
+      .eyebrow { color:var(--brand); font-weight:800; margin:0 0 8px; }
+      h1 { margin:0; font-size:clamp(32px,5vw,46px); letter-spacing:-.045em; }
+      .lead { max-width:760px; margin:12px 0 26px; color:var(--muted); font-size:17px; line-height:1.6; }
+      .notice { display:flex; gap:12px; align-items:flex-start; padding:16px 18px; margin-bottom:24px; background:#edf5ef; border:1px solid #cfe0d4; border-radius:13px; }
+      .notice strong { display:block; margin-bottom:3px; color:var(--ok); }
+      .notice p { margin:0; color:#456051; line-height:1.45; }
+      .dot { width:10px; height:10px; margin-top:6px; border-radius:50%; background:#3d8b5c; flex:0 0 auto; box-shadow:0 0 0 4px #d9eadf; }
+      .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+      .card { display:flex; flex-direction:column; min-height:260px; padding:22px; background:var(--panel); border:1px solid var(--line); border-radius:15px; }
+      .label { display:inline-flex; width:max-content; padding:6px 9px; border-radius:999px; background:var(--soft); color:var(--brand); font-size:12px; font-weight:800; }
+      .card h2 { margin:15px 0 8px; font-size:23px; letter-spacing:-.025em; }
+      .card p { margin:0; color:var(--muted); line-height:1.55; }
+      .checks { list-style:none; margin:18px 0 22px; padding:0; display:grid; gap:9px; }
+      .checks li { display:flex; gap:8px; color:#425149; line-height:1.4; }
+      .checks li::before { content:"✓"; color:var(--ok); font-weight:900; }
+      .card-actions { margin-top:auto; display:flex; flex-wrap:wrap; gap:8px; }
+      .card-link { padding:10px 13px; border-radius:9px; background:var(--brand); color:#fff; font-weight:750; text-decoration:none; }
+      .card-link.alt { background:#edf1ee; color:var(--text); }
+      .section-title { margin:32px 0 14px; font-size:21px; }
+      .quick { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+      .quick a { padding:15px; background:var(--panel); border:1px solid var(--line); border-radius:12px; color:var(--brand); font-weight:750; text-decoration:none; }
+      .footnote { margin-top:24px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; line-height:1.5; }
+      @media(max-width:760px){ .topbar-inner,.main{padding-left:14px;padding-right:14px}.topbar-inner{min-height:64px}.brand small{display:none}.grid,.quick{grid-template-columns:1fr}.card{min-height:auto}.nav .btn-secondary{display:none} }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">VitaCerta <small>Acessos e SEO</small></div>
+        <nav class="nav" aria-label="Admin">
+          <a class="btn btn-secondary" href="/admin/">Admin editorial</a>
+          <a class="btn btn-primary" href="/admin/novo/">+ Novo artigo</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main">
+      <p class="eyebrow">Insights v1</p>
+      <h1>Acessos e SEO</h1>
+      <p class="lead">Um ponto de partida para acompanhar quem chega ao VitaCerta, quais páginas são vistas e como o site aparece no Google. Os números atuais continuam nas ferramentas oficiais.</p>
+
+      <div class="notice">
+        <span class="dot" aria-hidden="true"></span>
+        <div>
+          <strong>Coleta de acessos confirmada</strong>
+          <p>O Cloudflare Web Analytics está ativo no site desde 21/09/2026. Os dados anteriores à instalação não aparecem.</p>
+        </div>
+      </div>
+
+      <section class="grid" aria-label="Ferramentas de acompanhamento">
+        <article class="card">
+          <span class="label">Tráfego do site</span>
+          <h2>Cloudflare Web Analytics</h2>
+          <p>Use para saber quantas visitas e visualizações cada página recebeu, além de país, dispositivo e navegador.</p>
+          <ul class="checks">
+            <li>Instalação validada no site público</li>
+            <li>Home e página de artigo testadas</li>
+            <li>Sem cookies de publicidade</li>
+          </ul>
+          <div class="card-actions">
+            <a class="card-link" href="https://dash.cloudflare.com/ecccc993e66cc06e8f349d0d413b44d5/web-analytics/overview/visits?siteTag~in=0213438d85c049b985776e2763ad9bf5&excludeBots=Yes" target="_blank" rel="noopener noreferrer">Ver acessos atuais</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="label">Busca do Google</span>
+          <h2>Google Search Console</h2>
+          <p>Use para acompanhar cliques, impressões, termos pesquisados, posição média e artigos encontrados pelo Google.</p>
+          <ul class="checks">
+            <li>Sitemap processado pelo Google</li>
+            <li>114 páginas encontradas na última verificação</li>
+            <li>5 páginas indexadas na última verificação</li>
+          </ul>
+          <div class="card-actions">
+            <a class="card-link" href="https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3Avitacerta.com.br" target="_blank" rel="noopener noreferrer">Ver desempenho</a>
+            <a class="card-link alt" href="https://search.google.com/search-console/index?resource_id=sc-domain%3Avitacerta.com.br" target="_blank" rel="noopener noreferrer">Ver indexação</a>
+          </div>
+        </article>
+      </section>
+
+      <h2 class="section-title">Atalhos úteis</h2>
+      <nav class="quick" aria-label="Atalhos úteis">
+        <a href="https://search.google.com/search-console/sitemaps?resource_id=sc-domain%3Avitacerta.com.br" target="_blank" rel="noopener noreferrer">Sitemap no Google ↗</a>
+        <a href="https://vitacerta.com.br/sitemap-index.xml" target="_blank" rel="noopener noreferrer">Abrir sitemap ↗</a>
+        <a href="https://vitacerta.com.br/" target="_blank" rel="noopener noreferrer">Abrir site público ↗</a>
+      </nav>
+
+      <p class="footnote">Última verificação manual: 21/09/2026. Os números acima registram essa verificação e não são atualizados automaticamente; use os botões para consultar os dados atuais. Esta primeira versão não armazena credenciais do Google ou da Cloudflare.</p>
+    </main>
+  </body>
+</html>

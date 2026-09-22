@@ -1,39 +1,4 @@
 ---
-import { client } from '../../lib/sanity.js';
-
-const articles = await client.fetch(`
-  *[_type == "post"] | order(_updatedAt desc){
-    _id,
-    title,
-    "slug": slug.current,
-    _updatedAt,
-    publishedAt,
-    "category": coalesce(categories[0]->slug.current, "sem-categoria"),
-    isHomeFeatured,
-    showInHighlights,
-    isCienciaVital
-  }
-`);
-
-const categories = [...new Set(
-  articles
-    .map((article) => typeof article.category === 'string' ? article.category : '')
-    .filter(Boolean)
-)].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-
-const formatDate = (value) => {
-  if (!value) return '—';
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(value));
-};
-
-const categoryLabel = (value) => value
-  .split('-')
-  .map((part) => part ? part.charAt(0).toUpperCase() + part.slice(1) : '')
-  .join(' ');
 ---
 
 <!doctype html>
@@ -53,9 +18,11 @@ const categoryLabel = (value) => value
       .topbar-inner { min-height:72px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
       .brand { font-size:22px; font-weight:800; letter-spacing:-.03em; }
       .brand small { margin-left:8px; color:var(--muted); font-size:14px; font-weight:500; }
+      .top-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
       .btn { border:0; border-radius:10px; padding:11px 15px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
       .btn-primary { background:var(--brand); color:#fff; }
       .btn-secondary { background:#eef2ef; color:var(--text); }
+      .btn-insights { background:var(--soft); color:var(--brand); }
       .main { padding-top:34px; padding-bottom:56px; }
       .heading { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:24px; }
       h1 { margin:0 0 6px; font-size:clamp(28px,4vw,38px); letter-spacing:-.04em; }
@@ -65,7 +32,7 @@ const categoryLabel = (value) => value
       .filters { display:grid; grid-template-columns:minmax(0,1fr) 220px 180px; gap:12px; padding:18px; border-bottom:1px solid var(--line); }
       .control { width:100%; border:1px solid #cfd9d2; border-radius:10px; background:#fff; padding:11px 12px; }
       .table-wrap { overflow-x:auto; }
-      table { width:100%; min-width:860px; border-collapse:collapse; }
+      table { width:100%; min-width:980px; border-collapse:collapse; }
       th,td { padding:15px 18px; text-align:left; border-bottom:1px solid #edf1ee; vertical-align:middle; }
       th { background:#fbfcfb; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
       .article-title { font-weight:750; line-height:1.35; margin-bottom:5px; }
@@ -74,18 +41,21 @@ const categoryLabel = (value) => value
       .dot { width:7px; height:7px; border-radius:50%; background:#3d8b5c; }
       .flags { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
       .flag { padding:3px 6px; border-radius:6px; background:#f1f3f1; color:#53605a; font-size:11px; }
+      .views { font-variant-numeric:tabular-nums; font-size:17px; font-weight:800; color:var(--brand); white-space:nowrap; }
+      .th-detail { display:block; margin-top:3px; font-size:10px; font-weight:600; letter-spacing:0; text-transform:none; }
       .link { display:inline-block; padding:8px 10px; border:1px solid #cdd9d1; border-radius:8px; color:var(--brand); font-weight:750; text-decoration:none; }
       .empty { display:none; padding:44px 20px; text-align:center; color:var(--muted); }
       .note { margin-top:14px; font-size:13px; }
-      @media(max-width:760px){ .topbar-inner,.main{padding-left:14px;padding-right:14px}.topbar-inner{min-height:64px}.brand small{display:none}.heading{align-items:flex-start;flex-direction:column}.filters{grid-template-columns:1fr}.btn-secondary{display:none} }
+      @media(max-width:760px){ .topbar-inner,.main{padding-left:14px;padding-right:14px}.topbar-inner{min-height:64px}.brand small{display:none}.heading{align-items:flex-start;flex-direction:column}.filters{grid-template-columns:1fr}.btn-secondary{display:none}.top-actions{gap:6px}.btn{padding:10px 12px} }
     </style>
   </head>
   <body>
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand">VitaCerta <small>Admin</small></div>
-        <div>
-          <button class="btn btn-secondary" type="button">Sair</button>
+        <div class="top-actions">
+          <a class="btn btn-insights" href="/admin/insights/">Acessos e SEO</a>
+          <button class="btn btn-secondary" id="logout" type="button">Sair</button>
           <a class="btn btn-primary" href="/admin/novo/">+ Novo artigo</a>
         </div>
       </div>
@@ -97,7 +67,7 @@ const categoryLabel = (value) => value
           <h1>Artigos</h1>
           <p class="subtitle">Gerencie o conteúdo editorial do VitaCerta em uma tela simples.</p>
         </div>
-        <div class="count"><span id="visibleCount">{articles.length}</span> artigos</div>
+        <div class="count"><span id="visibleCount">0</span> artigos</div>
       </div>
 
       <section class="panel">
@@ -105,71 +75,26 @@ const categoryLabel = (value) => value
           <input class="control" id="search" type="search" placeholder="Buscar por título ou slug…" aria-label="Buscar artigos" />
           <select class="control" id="category" aria-label="Filtrar por categoria">
             <option value="">Todas as categorias</option>
-            {categories.map((category) => <option value={category}>{categoryLabel(category)}</option>)}
+
           </select>
           <select class="control" id="status" aria-label="Filtrar por status">
             <option value="">Todos os status</option>
-            <option value="published">Publicado</option>
+            <option value="published">Publicado</option><option value="draft">Rascunho</option>
           </select>
         </div>
 
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Artigo</th><th>Categoria</th><th>Status</th><th>Atualizado</th><th>Ação</th></tr></thead>
+            <thead><tr><th>Artigo</th><th>Categoria</th><th>Status</th><th>Atualizado</th><th>Visualizações <span class="th-detail">desde 21/09/2026</span></th><th>Ação</th></tr></thead>
             <tbody id="articleRows">
-              {articles.map((article) => (
-                <tr data-title={(article.title || '').toLowerCase()} data-slug={(article.slug || '').toLowerCase()} data-category={article.category || ''} data-status="published">
-                  <td>
-                    <div class="article-title">{article.title}</div>
-                    <div class="slug">/{article.slug || 'sem-slug'}</div>
-                    <div class="flags">
-                      {article.isHomeFeatured && <span class="flag">Home</span>}
-                      {article.showInHighlights && <span class="flag">Em Destaque</span>}
-                      {article.isCienciaVital && <span class="flag">Ciência Vital</span>}
-                    </div>
-                  </td>
-                  <td>{categoryLabel(article.category || 'sem-categoria')}</td>
-                  <td><span class="badge"><span class="dot"></span>Publicado</span></td>
-                  <td>{formatDate(article._updatedAt || article.publishedAt)}</td>
-                  <td><a class="link" href={article.slug ? `/conteudos/${article.slug}/` : '#'} target="_blank">Ver artigo</a></td>
-                </tr>
-              ))}
             </tbody>
           </table>
         </div>
         <div class="empty" id="emptyState">Nenhum artigo encontrado com esses filtros.</div>
       </section>
-      <p class="note">Nesta etapa a listagem usa conteúdo publicado. Rascunhos e edição entrarão pela camada segura do Admin.</p>
+      <p class="note" id="dataNote">Carregando artigos e visualizações…</p>
     </main>
 
-    <script>
-      const search = document.querySelector('#search');
-      const category = document.querySelector('#category');
-      const status = document.querySelector('#status');
-      const rows = [...document.querySelectorAll('#articleRows tr')];
-      const visibleCount = document.querySelector('#visibleCount');
-      const emptyState = document.querySelector('#emptyState');
-
-      const applyFilters = () => {
-        const q = search.value.trim().toLowerCase();
-        const selectedCategory = category.value;
-        const selectedStatus = status.value;
-        let count = 0;
-        rows.forEach((row) => {
-          const matchesText = !q || row.dataset.title.includes(q) || row.dataset.slug.includes(q);
-          const matchesCategory = !selectedCategory || row.dataset.category === selectedCategory;
-          const matchesStatus = !selectedStatus || row.dataset.status === selectedStatus;
-          const visible = matchesText && matchesCategory && matchesStatus;
-          row.hidden = !visible;
-          if (visible) count += 1;
-        });
-        visibleCount.textContent = String(count);
-        emptyState.style.display = count === 0 ? 'block' : 'none';
-      };
-
-      search.addEventListener('input', applyFilters);
-      category.addEventListener('change', applyFilters);
-      status.addEventListener('change', applyFilters);
-    </script>
+    <script>import '../../lib/admin-list.js';</script>
   </body>
 </html>

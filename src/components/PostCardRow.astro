@@ -4,11 +4,15 @@ import { formatDate } from "../utils/dateFormatter";
 const { title, slug, description, date, _createdAt, image, categories } = Astro.props;
 const locale = Astro.currentLocale || "pt-BR";
 const displayDate = date || _createdAt;
+const isLegacyRemoteImage = typeof image === "string" && image.includes("blogger.googleusercontent.com");
 ---
 
 <article class="group grid grid-cols-1 sm:grid-cols-[1fr_2fr] md:grid-cols-[240px_auto] gap-4 border-t pt-10 first:border-t-0 first:pt-0">
   <a href={`/conteudos/${slug}`}>
-    {image && <Image src={image} alt={title} width={480} height={270} format="webp" quality={45} class="aspect-video w-full h-auto object-cover" />}
+    {image && (isLegacyRemoteImage
+      ? <img src={image} alt={title} loading="lazy" class="aspect-video w-full h-auto object-cover" />
+      : <Image src={image} alt={title} width={480} height={270} format="webp" quality={45} class="aspect-video w-full h-auto object-cover" />
+    )}
   </a>
   <div class="flex flex-col justify-between">
     <div>
