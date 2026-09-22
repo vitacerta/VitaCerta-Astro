@@ -1,6 +1,7 @@
 import {authenticate,authRoute,loginPage} from './auth.js';
 import {assert, HttpError, cleanHtml} from './validation.js';
 import {sanity, readArticle, saveArticle, unpublishArticle, deleteArticle} from './sanity.js';
+import {fetchArticlePageviews} from './analytics.js';
 
 const headers = {'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','X-Frame-Options':'DENY','X-Robots-Tag':'noindex, nofollow'};
 const json = (data, status = 200) => new Response(JSON.stringify(data), {status,headers:{...headers,'Content-Type':'application/json; charset=utf-8'}});
@@ -19,7 +20,7 @@ async function readBody(request, max) {
   for (const chunk of chunks) { result.set(chunk,offset); offset+=chunk.length; }
   return result;
 }
-export function createHandler({auth = authenticate, makeSanity = sanity} = {}) {
+export function createHandler({auth = authenticate, makeSanity = sanity, getArticlePageviews = fetchArticlePageviews} = {}) {
   return async (request, env) => {
     try {
       const url = new URL(request.url);
@@ -45,6 +46,7 @@ export function createHandler({auth = authenticate, makeSanity = sanity} = {}) {
         assert(request.headers.get('Origin') === env.ADMIN_ORIGIN && request.headers.get('X-VitaCerta-Admin') === '1','Origem da requisição não permitida.',403);
       }
       if (url.pathname === '/api/session' && request.method === 'GET') return json({authenticated:true,writesEnabled:env.WRITES_ENABLED === 'true'});
+      if (url.pathname === '/api/article-pageviews' && request.method === 'GET') return json(await getArticlePageviews(env));
       if (url.pathname === '/api/preview' && request.method === 'POST') {
         assert(request.headers.get('Content-Type')?.split(';')[0] === 'application/json','Envie JSON.',415);
         let body; try { body=JSON.parse(new TextDecoder().decode(await readBody(request,850000))); } catch (e) { if(e instanceof HttpError) throw e; throw new HttpError(400,'JSON inválido.'); }
