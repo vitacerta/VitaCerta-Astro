@@ -18,9 +18,11 @@
       .topbar-inner { min-height:72px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
       .brand { font-size:22px; font-weight:800; letter-spacing:-.03em; }
       .brand small { margin-left:8px; color:var(--muted); font-size:14px; font-weight:500; }
+      .top-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
       .btn { border:0; border-radius:10px; padding:11px 15px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
       .btn-primary { background:var(--brand); color:#fff; }
       .btn-secondary { background:#eef2ef; color:var(--text); }
+      .btn-insights { background:var(--soft); color:var(--brand); }
       .main { padding-top:34px; padding-bottom:56px; }
       .heading { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:24px; }
       h1 { margin:0 0 6px; font-size:clamp(28px,4vw,38px); letter-spacing:-.04em; }
@@ -42,14 +44,15 @@
       .link { display:inline-block; padding:8px 10px; border:1px solid #cdd9d1; border-radius:8px; color:var(--brand); font-weight:750; text-decoration:none; }
       .empty { display:none; padding:44px 20px; text-align:center; color:var(--muted); }
       .note { margin-top:14px; font-size:13px; }
-      @media(max-width:760px){ .topbar-inner,.main{padding-left:14px;padding-right:14px}.topbar-inner{min-height:64px}.brand small{display:none}.heading{align-items:flex-start;flex-direction:column}.filters{grid-template-columns:1fr}.btn-secondary{display:none} }
+      @media(max-width:760px){ .topbar-inner,.main{padding-left:14px;padding-right:14px}.topbar-inner{min-height:64px}.brand small{display:none}.heading{align-items:flex-start;flex-direction:column}.filters{grid-template-columns:1fr}.btn-secondary{display:none}.top-actions{gap:6px}.btn{padding:10px 12px} }
     </style>
   </head>
   <body>
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand">VitaCerta <small>Admin</small></div>
-        <div>
+        <div class="top-actions">
+          <a class="btn btn-insights" href="/admin/insights/">Acessos e SEO</a>
           <button class="btn btn-secondary" id="logout" type="button">Sair</button>
           <a class="btn btn-primary" href="/admin/novo/">+ Novo artigo</a>
         </div>
