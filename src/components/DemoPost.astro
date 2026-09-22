@@ -41,30 +41,33 @@ const displayDate = post?.publishedAt || post?._createdAt;
 ---
 
 {post ? (
-  <section class="section section-demo-post">
-    <div class="container grid gap-10">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 order-2 lg:order-1 group">
+  <section class="home-featured">
+    <div class="home-shell">
+      <div class="home-section-heading">
         <div>
-          {post.categories && (
-            <a href={`/${locale}/blog/${post.categories.slug}`} class="uppercase hover:underline">{post.categories.title}</a>
-          )}
-          <a href={`/conteudos/${post.slug}`} class="group-hover:underline"><h2 class="h1">{post.title}</h2></a>
+          <span>LEITURA EM DESTAQUE</span>
+          <h2>Para começar</h2>
         </div>
-        <div class="grid gap-4">
-          <a href={`/conteudos/${post.slug}`}><p>{post.description}</p></a>
-          <div class="flex flex-wrap gap-4 justify-between items-center">
-            {displayDate && <p>{formatDate(displayDate)}</p>}
-            <a href={`/conteudos/${post.slug}`} class="btn btn-outline rounded-none uppercase">LER MATÉRIA</a>
+        <p>Uma seleção editorial para transformar informação em escolhas mais conscientes.</p>
+      </div>
+      <article class="home-featured-card group">
+        {post.image && (
+          <a class="home-featured-image" href={`/conteudos/${post.slug}`}>
+            <Image src={post.image} alt={post.title} width={1600} height={900} format="webp" quality={65} loading="eager" fetchpriority="high" sizes="(min-width: 900px) 58vw, 100vw" />
+          </a>
+        )}
+        <div class="home-featured-copy">
+          {post.categories && (
+            <a href={`/${locale}/blog/${post.categories.slug}`} class="home-category">{post.categories.title}</a>
+          )}
+          <a href={`/conteudos/${post.slug}`}><h3>{post.title}</h3></a>
+          <p>{post.description}</p>
+          <div class="home-featured-meta">
+            {displayDate && <time>{formatDate(displayDate)}</time>}
+            <a href={`/conteudos/${post.slug}`} class="home-button home-button-outline">Ler matéria <span aria-hidden="true">→</span></a>
           </div>
         </div>
-      </div>
-      {post.image && (
-        <div class="order-1 lg:order-2">
-          <a href={`/conteudos/${post.slug}`}>
-            <Image src={post.image} alt={post.title} width={1600} height={900} format="webp" quality={55} loading="eager" fetchpriority="high" sizes="100vw" class="w-full h-auto aspect-video object-cover" />
-          </a>
-        </div>
-      )}
+      </article>
     </div>
   </section>
 ) : null}

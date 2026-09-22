@@ -19,16 +19,18 @@ const posts = await client.fetch(`
 ---
 
 {posts.length > 0 ? (
-  <section class="section section-posts">
-    <div class="container">
-      <div>
+  <section class="home-recent">
+    <div class="home-shell">
+      <div class="home-section-heading home-section-heading-row">
         <div>
-          <h2 class="h1 mb-10">CONTEÚDOS RECENTES</h2>
-          <div class="grid gap-10">{posts.map((post) => <PostCardRow {...post} />)}</div>
-          <a href="/conteudos/" class="btn btn-link mt-10 text-inherit uppercase no-underline group p-0">
-            TODOS OS CONTEÚDOS <i class="fa-solid fa-arrow-right group-hover:translate-x-1" />
-          </a>
+          <span>PUBLICAÇÕES</span>
+          <h2>Conteúdos recentes</h2>
         </div>
+        <a href="/conteudos/" class="home-text-link">Ver todos <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="home-recent-list">{posts.map((post) => <PostCardRow {...post} />)}</div>
+      <div class="home-recent-action">
+        <a href="/conteudos/" class="home-button home-button-primary">Explorar todos os conteúdos</a>
       </div>
     </div>
   </section>
