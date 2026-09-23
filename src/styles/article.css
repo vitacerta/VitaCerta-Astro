@@ -232,10 +232,46 @@ body {
   color: var(--article-green-700);
 }
 
-.editorial-copy .post a {
-  color: var(--article-green-800);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.2rem;
+.editorial-copy .post p a,
+.editorial-copy .post li a,
+.editorial-copy .post blockquote a,
+.editorial-copy .post cite a {
+  color: #0b6b50;
+  font-weight: 600;
+  text-decoration-line: underline;
+  text-decoration-color: #71a38e;
+  text-decoration-thickness: 0.09em;
+  text-underline-offset: 0.2em;
+  transition:
+    color 160ms ease,
+    text-decoration-color 160ms ease,
+    text-decoration-thickness 160ms ease;
+}
+
+.editorial-copy .post p a:visited,.editorial-copy .post p a,
+
+.editorial-copy .post li a:visited,
+.editorial-copy .post blockquote a:visited,
+.editorial-copy .post cite a:visited {
+  color: #0b6b50;
+}
+
+.editorial-copy .post p a:hover,
+.editorial-copy .post li a:hover,
+.editorial-copy .post blockquote a:hover,
+.editorial-copy .post cite a:hover {
+  color: var(--article-green-950);
+  text-decoration-color: var(--article-green-950);
+  text-decoration-thickness: 0.13em;
+}
+
+.editorial-copy .post p a:focus-visible,
+.editorial-copy .post li a:focus-visible,
+.editorial-copy .post blockquote a:focus-visible,
+.editorial-copy .post cite a:focus-visible {
+  outline: 2px solid var(--article-green-700);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 .editorial-copy .post blockquote,
@@ -463,4 +499,3 @@ body {
     padding-block: 3rem;
   }
 }
-
