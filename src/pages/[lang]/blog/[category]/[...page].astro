@@ -1,11 +1,19 @@
 ---
+import Image from "astro/components/Image.astro";
 import { client } from "../../../../lib/sanity";
 import Layout from "../../../../layouts/Base.astro";
-import Hero from "../../../../components/Hero.astro";
-import PostCard from "../../../../components/PostCardBase.astro";
-import Pagination from "../../../../components/Pagination.astro";
-
 import { LOCALES } from "../../../../i18n";
+import { formatDate } from "../../../../utils/dateFormatter";
+import "../../../../styles/home.css";
+import "../../../../styles/archive.css";
+
+const categoryDescriptions = {
+  saude: "Informação clara para compreender sintomas, prevenção, exames e cuidados de saúde — com contexto, fontes confiáveis e sem alarmismo.",
+  mente: "Informação baseada em ciência para compreender emoções, sono, comportamento e saúde mental — com clareza, contexto e sem alarmismo.",
+  longevidade: "Conhecimento para viver mais e melhor, com autonomia, prevenção e hábitos sustentáveis em todas as fases da vida.",
+  nutricao: "Informação confiável sobre alimentação, nutrientes e escolhas possíveis para diferentes rotinas e objetivos.",
+  movimento: "Orientação baseada em evidências para desenvolver força, mobilidade, condicionamento e uma relação sustentável com o exercício.",
+};
 
 export async function getStaticPaths({ paginate }) {
   const paths = [];
@@ -17,6 +25,7 @@ export async function getStaticPaths({ paginate }) {
         "title": title[_key == $lang][0].value,
         "slug": slug.current
       }
+      | order(title asc)
       `,
       { lang }
     );
@@ -32,15 +41,10 @@ export async function getStaticPaths({ paginate }) {
         | order(publishedAt desc, _createdAt desc){
           title,
           description,
-          duration,
           publishedAt,
           _createdAt,
           "slug": slug.current,
           "image": coalesce(thumbnail.asset->url, mainImage.asset->url, coverUrl),
-          "author": author->{
-            name,
-            "slug": slug.current
-          },
           "categories": categories[0]->{
             "title": title[_key == $lang][0].value,
             "slug": slug.current
@@ -61,6 +65,8 @@ export async function getStaticPaths({ paginate }) {
         },
         props: {
           categoryTitle: category.title,
+          categorySlug: category.slug,
+          categories,
         },
       });
 
@@ -72,44 +78,103 @@ export async function getStaticPaths({ paginate }) {
 }
 
 const locale = Astro.params.lang;
-const { page, categoryTitle } = Astro.props;
+const { page, categoryTitle, categorySlug, categories } = Astro.props;
 const totalPages = Math.ceil(page.total / page.size);
+const description =
+  categoryDescriptions[categorySlug] ||
+  `Conteúdos sobre ${categoryTitle} com informação clara, contexto e fontes confiáveis.`;
 ---
 
-<Layout title={`Blog | ${categoryTitle}`}>
-  <Hero title="Magazine" />
-
-  <section class="mt-10">
-    <div class="container">
-      <div class="flex flex-wrap justify-between items-center gap-4 mb-10">
-        <a
-          href="/conteudos/"
-          class="btn btn-link text-inherit uppercase no-underline group p-0"
-        >
-          <i class="fa-solid fa-arrow-left group-hover:translate-x-1"></i>
-          Voltar
-        </a>
-
-        <h1 class="h2 w-full lg:w-auto">
-          Categoria: {categoryTitle}
-        </h1>
-
-        <p>
-          Página {page.currentPage} de {totalPages}
-        </p>
+<Layout title={categoryTitle} description={description} lang={locale}>
+  <div class="editorial-home archive-page">
+    <section class="archive-hero">
+      <div class="home-shell archive-hero-grid">
+        <div class="archive-hero-copy">
+          <span class="home-eyebrow">TEMA</span>
+          <h1>{categoryTitle}</h1>
+          <p>{description}</p>
+        </div>
+        <aside class="archive-count" aria-label="Quantidade de publicações nesta página">
+          <strong>{page.data.length}</strong>
+          <span>conteúdos apresentados nesta página, de {page.total} disponíveis sobre o tema.</span>
+        </aside>
       </div>
+    </section>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-10">
-        {page.data.map((post) => <PostCard {...post} />)}
+    <section class="archive-topics" aria-labelledby="archive-topics-title">
+      <div class="home-shell">
+        <div class="archive-topics-heading">
+          <strong id="archive-topics-title">EXPLORE POR TEMA</strong>
+          <span>Continue sua busca por assunto</span>
+        </div>
+        <nav class="archive-pills" aria-label="Categorias de conteúdo">
+          <a href="/conteudos/">Todos</a>
+          {categories.map((category) => (
+            <a
+              class:list={{ "is-active": category.slug === categorySlug }}
+              href={`/${locale}/blog/${category.slug}/`}
+              aria-current={category.slug === categorySlug ? "page" : undefined}
+            >
+              {category.title}
+            </a>
+          ))}
+        </nav>
       </div>
+    </section>
 
-      {
-        totalPages > 1 && (
-          <div class="mb-10">
-            <Pagination totalPages={totalPages} page={page} />
+    <section class="archive-content" id="publicacoes" aria-labelledby="archive-list-title">
+      <div class="home-shell">
+        <div class="archive-heading">
+          <div>
+            <span>{categoryTitle.toUpperCase()}</span>
+            <h2 id="archive-list-title">Conteúdos mais recentes</h2>
           </div>
-        )
-      }
-    </div>
-  </section>
+          <p>Guias claros para reconhecer sinais, entender causas e tomar decisões mais informadas.</p>
+        </div>
+
+        <div class="archive-grid">
+          {page.data.map((post, index) => {
+            const displayDate = post.publishedAt || post._createdAt;
+            const articleUrl = `/conteudos/${post.slug}/`;
+            return (
+              <article class:list={["archive-card", { "archive-card-featured": index === 0 }]}> 
+                {post.image && (
+                  <a class="archive-card-image" href={articleUrl} aria-label={`Ler ${post.title}`}>
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      width={1600}
+                      height={900}
+                      format="webp"
+                      quality={index === 0 ? 72 : 65}
+                      loading={index === 0 ? "eager" : "lazy"}
+                      fetchpriority={index === 0 ? "high" : "auto"}
+                      sizes={index === 0 ? "(min-width: 900px) 62vw, 100vw" : "(min-width: 1100px) 31vw, (min-width: 700px) 48vw, 100vw"}
+                    />
+                  </a>
+                )}
+                <div class="archive-card-copy">
+                  <a class="home-category" href={`/${locale}/blog/${categorySlug}/`}>{categoryTitle}</a>
+                  <a href={articleUrl}><h3>{post.title}</h3></a>
+                  {post.description && <p>{post.description}</p>}
+                  <div class="archive-card-meta">
+                    {displayDate && <time datetime={displayDate}>{formatDate(displayDate, locale)}</time>}
+                    <a class="archive-arrow" href={articleUrl} aria-label={`Ler ${post.title}`}><span aria-hidden="true">↗</span></a>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        {totalPages > 1 && (
+          <nav class="archive-pagination" aria-label="Paginação de conteúdos">
+            <div>{page.url.prev ? <a href={page.url.prev}>← Página anterior</a> : <span aria-hidden="true"></span>}</div>
+            <span>Página <strong>{page.currentPage}</strong> de {totalPages}</span>
+            <div>{page.url.next ? <a href={page.url.next}>Próxima página →</a> : <span aria-hidden="true"></span>}</div>
+          </nav>
+        )}
+      </div>
+    </section>
+  </div>
 </Layout>
