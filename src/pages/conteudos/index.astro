@@ -1,9 +1,12 @@
 ---
+import Image from "astro/components/Image.astro";
 import Layout from "../../layouts/Base.astro";
-import Hero from "../../components/Hero.astro";
-import PostCard from "../../components/PostCardBase.astro";
 import { client } from "../../lib/sanity";
+import { formatDate } from "../../utils/dateFormatter";
+import "../../styles/home.css";
+import "../../styles/archive.css";
 
+const locale = "pt-BR";
 const posts = await client.fetch(`
   *[_type == "post" && language == "pt-BR"]
   | order(publishedAt desc, _createdAt desc)
@@ -20,6 +23,14 @@ const posts = await client.fetch(`
     }
   }
 `);
+
+const categories = Array.from(
+  new Map(
+    posts
+      .filter((post) => post.categories?.title && post.categories?.slug)
+      .map((post) => [post.categories.slug, post.categories])
+  ).values()
+);
 ---
 
 <Layout
@@ -27,21 +38,85 @@ const posts = await client.fetch(`
   description="Informação para entender melhor sua saúde e fazer escolhas mais conscientes. Explore os conteúdos do VitaCerta e encontre as publicações mais recentes."
   lang="pt-BR"
 >
-  <Hero title="TODOS OS CONTEÚDOS" />
-
-  <section class="mt-10">
-    <div class="container">
-      <p class="text-lg max-w-4xl">
-        Informação para entender melhor sua saúde e fazer escolhas mais conscientes. Explore os conteúdos do VitaCerta por tema ou encontre as publicações mais recentes.
-      </p>
-    </div>
-  </section>
-
-  <section class="section mt-5!">
-    <div class="container">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-10">
-        {posts.map((post) => <PostCard {...post} />)}
+  <div class="editorial-home archive-page">
+    <section class="archive-hero">
+      <div class="home-shell archive-hero-grid">
+        <div class="archive-hero-copy">
+          <span class="home-eyebrow">BIBLIOTECA VITACERTA</span>
+          <h1>Conteúdos para cuidar melhor de você.</h1>
+          <p>Informação baseada em ciência para entender sua saúde, comparar escolhas e tomar decisões mais conscientes.</p>
+        </div>
+        <aside class="archive-count" aria-label="Quantidade de publicações">
+          <strong>{posts.length}</strong>
+          <span>publicações para consultar com calma, contexto e fontes confiáveis.</span>
+        </aside>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <section class="archive-topics" aria-labelledby="archive-topics-title">
+      <div class="home-shell">
+        <div class="archive-topics-heading">
+          <strong id="archive-topics-title">EXPLORE POR TEMA</strong>
+          <span>Encontre o assunto que procura</span>
+        </div>
+        <nav class="archive-pills" aria-label="Categorias de conteúdo">
+          <a class="is-active" href="#publicacoes">Todos</a>
+          {categories.map((category) => (
+            <a href={`/${locale}/blog/${category.slug}/`}>{category.title}</a>
+          ))}
+        </nav>
+      </div>
+    </section>
+
+    <section class="archive-content" id="publicacoes" aria-labelledby="archive-list-title">
+      <div class="home-shell">
+        <div class="archive-heading">
+          <div>
+            <span>PUBLICAÇÕES</span>
+            <h2 id="archive-list-title">Mais recentes</h2>
+          </div>
+          <p>Do conteúdo mais novo aos temas que continuam relevantes.</p>
+        </div>
+
+        <div class="archive-grid">
+          {posts.map((post, index) => {
+            const displayDate = post.publishedAt || post._createdAt;
+            const articleUrl = `/conteudos/${post.slug}/`;
+            return (
+              <article class:list={["archive-card", { "archive-card-featured": index === 0 }]}>
+                {post.image && (
+                  <a class="archive-card-image" href={articleUrl} aria-label={`Ler ${post.title}`}>
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      width={1600}
+                      height={900}
+                      format="webp"
+                      quality={index === 0 ? 72 : 65}
+                      loading={index === 0 ? "eager" : "lazy"}
+                      fetchpriority={index === 0 ? "high" : "auto"}
+                      sizes={index === 0 ? "(min-width: 900px) 62vw, 100vw" : "(min-width: 1100px) 31vw, (min-width: 700px) 48vw, 100vw"}
+                    />
+                  </a>
+                )}
+                <div class="archive-card-copy">
+                  {post.categories && (
+                    <a class="home-category" href={`/${locale}/blog/${post.categories.slug}/`}>
+                      {post.categories.title}
+                    </a>
+                  )}
+                  <a href={articleUrl}><h3>{post.title}</h3></a>
+                  {post.description && <p>{post.description}</p>}
+                  <div class="archive-card-meta">
+                    {displayDate && <time datetime={displayDate}>{formatDate(displayDate)}</time>}
+                    <a class="archive-arrow" href={articleUrl} aria-label={`Ler ${post.title}`}><span aria-hidden="true">↗</span></a>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  </div>
 </Layout>
