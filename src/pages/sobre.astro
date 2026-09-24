@@ -1,40 +1,79 @@
 ---
 import Layout from "../layouts/Base.astro";
+import "../styles/home.css";
+import "../styles/about.css";
 ---
 
 <Layout
   title="Sobre o VitaCerta"
-  description="Conheça o VitaCerta, nossos princípios editoriais e como produzimos conteúdos baseados em ciência para melhores decisões sobre saúde e qualidade de vida."
+  description="Conheça a missão, os princípios e o método editorial do VitaCerta: informação baseada em ciência, fontes apresentadas e independência comercial."
   lang="pt-BR"
 >
-  <section class="section">
-    <div class="container">
-      <div class="max-w-4xl">
-        <p class="uppercase mb-4">SOBRE O VITACERTA</p>
-        <h1 class="h1 mb-8">INFORMAÇÃO PARA MELHORES DECISÕES</h1>
-        <p class="text-lg mb-8">Saúde não precisa ser complicada. O VitaCerta transforma ciência e informação confiável em conteúdos claros para ajudar você a entender melhor sua saúde e fazer escolhas mais conscientes.</p>
-        <p class="text-lg">Separamos ciência de opinião e mostramos o que as evidências realmente dizem. A informação é nossa responsabilidade. A escolha é sua.</p>
+  <main class="editorial-home about-page">
+    <section class="about-hero">
+      <div class="home-shell about-hero-grid">
+        <div class="about-hero-copy">
+          <span class="home-eyebrow">SOBRE O VITACERTA</span>
+          <h1>Informação para escolher com mais clareza.</h1>
+          <p>O VitaCerta aproxima ciência e vida real. Traduzimos evidências confiáveis em conteúdos claros para que cada pessoa compreenda melhor sua saúde e tome decisões mais conscientes.</p>
+        </div>
+        <aside class="about-manifesto">
+          <span>01</span>
+          <p>“A informação é nossa responsabilidade. A escolha é sua.”</p>
+        </aside>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section border-t">
-    <div class="container">
-      <div class="max-w-4xl">
-        <h2 class="h1 mb-8">COMO PRODUZIMOS NOSSOS CONTEÚDOS</h2>
-        <p class="text-lg mb-8">Toda informação precisa ter uma origem. Por isso, as matérias do VitaCerta são baseadas em referências científicas e fontes qualificadas, apresentadas ao final de cada conteúdo para que você possa consultar e verificar as informações.</p>
-        <p class="text-lg"><strong>Informação baseada em ciência para melhores decisões sobre saúde e qualidade de vida.</strong></p>
+    <section class="about-origin">
+      <div class="home-shell about-reading">
+        <span class="about-kicker">POR QUE EXISTIMOS</span>
+        <div>
+          <h2>Boas decisões começam com informação de qualidade.</h2>
+          <p>O projeto nasceu de uma busca pessoal por respostas de saúde mais claras, úteis e sustentadas por evidências. Em um ambiente cheio de promessas rápidas, opiniões e interesses comerciais, queremos oferecer um lugar de consulta que respeite a inteligência do leitor.</p>
+          <p>Não vendemos tratamentos, suplementos ou soluções milagrosas. Nosso papel é apresentar contexto, limites e fontes para ajudar você a fazer perguntas melhores.</p>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section border-t">
-    <div class="container">
-      <div class="max-w-4xl">
-        <h2 class="h1 mb-8">NOSSO PRINCÍPIO EDITORIAL</h2>
-        <p class="text-lg mb-6">Pessoas bem informadas tomam melhores decisões sobre saúde e qualidade de vida.</p>
-        <p class="text-lg"><strong>A informação é nossa responsabilidade. A escolha é sua.</strong></p>
+    <section class="about-principles">
+      <div class="home-shell">
+        <div class="about-section-heading">
+          <span>NOSSOS PRINCÍPIOS</span>
+          <h2>O compromisso por trás de cada conteúdo.</h2>
+        </div>
+        <div class="about-card-grid">
+          <article><span>01</span><h3>Ciência antes da opinião</h3><p>Priorizamos estudos, diretrizes e instituições reconhecidas. Quando a evidência é limitada, deixamos isso claro.</p></article>
+          <article><span>02</span><h3>Fontes à vista</h3><p>As referências usadas ficam apresentadas nos artigos para que o leitor possa consultar e verificar as informações.</p></article>
+          <article><span>03</span><h3>Sem venda disfarçada</h3><p>Conteúdo editorial não é recomendação comercial. Independência e transparência orientam nossas escolhas.</p></article>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <section class="about-method">
+      <div class="home-shell about-method-grid">
+        <div class="about-method-intro">
+          <span class="about-kicker">COMO PRODUZIMOS</span>
+          <h2>Um processo simples, criterioso e verificável.</h2>
+          <p>Cada texto começa com uma pergunta real e termina com fontes que sustentam o que foi publicado.</p>
+        </div>
+        <ol class="about-steps">
+          <li><span>01</span><div><h3>Pesquisar</h3><p>Buscamos evidências e orientações em fontes científicas e institucionais confiáveis.</p></div></li>
+          <li><span>02</span><div><h3>Comparar</h3><p>Confrontamos diferentes fontes para identificar consensos, limites e incertezas.</p></div></li>
+          <li><span>03</span><div><h3>Traduzir</h3><p>Transformamos linguagem técnica em explicações claras, sem simplificar demais.</p></div></li>
+          <li><span>04</span><div><h3>Revisar e atualizar</h3><p>Corrigimos quando necessário e atualizamos conteúdos quando novas evidências mudam a compreensão do tema.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="about-signature">
+      <div class="home-shell about-signature-box">
+        <div><span class="about-kicker">RESPONSABILIDADE EDITORIAL</span><h2>Quem produz o conteúdo?</h2></div>
+        <div>
+          <p>Os artigos são produzidos pelo <strong>VitaCerta Editorial</strong> com base nas fontes apresentadas em cada publicação.</p>
+          <p>O VitaCerta oferece informação educativa. O conteúdo não substitui consulta, diagnóstico ou tratamento realizado por profissional de saúde qualificado.</p>
+          <a href="/conteudos/">EXPLORAR CONTEÚDOS <span>→</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
 </Layout>
