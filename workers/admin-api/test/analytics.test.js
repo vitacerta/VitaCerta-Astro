@@ -11,10 +11,10 @@ test('não consulta a Cloudflare sem todas as configurações',async()=>{
   let called=false;
   const result=await fetchArticlePageviews({},{
     fetchImpl:async()=>{called=true;throw new Error('não deveria consultar');},
-    now:()=>new Date('2026-09-22T12:00:00Z')
+    now:()=>new Date('2026-10-04T12:00:00Z')
   });
   assert.equal(called,false);
-  assert.deepEqual(result,{configured:false,from:'2026-09-21',pageviews:{},updatedAt:null});
+  assert.deepEqual(result,{configured:false,from:'2026-10-03',pageviews:{},updatedAt:null});
 });
 
 test('agrupa visualizações por artigo e ignora páginas que não são artigos',async()=>{
@@ -32,8 +32,8 @@ test('agrupa visualizações por artigo e ignora páginas que não são artigos'
     CF_ANALYTICS_API_TOKEN:'segredo',
     CF_ACCOUNT_ID:'conta',
     CF_WEB_ANALYTICS_SITE_TAG:'site',
-    ANALYTICS_START_DATE:'2026-09-21'
-  },{fetchImpl,now:()=>new Date('2026-09-22T12:00:00Z')});
+    ANALYTICS_START_DATE:'2026-10-03'
+  },{fetchImpl,now:()=>new Date('2026-10-04T12:00:00Z')});
 
   assert.equal(requestBody.variables.accountTag,'conta');
   assert.equal(requestBody.variables.siteTag,'site');

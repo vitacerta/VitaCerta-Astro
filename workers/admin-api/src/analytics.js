@@ -1,5 +1,5 @@
 const GRAPHQL_ENDPOINT = 'https://api.cloudflare.com/client/v4/graphql';
-const DEFAULT_START_DATE = '2026-09-21';
+const DEFAULT_START_DATE = '2026-10-03';
 const DEFAULT_HOST = 'vitacerta.com.br';
 const DAY_MS = 24 * 60 * 60 * 1000;
 

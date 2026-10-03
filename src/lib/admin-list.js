@@ -2,7 +2,7 @@ import {api,categoryLabel} from './admin-api.js';
 const el=id=>document.getElementById(id);
 const numberFormat=new Intl.NumberFormat('pt-BR');
 let articles=[];
-let analytics={loading:true,configured:false,pageviews:{},from:'2026-09-21',updatedAt:null,error:null};
+let analytics={loading:true,configured:false,pageviews:{},from:'2026-10-03',updatedAt:null,error:null};
 
 function articlePath(slug){
   return `/conteudos/${String(slug || '').replace(/^\/+|\/+$/g,'')}`;
