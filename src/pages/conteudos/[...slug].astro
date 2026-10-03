@@ -74,7 +74,13 @@ const prepareVitaminDPartOne = (html = "") => {
     const src = imageTag.match(/\bsrc\s*=\s*(["'])(.*?)\1/i)?.[2];
     return src === post.image ? "" : imageTag;
   });
-  const withContinuation = withoutRepeatedCover.replace(
+  const firstParagraph = '<p><span>Vitamina D: para que serve?</span></p>';
+  const firstParagraphAt = withoutRepeatedCover.indexOf(firstParagraph);
+  const leadingMarkup = firstParagraphAt > 0 ? withoutRepeatedCover.slice(0, firstParagraphAt) : "";
+  const bodyWithoutEmptyLead = firstParagraphAt > 0 && leadingMarkup.replace(/<[^>]*>|&nbsp;|\s/g, "") === ""
+    ? withoutRepeatedCover.slice(firstParagraphAt)
+    : withoutRepeatedCover;
+  const withContinuation = bodyWithoutEmptyLead.replace(
     /<p>\s*<span>\s*Continua na Parte 2\s*<\/span>\s*<\/p>/i,
     '<p><a href="' + vitaminDPartTwoPath + '">Continue lendo: sintomas da falta de vitamina D, fontes e cuidados</a></p>',
   );
