@@ -62,7 +62,8 @@ const normalizeLegacyInternalLinks = (html = "") => html
 const vitaminDPartOneSlug = "vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante";
 const vitaminDPartTwoPath = "/conteudos/sintomas-da-falta-de-vitamina-d-sinais-grupos-de-risco-e-quando-suplementar/";
 const throatSlug = "garganta-seca-ou-irritada-5-dicas-eficazes-para-aliviar-o-desconforto";
-const reviewedEditorialArticle = post.slug === vitaminDPartOneSlug || post.slug === throatSlug;
+// Regra editorial do acervo: dentro de cada artigo, só outros artigos do VitaCerta são links.
+const articleLinksRestricted = true;
 
 const keepArticleLinksOnly = (html = "") => html.replace(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi, (anchor, attributes, inner) => {
   const href = attributes.match(/\bhref\s*=\s*(["'])(.*?)\1/i)?.[2];
@@ -119,7 +120,14 @@ const prepareThroat = (html = "") => {
   return keepArticleLinksOnly(withoutOffTopicLine);
 };
 
-const prepareEditorialArticle = (html = "") => prepareThroat(prepareVitaminDPartOne(normalizeLegacyInternalLinks(html)));
+const prepareEditorialArticle = (html = "") => {
+  const individuallyReviewed = prepareThroat(prepareVitaminDPartOne(normalizeLegacyInternalLinks(html)));
+  const withoutRepeatedCover = individuallyReviewed.replace(/<img\b[^>]*>/gi, (imageTag) => {
+    const src = imageTag.match(/\bsrc\s*=\s*(["'])(.*?)\1/i)?.[2];
+    return src === post.image ? "" : imageTag;
+  });
+  return keepArticleLinksOnly(withoutRepeatedCover);
+};
 const editorialBodyHtml = prepareEditorialArticle(post.bodyHtml || "");
 const legacyBodyHtml = prepareEditorialArticle(post.legacyBodyHtml || "");
 const portableText = Array.isArray(post.body)
@@ -184,11 +192,11 @@ if (relatedPosts.length < 3) {
   canonicalURL={canonicalURL}
   lang={post.language || locale}
 >
-  <article class="editorial-article" data-article-slug={post.slug}>
+  <article class="editorial-article" data-article-slug={post.slug} data-links-restricted={articleLinksRestricted ? "true" : undefined}>
     <nav class="article-breadcrumb" aria-label="Caminho da página">
       <div class="article-shell breadcrumb-inner">
-        {reviewedEditorialArticle ? <span>Início</span> : <a href="/">Início</a>}<span aria-hidden="true">›</span>
-        {reviewedEditorialArticle ? <span>Conteúdos</span> : <a href="/conteudos/">Conteúdos</a>}
+        {articleLinksRestricted ? <span>Início</span> : <a href="/">Início</a>}<span aria-hidden="true">›</span>
+        {articleLinksRestricted ? <span>Conteúdos</span> : <a href="/conteudos/">Conteúdos</a>}
         {post.categories && <><span aria-hidden="true">›</span><span>{post.categories.title}</span></>}
       </div>
     </nav>
@@ -196,7 +204,7 @@ if (relatedPosts.length < 3) {
     <div class="article-shell article-layout">
       <div class="article-main">
         {post.categories && (
-          reviewedEditorialArticle ? (
+          articleLinksRestricted ? (
             <span class="article-kicker">{post.categories.title}</span>
           ) : (
             <a class="article-kicker" href={`/${locale}/blog/${post.categories.slug}/`}>
@@ -210,7 +218,7 @@ if (relatedPosts.length < 3) {
         <div class="editorial-byline">
           <span class="editorial-icon" aria-hidden="true">✦</span>
           <p>
-            Conteúdo produzido pelo {reviewedEditorialArticle ? <strong>VitaCerta Editorial</strong> : <a href="/sobre/"><strong>VitaCerta Editorial</strong></a>}
+            Conteúdo produzido pelo {articleLinksRestricted ? <strong>VitaCerta Editorial</strong> : <a href="/sobre/"><strong>VitaCerta Editorial</strong></a>}
             com base nas fontes apresentadas no artigo.
           </p>
         </div>
@@ -251,7 +259,7 @@ if (relatedPosts.length < 3) {
           <p>Conteúdo educativo. Não substitui orientação, diagnóstico ou tratamento realizado por profissionais de saúde.</p>
         </div>
 
-        {!reviewedEditorialArticle && <div class="article-share">
+        {!articleLinksRestricted && <div class="article-share">
           <strong>Compartilhar</strong>
           <div class="share-actions">
             <a href={`https://wa.me/?text=${encodedShareText}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
@@ -266,10 +274,10 @@ if (relatedPosts.length < 3) {
           <span class="card-eyebrow">Transparência</span>
           <h2>Como produzimos nossos conteúdos</h2>
           <p>Conheça o propósito do VitaCerta, o compromisso com fontes confiáveis e os limites de nossos conteúdos.</p>
-          {!reviewedEditorialArticle && <a href="/sobre/">Conhecer o VitaCerta <span aria-hidden="true">→</span></a>}
+          {!articleLinksRestricted && <a href="/sobre/">Conhecer o VitaCerta <span aria-hidden="true">→</span></a>}
         </section>
 
-        <section class="editorial-card article-summary" data-article-summary hidden={reviewedEditorialArticle}>
+        <section class="editorial-card article-summary" data-article-summary hidden={articleLinksRestricted}>
           <span class="card-eyebrow">Neste artigo</span>
           <h2>Em resumo</h2>
           <ol data-summary-list></ol>
@@ -286,7 +294,7 @@ if (relatedPosts.length < 3) {
             <span>Continue explorando</span>
             <h2>Conteúdos relacionados</h2>
           </div>
-          {!reviewedEditorialArticle && <a href="/conteudos/">Ver todos <span aria-hidden="true">→</span></a>}
+          {!articleLinksRestricted && <a href="/conteudos/">Ver todos <span aria-hidden="true">→</span></a>}
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {relatedPosts.map((post) => <PostCardBase {...post} />)}
@@ -319,7 +327,7 @@ if (relatedPosts.length < 3) {
     const summaryList = document.querySelector('[data-summary-list]');
     const headings = copy ? [...copy.querySelectorAll('h2')].slice(0, 6) : [];
 
-    if (!['vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante', 'garganta-seca-ou-irritada-5-dicas-eficazes-para-aliviar-o-desconforto'].includes(copy?.closest('.editorial-article')?.getAttribute('data-article-slug')) && summary && summaryList && headings.length > 1) {
+    if (copy?.closest('.editorial-article')?.getAttribute('data-links-restricted') !== 'true' && summary && summaryList && headings.length > 1) {
       headings.forEach((heading, index) => {
         if (!heading.id) heading.id = `secao-${index + 1}`;
         const item = document.createElement('li');
