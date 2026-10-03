@@ -148,11 +148,11 @@ if (relatedPosts.length < 3) {
   canonicalURL={canonicalURL}
   lang={post.language || locale}
 >
-  <article class="editorial-article">
+  <article class="editorial-article" data-article-slug={post.slug}>
     <nav class="article-breadcrumb" aria-label="Caminho da página">
       <div class="article-shell breadcrumb-inner">
-        <a href="/">Início</a><span aria-hidden="true">›</span>
-        <a href="/conteudos/">Conteúdos</a>
+        {post.slug === vitaminDPartOneSlug ? <span>Início</span> : <a href="/">Início</a>}<span aria-hidden="true">›</span>
+        {post.slug === vitaminDPartOneSlug ? <span>Conteúdos</span> : <a href="/conteudos/">Conteúdos</a>}
         {post.categories && <><span aria-hidden="true">›</span><span>{post.categories.title}</span></>}
       </div>
     </nav>
@@ -160,9 +160,13 @@ if (relatedPosts.length < 3) {
     <div class="article-shell article-layout">
       <div class="article-main">
         {post.categories && (
-          <a class="article-kicker" href={`/${locale}/blog/${post.categories.slug}/`}>
-            {post.categories.title}
-          </a>
+          post.slug === vitaminDPartOneSlug ? (
+            <span class="article-kicker">{post.categories.title}</span>
+          ) : (
+            <a class="article-kicker" href={`/${locale}/blog/${post.categories.slug}/`}>
+              {post.categories.title}
+            </a>
+          )
         )}
         <h1>{post.title}</h1>
         <p class="article-dek">{post.description}</p>
@@ -170,7 +174,7 @@ if (relatedPosts.length < 3) {
         <div class="editorial-byline">
           <span class="editorial-icon" aria-hidden="true">✦</span>
           <p>
-            Conteúdo produzido pelo <a href="/sobre/"><strong>VitaCerta Editorial</strong></a>
+            Conteúdo produzido pelo {post.slug === vitaminDPartOneSlug ? <strong>VitaCerta Editorial</strong> : <a href="/sobre/"><strong>VitaCerta Editorial</strong></a>}
             com base nas fontes apresentadas no artigo.
           </p>
         </div>
@@ -211,14 +215,14 @@ if (relatedPosts.length < 3) {
           <p>Conteúdo educativo. Não substitui orientação, diagnóstico ou tratamento realizado por profissionais de saúde.</p>
         </div>
 
-        <div class="article-share">
+        {post.slug !== vitaminDPartOneSlug && <div class="article-share">
           <strong>Compartilhar</strong>
           <div class="share-actions">
             <a href={`https://wa.me/?text=${encodedShareText}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
             <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodedURL}`} target="_blank" rel="noopener noreferrer">Facebook</a>
             <button type="button" class="js-copy-link" data-url={canonicalURL}>Copiar link</button>
           </div>
-        </div>
+        </div>}
       </div>
 
       <aside class="article-sidebar" aria-label="Informações editoriais">
@@ -226,10 +230,10 @@ if (relatedPosts.length < 3) {
           <span class="card-eyebrow">Transparência</span>
           <h2>Como produzimos nossos conteúdos</h2>
           <p>Conheça o propósito do VitaCerta, o compromisso com fontes confiáveis e os limites de nossos conteúdos.</p>
-          <a href="/sobre/">Conhecer o VitaCerta <span aria-hidden="true">→</span></a>
+          {post.slug !== vitaminDPartOneSlug && <a href="/sobre/">Conhecer o VitaCerta <span aria-hidden="true">→</span></a>}
         </section>
 
-        <section class="editorial-card article-summary" data-article-summary hidden>
+        <section class="editorial-card article-summary" data-article-summary hidden={post.slug === vitaminDPartOneSlug}>
           <span class="card-eyebrow">Neste artigo</span>
           <h2>Em resumo</h2>
           <ol data-summary-list></ol>
@@ -246,7 +250,7 @@ if (relatedPosts.length < 3) {
             <span>Continue explorando</span>
             <h2>Conteúdos relacionados</h2>
           </div>
-          <a href="/conteudos/">Ver todos <span aria-hidden="true">→</span></a>
+          {post.slug !== vitaminDPartOneSlug && <a href="/conteudos/">Ver todos <span aria-hidden="true">→</span></a>}
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {relatedPosts.map((post) => <PostCardBase {...post} />)}
@@ -279,7 +283,7 @@ if (relatedPosts.length < 3) {
     const summaryList = document.querySelector('[data-summary-list]');
     const headings = copy ? [...copy.querySelectorAll('h2')].slice(0, 6) : [];
 
-    if (summary && summaryList && headings.length > 1) {
+    if (copy?.closest('.editorial-article')?.getAttribute('data-article-slug') !== 'vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante' && summary && summaryList && headings.length > 1) {
       headings.forEach((heading, index) => {
         if (!heading.id) heading.id = `secao-${index + 1}`;
         const item = document.createElement('li');
