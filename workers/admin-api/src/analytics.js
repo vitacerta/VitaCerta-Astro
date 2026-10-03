@@ -2,7 +2,6 @@ const GRAPHQL_ENDPOINT = 'https://api.cloudflare.com/client/v4/graphql';
 const DEFAULT_START_DATE = '2026-09-21';
 const DEFAULT_HOST = 'vitacerta.com.br';
 const DAY_MS = 24 * 60 * 60 * 1000;
-let cached;
 
 export function normalizeArticlePath(value) {
   if (!value) return '/';
@@ -78,9 +77,6 @@ export async function fetchArticlePageviews(env,{fetchImpl=fetch,now=()=>new Dat
   if (required.some(value => !value)) return {configured:false,from,pageviews:{},updatedAt:null};
 
   const current = now();
-  const canUseProcessCache = fetchImpl === fetch;
-  if (canUseProcessCache && cached?.expiresAt > current.getTime()) return cached.data;
-
   const start = dateAtBrazilMidnight(from);
   const pageviews = {};
   for (const [rangeStart,rangeEnd] of rangesBetween(start,current)) {
@@ -92,6 +88,5 @@ export async function fetchArticlePageviews(env,{fetchImpl=fetch,now=()=>new Dat
   }
 
   const data = {configured:true,from,pageviews,updatedAt:current.toISOString()};
-  if (canUseProcessCache) cached={expiresAt:current.getTime()+DAY_MS,data};
   return data;
 }
