@@ -1,0 +1,30 @@
+name: Validate Admin API (no deploy)
+on:
+  pull_request:
+    paths: ['workers/admin-api/**', 'src/lib/admin-*.js', 'src/pages/admin/**', 'scripts/prepare-admin.mjs', '.github/workflows/admin-api-check.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  worker:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: workers/admin-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '11.19.0'
+      - name: Install locked Worker dependencies
+        run: pnpm install --ignore-workspace --frozen-lockfile --ignore-scripts
+      - name: Test authentication, validation and mutations
+        run: node --test test/*.test.js
+      - name: Validate Worker bundle without publishing
+        run: |
+          mkdir -p public
+          echo 'Build validation only' > public/check.txt
+          node node_modules/wrangler/bin/wrangler.js deploy --dry-run --outdir dist
