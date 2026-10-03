@@ -57,8 +57,35 @@ const normalizeLegacyInternalLinks = (html = "") => html
     "/conteudos/$1/",
   );
 
-const editorialBodyHtml = normalizeLegacyInternalLinks(post.bodyHtml || "");
-const legacyBodyHtml = normalizeLegacyInternalLinks(post.legacyBodyHtml || "");
+// Revisão individual do artigo legado de vitamina D.
+// Imagens e referências permanecem; só outros artigos são links clicáveis.
+const vitaminDPartOneSlug = "vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante";
+const vitaminDPartTwoPath = "/conteudos/sintomas-da-falta-de-vitamina-d-sinais-grupos-de-risco-e-quando-suplementar/";
+
+const prepareVitaminDPartOne = (html = "") => {
+  if (post.slug !== vitaminDPartOneSlug || !html) return html;
+
+  const withoutCommercialParagraph = html.replace(
+    /<p\b[^>]*>(?:(?!<\/p>)[\s\S])*?https?:\/\/(?:app\.)?monetizze\.com\.br\/(?:(?!<\/p>)[\s\S])*?<\/p>/gi,
+    "",
+  );
+  const withContinuation = withoutCommercialParagraph.replace(
+    /<p>\s*<span>\s*Continua na Parte 2\s*<\/span>\s*<\/p>/i,
+    '<p><a href="' + vitaminDPartTwoPath + '">Continue lendo: sintomas da falta de vitamina D, fontes e cuidados</a></p>',
+  );
+
+  return withContinuation.replace(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi, (anchor, attributes, inner) => {
+    const href = attributes.match(/\bhref\s*=\s*(["'])(.*?)\1/i)?.[2];
+    if (!href) return inner;
+    const isInternalArticle = /^\/conteudos\/[a-z0-9-]+\/?(?:#[a-z0-9-]+)?$/i.test(href)
+      || /^https:\/\/(?:www\.)?vitacerta\.com\.br\/conteudos\/[a-z0-9-]+\/?(?:#[a-z0-9-]+)?$/i.test(href);
+    if (isInternalArticle) return anchor;
+    return /^https?:\/\/(?:[^/]*\.)?monetizze\.com\.br(?:\/|$)/i.test(href) ? "" : inner;
+  });
+};
+
+const editorialBodyHtml = prepareVitaminDPartOne(normalizeLegacyInternalLinks(post.bodyHtml || ""));
+const legacyBodyHtml = prepareVitaminDPartOne(normalizeLegacyInternalLinks(post.legacyBodyHtml || ""));
 const portableText = Array.isArray(post.body)
   ? post.body
       .flatMap((block) => Array.isArray(block?.children) ? block.children : [])
