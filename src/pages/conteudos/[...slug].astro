@@ -61,6 +61,17 @@ const normalizeLegacyInternalLinks = (html = "") => html
 // Imagens e referências permanecem; só outros artigos são links clicáveis.
 const vitaminDPartOneSlug = "vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante";
 const vitaminDPartTwoPath = "/conteudos/sintomas-da-falta-de-vitamina-d-sinais-grupos-de-risco-e-quando-suplementar/";
+const throatSlug = "garganta-seca-ou-irritada-5-dicas-eficazes-para-aliviar-o-desconforto";
+const reviewedEditorialArticle = post.slug === vitaminDPartOneSlug || post.slug === throatSlug;
+
+const keepArticleLinksOnly = (html = "") => html.replace(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi, (anchor, attributes, inner) => {
+  const href = attributes.match(/\bhref\s*=\s*(["'])(.*?)\1/i)?.[2];
+  if (!href) return inner;
+  const isInternalArticle = /^\/conteudos\/[a-z0-9-]+\/?(?:#[a-z0-9-]+)?$/i.test(href)
+    || /^https:\/\/(?:www\.)?vitacerta\.com\.br\/conteudos\/[a-z0-9-]+\/?(?:#[a-z0-9-]+)?$/i.test(href);
+  if (isInternalArticle) return anchor;
+  return /^https?:\/\/(?:[^/]*\.)?monetizze\.com\.br(?:\/|$)/i.test(href) ? "" : inner;
+});
 
 const prepareVitaminDPartOne = (html = "") => {
   if (post.slug !== vitaminDPartOneSlug || !html) return html;
@@ -85,18 +96,32 @@ const prepareVitaminDPartOne = (html = "") => {
     '<p><a href="' + vitaminDPartTwoPath + '">Continue lendo: sintomas da falta de vitamina D, fontes e cuidados</a></p>',
   );
 
-  return withContinuation.replace(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi, (anchor, attributes, inner) => {
-    const href = attributes.match(/\bhref\s*=\s*(["'])(.*?)\1/i)?.[2];
-    if (!href) return inner;
-    const isInternalArticle = /^\/conteudos\/[a-z0-9-]+\/?(?:#[a-z0-9-]+)?$/i.test(href)
-      || /^https:\/\/(?:www\.)?vitacerta\.com\.br\/conteudos\/[a-z0-9-]+\/?(?:#[a-z0-9-]+)?$/i.test(href);
-    if (isInternalArticle) return anchor;
-    return /^https?:\/\/(?:[^/]*\.)?monetizze\.com\.br(?:\/|$)/i.test(href) ? "" : inner;
-  });
+  return keepArticleLinksOnly(withContinuation);
 };
 
-const editorialBodyHtml = prepareVitaminDPartOne(normalizeLegacyInternalLinks(post.bodyHtml || ""));
-const legacyBodyHtml = prepareVitaminDPartOne(normalizeLegacyInternalLinks(post.legacyBodyHtml || ""));
+const prepareThroat = (html = "") => {
+  if (post.slug !== throatSlug || !html) return html;
+
+  const withoutRepeatedCover = html.replace(/<img\b[^>]*>/gi, (imageTag) => {
+    const src = imageTag.match(/\bsrc\s*=\s*(["'])(.*?)\1/i)?.[2];
+    return src === post.image ? "" : imageTag;
+  });
+  const intro = "A garganta costuma começar a incomodar";
+  const introAt = withoutRepeatedCover.indexOf(intro);
+  const leadingMarkup = introAt > 0 ? withoutRepeatedCover.slice(0, introAt) : "";
+  const withoutEmptyLead = introAt > 0 && leadingMarkup.replace(/<[^>]*>|&nbsp;|\s/g, "") === ""
+    ? "<p>" + withoutRepeatedCover.slice(introAt).replace("<p></p>", "</p>")
+    : withoutRepeatedCover;
+  const withoutOffTopicLine = withoutEmptyLead.replace(
+    /<p><strong>Cuidar do corpo é um conjunto de pequenos hábitos — hidratação, boas escolhas alimentares e o suporte certo de vitaminas e minerais fazem parte dessa base\.<\/strong>&nbsp;<\/p>\s*<hr\s*\/>/i,
+    "",
+  );
+  return keepArticleLinksOnly(withoutOffTopicLine);
+};
+
+const prepareEditorialArticle = (html = "") => prepareThroat(prepareVitaminDPartOne(normalizeLegacyInternalLinks(html)));
+const editorialBodyHtml = prepareEditorialArticle(post.bodyHtml || "");
+const legacyBodyHtml = prepareEditorialArticle(post.legacyBodyHtml || "");
 const portableText = Array.isArray(post.body)
   ? post.body
       .flatMap((block) => Array.isArray(block?.children) ? block.children : [])
@@ -162,8 +187,8 @@ if (relatedPosts.length < 3) {
   <article class="editorial-article" data-article-slug={post.slug}>
     <nav class="article-breadcrumb" aria-label="Caminho da página">
       <div class="article-shell breadcrumb-inner">
-        {post.slug === vitaminDPartOneSlug ? <span>Início</span> : <a href="/">Início</a>}<span aria-hidden="true">›</span>
-        {post.slug === vitaminDPartOneSlug ? <span>Conteúdos</span> : <a href="/conteudos/">Conteúdos</a>}
+        {reviewedEditorialArticle ? <span>Início</span> : <a href="/">Início</a>}<span aria-hidden="true">›</span>
+        {reviewedEditorialArticle ? <span>Conteúdos</span> : <a href="/conteudos/">Conteúdos</a>}
         {post.categories && <><span aria-hidden="true">›</span><span>{post.categories.title}</span></>}
       </div>
     </nav>
@@ -171,7 +196,7 @@ if (relatedPosts.length < 3) {
     <div class="article-shell article-layout">
       <div class="article-main">
         {post.categories && (
-          post.slug === vitaminDPartOneSlug ? (
+          reviewedEditorialArticle ? (
             <span class="article-kicker">{post.categories.title}</span>
           ) : (
             <a class="article-kicker" href={`/${locale}/blog/${post.categories.slug}/`}>
@@ -185,7 +210,7 @@ if (relatedPosts.length < 3) {
         <div class="editorial-byline">
           <span class="editorial-icon" aria-hidden="true">✦</span>
           <p>
-            Conteúdo produzido pelo {post.slug === vitaminDPartOneSlug ? <strong>VitaCerta Editorial</strong> : <a href="/sobre/"><strong>VitaCerta Editorial</strong></a>}
+            Conteúdo produzido pelo {reviewedEditorialArticle ? <strong>VitaCerta Editorial</strong> : <a href="/sobre/"><strong>VitaCerta Editorial</strong></a>}
             com base nas fontes apresentadas no artigo.
           </p>
         </div>
@@ -226,7 +251,7 @@ if (relatedPosts.length < 3) {
           <p>Conteúdo educativo. Não substitui orientação, diagnóstico ou tratamento realizado por profissionais de saúde.</p>
         </div>
 
-        {post.slug !== vitaminDPartOneSlug && <div class="article-share">
+        {!reviewedEditorialArticle && <div class="article-share">
           <strong>Compartilhar</strong>
           <div class="share-actions">
             <a href={`https://wa.me/?text=${encodedShareText}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
@@ -241,10 +266,10 @@ if (relatedPosts.length < 3) {
           <span class="card-eyebrow">Transparência</span>
           <h2>Como produzimos nossos conteúdos</h2>
           <p>Conheça o propósito do VitaCerta, o compromisso com fontes confiáveis e os limites de nossos conteúdos.</p>
-          {post.slug !== vitaminDPartOneSlug && <a href="/sobre/">Conhecer o VitaCerta <span aria-hidden="true">→</span></a>}
+          {!reviewedEditorialArticle && <a href="/sobre/">Conhecer o VitaCerta <span aria-hidden="true">→</span></a>}
         </section>
 
-        <section class="editorial-card article-summary" data-article-summary hidden={post.slug === vitaminDPartOneSlug}>
+        <section class="editorial-card article-summary" data-article-summary hidden={reviewedEditorialArticle}>
           <span class="card-eyebrow">Neste artigo</span>
           <h2>Em resumo</h2>
           <ol data-summary-list></ol>
@@ -261,7 +286,7 @@ if (relatedPosts.length < 3) {
             <span>Continue explorando</span>
             <h2>Conteúdos relacionados</h2>
           </div>
-          {post.slug !== vitaminDPartOneSlug && <a href="/conteudos/">Ver todos <span aria-hidden="true">→</span></a>}
+          {!reviewedEditorialArticle && <a href="/conteudos/">Ver todos <span aria-hidden="true">→</span></a>}
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {relatedPosts.map((post) => <PostCardBase {...post} />)}
@@ -294,7 +319,7 @@ if (relatedPosts.length < 3) {
     const summaryList = document.querySelector('[data-summary-list]');
     const headings = copy ? [...copy.querySelectorAll('h2')].slice(0, 6) : [];
 
-    if (copy?.closest('.editorial-article')?.getAttribute('data-article-slug') !== 'vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante' && summary && summaryList && headings.length > 1) {
+    if (!['vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante', 'garganta-seca-ou-irritada-5-dicas-eficazes-para-aliviar-o-desconforto'].includes(copy?.closest('.editorial-article')?.getAttribute('data-article-slug')) && summary && summaryList && headings.length > 1) {
       headings.forEach((heading, index) => {
         if (!heading.id) heading.id = `secao-${index + 1}`;
         const item = document.createElement('li');
