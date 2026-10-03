@@ -69,7 +69,12 @@ const prepareVitaminDPartOne = (html = "") => {
     /<p\b[^>]*>(?:(?!<\/p>)[\s\S])*?https?:\/\/(?:app\.)?monetizze\.com\.br\/(?:(?!<\/p>)[\s\S])*?<\/p>/gi,
     "",
   );
-  const withContinuation = withoutCommercialParagraph.replace(
+  // O HTML migrado repete a imagem de capa antes do primeiro parágrafo.
+  const withoutRepeatedCover = withoutCommercialParagraph.replace(/<img\b[^>]*>/gi, (imageTag) => {
+    const src = imageTag.match(/\bsrc\s*=\s*(["'])(.*?)\1/i)?.[2];
+    return src === post.image ? "" : imageTag;
+  });
+  const withContinuation = withoutRepeatedCover.replace(
     /<p>\s*<span>\s*Continua na Parte 2\s*<\/span>\s*<\/p>/i,
     '<p><a href="' + vitaminDPartTwoPath + '">Continue lendo: sintomas da falta de vitamina D, fontes e cuidados</a></p>',
   );
