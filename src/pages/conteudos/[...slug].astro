@@ -41,7 +41,14 @@ export async function getStaticPaths() {
 }
 
 const locale = "pt-BR";
-const { post } = Astro.props;
+const { post: originalPost } = Astro.props;
+// Revisão restrita à página publicada de vitamina D; o slug e o CMS permanecem intactos.
+const post = originalPost.slug === "vitamina-d-para-que-serve-beneficios-e-por-que-ela-e-tao-importante"
+  ? { ...originalPost,
+      title: "Vitamina D: para que serve e quais são seus benefícios",
+      description: "Entenda para que serve a vitamina D, seu papel na saúde dos ossos e músculos, a diferença entre D2 e D3 e os cuidados com a suplementação."
+    }
+  : originalPost;
 const displayDate = post.publishedAt || post._createdAt;
 const canonicalURL = post.canonicalURL || `https://vitacerta.com.br/conteudos/${post.slug}/`;
 const encodedURL = encodeURIComponent(canonicalURL);
@@ -97,7 +104,38 @@ const prepareVitaminDPartOne = (html = "") => {
     '<p><a href="' + vitaminDPartTwoPath + '">Continue lendo: sintomas da falta de vitamina D, fontes e cuidados</a></p>',
   );
 
-  return keepArticleLinksOnly(withContinuation);
+
+  const headings = [
+    ["O que é a vitamina D?", "h2"],
+    ["Qual a principal função da vitamina D?", "h2"],
+    ["Benefícios da vitamina D para o organismo", "h2"],
+    ["Contribui para a saúde dos ossos", "h3"],
+    ["Auxilia no funcionamento muscular", "h3"],
+    ["Participa do funcionamento do sistema imunológico", "h3"],
+    ["Atua no equilíbrio geral do organismo", "h3"],
+    ["Por que a vitamina D se tornou um assunto tão comentado?", "h2"],
+    ["Referência", "h2"],
+  ];
+  let revised = withContinuation;
+  for (const [text, tag] of headings) {
+    revised = revised.replace("<p><span>" + text + "</span></p>", "<" + tag + ">" + text + "</" + tag + ">");
+  }
+  revised = revised.replace("<p><span>Vitamina D: para que serve?</span></p>", "");
+  revised = revised.replace(
+    "<p><span>A vitamina D é um nutriente essencial para o bom funcionamento do organismo. Embora seja chamada de \"vitamina\", ela na verdade se comporta como um hormônio, participando de diversos processos ligados principalmente à saúde dos ossos, dos músculos e ao equilíbrio geral do corpo.</span></p>",
+    "<p>A vitamina D ajuda o organismo a absorver cálcio e participa da manutenção dos ossos e do funcionamento dos músculos. Também atua no sistema imunológico, mas isso não significa que tomar suplementos previna ou trate doenças. A necessidade de suplementação deve ser avaliada individualmente.</p>"
+  );
+  revised = revised.replace(
+    "<p><span>Vitamina D2 (ergocalciferol): encontrada principalmente em algumas fontes vegetais.</span></p>",
+    "<h3>Qual é a diferença entre vitamina D2 e D3?</h3><p>Vitamina D2 (ergocalciferol): encontrada em alguns fungos, como cogumelos, e utilizada em alimentos enriquecidos e suplementos.</p>"
+  );
+  revised = revised.replace(
+    "<p><span>Vitamina D3 (colecalciferol): produzida pela própria pele após a exposição ao sol, e também presente em alguns alimentos de origem animal.</span></p>",
+    "<p>Vitamina D3 (colecalciferol): produzida na pele em resposta à exposição solar e presente em alguns alimentos de origem animal. Também é utilizada em suplementos.</p><p>As duas formas podem aumentar os níveis de vitamina D no sangue. A diferença entre elas não determina, por si só, se você precisa suplementar ou qual dose deve tomar.</p>"
+  );
+  revised = revised.replace("Disponível em: ods.od.nih.gov/factsheets/VitaminD", "Disponível em: ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/");
+  revised = revised.replace(/<p>\s*(?:<span>\s*(?:<br\s*\/?>)?\s*<\/span>|<br\s*\/?>)?\s*<\/p>/gi, "");
+  return keepArticleLinksOnly(revised);
 };
 
 const prepareThroat = (html = "") => {
