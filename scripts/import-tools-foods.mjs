@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+// Usage: node scripts/import-tools-foods.mjs /path/to/official-SR-Legacy.json
+if (!process.argv[2]) throw Error('Informe o caminho do JSON oficial SR Legacy de abril de 2018.');
+const source=JSON.parse(fs.readFileSync(process.argv[2])).SRLegacyFoods;
+const names={168878:'Arroz branco, grão longo, enriquecido, cozido',169097:'Laranja, crua',169705:'Aveia, crua',169967:'Brócolis, cozido, drenado, sem sal',170393:'Cenoura, crua',170457:'Tomate vermelho, cru',171413:'Azeite de oliva',171477:'Frango, peito sem pele, assado',171688:'Maçã com casca, crua',171705:'Abacate, cru',172217:'Leite integral, sem vitaminas A e D adicionadas',172421:'Lentilha, cozida, sem sal',173424:'Ovo inteiro, cozido',173735:'Feijão preto, cozido, sem sal',173944:'Banana, crua'};
+Object.assign(names, JSON.parse(fs.readFileSync(new URL('./tools-food-names.json', import.meta.url))));
+const specs=[[1008,'Energia','kcal'],[1003,'Proteínas','g'],[1005,'Carboidratos','g'],[1004,'Gorduras','g'],[1079,'Fibras','g'],[1093,'Sódio','mg'],[1087,'Cálcio','mg'],[1089,'Ferro','mg'],[1090,'Magnésio','mg'],[1092,'Potássio','mg'],[1095,'Zinco','mg'],[1106,'Vitamina A (RAE)','µg'],[1162,'Vitamina C','mg'],[1114,'Vitamina D','µg'],[1109,'Vitamina E (alfa-tocoferol)','mg'],[1185,'Vitamina K (filoquinona)','µg'],[1165,'Vitamina B1 (tiamina)','mg'],[1166,'Vitamina B2 (riboflavina)','mg'],[1167,'Vitamina B3 (niacina)','mg'],[1175,'Vitamina B6','mg'],[1177,'Folato total','µg'],[1178,'Vitamina B12','µg']];
+const nutrients=specs.map(([id,name,unit],i)=>({id,name,unit,group:i<5?'principal':'micro'}));
+const foods=Object.entries(names).map(([id,name])=>{const food=source.find(f=>f.fdcId===Number(id));if(!food)throw Error(id);return {id:Number(id),name,original:food.description,values:Object.fromEntries(nutrients.map(n=>{const found=food.foodNutrients.find(f=>f.nutrient.id===n.id);if(found&&found.nutrient.unitName.toLowerCase()!==n.unit.toLowerCase().replace('µg','µg'))throw Error('Unit mismatch '+n.name);return [n.id,found?.amount??null];}))};}).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
+const target=new URL('../public/data/',import.meta.url);fs.mkdirSync(target,{recursive:true});fs.writeFileSync(new URL('tools-foods.json',target),JSON.stringify({source:'USDA FoodData Central — SR Legacy',release:'2018-04',download:'https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_json_2018-04.zip',nutrients,foods}));
+console.log('Exported',foods.length,'foods; all numeric values copied from official data.');
+
